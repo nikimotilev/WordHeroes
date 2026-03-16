@@ -2399,11 +2399,29 @@ function updateMiniStageProgress(world,stage,current,total){
 }
 
 /* 9 — Smash best badge on button */
-.smash-best-badge {
+.smash-lb-badge {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(139,92,246,0.22);
+  border: 1px solid rgba(139,92,246,0.45);
+  color: #c4b5fd;
+  border-radius: 999px;
   font-size: 11px;
-  font-weight: 800;
-  opacity: 0.75;
-  margin-right: 4px;
+  font-weight: 900;
+  padding: 1px 7px;
+  vertical-align: middle;
+}
+  display: inline-flex;
+  align-items: center;
+  background: rgba(251,191,36,0.22);
+  border: 1px solid rgba(251,191,36,0.5);
+  color: #fde68a;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+  padding: 2px 8px;
+  margin-right: 6px;
+  vertical-align: middle;
 }
 
 /* 10 — Combo break flash */
@@ -3338,7 +3356,7 @@ function updateMiniStageProgress(world,stage,current,total){
       if (!wordSmashBtn) return;
       const best = getWordSmashBestScore();
       wordSmashBtn.innerHTML = best > 0
-        ? `⚡ Word Smash <span class="smash-best-badge">· Best: ${best}</span>`
+        ? `⚡ Word Smash <span class="smash-best-badge">🏆 ${best}</span>`
         : "⚡ Word Smash";
     }
 
@@ -5624,7 +5642,7 @@ function updateHeroUI(profile) {
           <div class="leader-avatar"><img src="${heroSrc}" alt="Hero" /></div>
           <div>
             <div class="leader-name">${safeName}${isMe ? ' <span style="color:#fbbf24;font-size:11px;">אתה</span>' : ""}</div>
-            <div class="leader-sub">${worldIcon} עולם ${worldNum} • 📖 ${player.words_learned || 0} מילים${smashBest > 0 ? ` • ⚡ ${smashBest}` : ""} • רמה ${player.level || 1}</div>
+            <div class="leader-sub">${worldIcon} עולם ${worldNum} • 📖 ${player.words_learned || 0} מילים${smashBest > 0 ? ` • <span class="smash-lb-badge">⚡ ${smashBest}</span>` : ""} • רמה ${player.level || 1}</div>
           </div>
         </div>`;
       };
@@ -5725,7 +5743,7 @@ function updateHeroUI(profile) {
           <div>
             ${titleHtml}
             <div class="leader-name">${safeName} ${safeClass ? `<span class="leader-class-tag">${safeClass}</span>` : ""}</div>
-            <div class="leader-sub">${worldIcon} עולם ${worldNum} • 📖 ${player.words_learned || 0} מילים${smashBest > 0 ? ` • ⚡ ${smashBest}` : ""}</div>
+            <div class="leader-sub">${worldIcon} עולם ${worldNum} • 📖 ${player.words_learned || 0} מילים${smashBest > 0 ? ` • <span class="smash-lb-badge">⚡ ${smashBest}</span>` : ""}</div>
           </div>
           <div class="leader-level">רמה ${player.level || 1}</div>
         </div>`;
