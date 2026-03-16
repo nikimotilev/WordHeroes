@@ -212,15 +212,17 @@ function updateMiniStageProgress(world,stage,current,total){
     }
 
     .answer-btn.correct {
-      background: rgba(52,211,153,0.2);
-      border-color: rgba(52,211,153,0.6);
-      transform: scale(1.02);
+      background: rgba(52,211,153,0.22);
+      border-color: rgba(52,211,153,0.8);
+      box-shadow: 0 0 0 4px rgba(52,211,153,0.18), 0 0 24px rgba(52,211,153,0.18);
+      animation: correctPop 0.38s cubic-bezier(0.34,1.56,0.64,1) forwards;
     }
 
     .answer-btn.wrong {
-      background: rgba(248,113,113,0.2);
-      border-color: rgba(248,113,113,0.6);
-      animation: shake 0.28s ease;
+      background: rgba(248,113,113,0.22);
+      border-color: rgba(248,113,113,0.8);
+      box-shadow: 0 0 0 4px rgba(248,113,113,0.18);
+      animation: wrongShakeBtn 0.42s ease forwards;
     }
 
     .hero-card {
@@ -1075,6 +1077,40 @@ function updateMiniStageProgress(world,stage,current,total){
       50% { transform: translateX(5px); }
       75% { transform: translateX(-4px); }
       100% { transform: translateX(0); }
+    }
+
+    @keyframes correctPop {
+      0%   { transform: scale(1); }
+      40%  { transform: scale(1.055); }
+      70%  { transform: scale(0.985); }
+      100% { transform: scale(1.02); }
+    }
+
+    @keyframes wrongShakeBtn {
+      0%   { transform: translateX(0) scale(1); }
+      15%  { transform: translateX(-7px) scale(0.98); }
+      30%  { transform: translateX(7px) scale(0.98); }
+      45%  { transform: translateX(-5px); }
+      60%  { transform: translateX(5px); }
+      75%  { transform: translateX(-3px); }
+      100% { transform: translateX(0) scale(1); }
+    }
+
+
+    @keyframes screenFlash {
+      0%   { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    @keyframes answerParticle {
+      0%   { opacity: 1; transform: translate(0, 0) scale(1); }
+      60%  { opacity: 0.8; }
+      100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0.4) rotate(180deg); }
+    }
+
+    @keyframes xpBarPulse {
+      0%,100% { filter: brightness(1); }
+      50%     { filter: brightness(1.4); }
     }
 
     @keyframes popIn {
@@ -2600,6 +2636,11 @@ body.review-mode .world-pill[data-world].locked-world {
   border-width: 2.5px;
   box-shadow: 0 0 0 5px rgba(245,158,11,0.13);
   color: #fcd34d;
+  animation: currentOrbPulse 2s ease-in-out infinite;
+}
+@keyframes currentOrbPulse {
+  0%,100% { box-shadow: 0 0 0 4px rgba(245,158,11,0.12), 0 0 10px rgba(245,158,11,0.10); }
+  50%     { box-shadow: 0 0 0 9px rgba(245,158,11,0.22), 0 0 22px rgba(245,158,11,0.18); }
 }
 .stage-node.current .stage-orb::before {
   content: '▼';
@@ -4008,114 +4049,148 @@ body.review-mode .world-pill[data-world].locked-world {
 
     function playCorrectVariation() {
       const variation = Math.floor(Math.random() * 3);
-      const delay = 0.06;
       if (variation === 0) {
-        playTone(720, 0.06, "triangle", 0.016, delay, { endFreq: 860, release: 0.07 });
-        playTone(980, 0.08, "triangle", 0.014, delay + 0.045, { endFreq: 1120, release: 0.09 });
-        return;
+        // מנגינת ניצחון קצרה - Do Mi Sol
+        playTone(523, 0.07, "triangle", 0.06, 0,    { endFreq: 540, release: 0.08 });
+        playTone(659, 0.07, "triangle", 0.06, 0.07, { endFreq: 680, release: 0.08 });
+        playTone(784, 0.14, "triangle", 0.07, 0.14, { endFreq: 830, release: 0.18 });
+        // הארמוניה עדינה
+        playTone(1047, 0.1, "sine", 0.03, 0.14, { endFreq: 1100, release: 0.14 });
+      } else if (variation === 1) {
+        // צ'ים עולה
+        playTone(880, 0.05, "triangle", 0.055, 0,    { endFreq: 960, release: 0.07 });
+        playTone(1108,0.09, "triangle", 0.065, 0.05, { endFreq: 1200, release: 0.12 });
+        playTone(1318,0.13, "triangle", 0.07,  0.12, { endFreq: 1480, release: 0.16 });
+      } else {
+        // בינגו!
+        playTone(660,  0.06, "triangle", 0.06, 0,    { endFreq: 700, release: 0.07 });
+        playTone(990,  0.08, "triangle", 0.065, 0.06, { endFreq: 1060, release: 0.1 });
+        playTone(1320, 0.15, "triangle", 0.075, 0.13, { endFreq: 1500, release: 0.18 });
+        playTone(660,  0.04, "sine",    0.025, 0.13, { endFreq: 660, release: 0.06 }); // bass echo
       }
-      if (variation === 1) {
-        playTone(660, 0.055, "sine", 0.015, delay, { endFreq: 760, release: 0.065 });
-        playTone(880, 0.075, "triangle", 0.014, delay + 0.04, { endFreq: 1040, release: 0.085 });
-        return;
-      }
-      playTone(760, 0.05, "triangle", 0.015, delay, { endFreq: 900, release: 0.06 });
-      playTone(1040, 0.07, "triangle", 0.013, delay + 0.038, { endFreq: 1220, release: 0.08 });
     }
 
     function playWrongVariation() {
-      playTone(260, 0.07, "sawtooth", 0.018, 0, { endFreq: 230, release: 0.08 });
-      playTone(205, 0.11, "sawtooth", 0.014, 0.045, { endFreq: 175, release: 0.12 });
+      // ירידה חדה עם כפל
+      playTone(300, 0.09, "sawtooth", 0.06, 0,    { endFreq: 200, release: 0.12 });
+      playTone(240, 0.12, "sawtooth", 0.05, 0.06, { endFreq: 160, release: 0.15 });
+      playTone(160, 0.1,  "square",   0.03, 0.1,  { endFreq: 120, release: 0.13 });
+      if (navigator.vibrate) navigator.vibrate([40, 20, 60]);
     }
 
     function playStreakSound(currentStreak = streak) {
-      const tier = Math.min(4, Math.max(0, Math.floor((Math.max(0, currentStreak) - 1) / 5)));
-      const base = 900 + (tier * 70);
-      const volume = 0.018 + (tier * 0.003);
-      playTone(base, 0.045, "triangle", volume, 0, { endFreq: base + 70, release: 0.05 });
-      playTone(base + 180, 0.065, "triangle", volume + 0.002, 0.04, { endFreq: base + 280, release: 0.075 });
+      const tier = Math.min(5, Math.max(0, Math.floor((Math.max(0, currentStreak) - 1) / 5)));
+      const base = 800 + (tier * 120);
+      const vol  = 0.055 + (tier * 0.01);
+      playTone(base,       0.05, "triangle", vol,       0,    { endFreq: base + 80,  release: 0.07 });
+      playTone(base + 200, 0.08, "triangle", vol + 0.01, 0.05, { endFreq: base + 320, release: 0.1  });
+      if (tier >= 2) playTone(base + 400, 0.1, "triangle", vol + 0.015, 0.11, { endFreq: base + 560, release: 0.13 });
+      if (tier >= 4) playTone(base + 700, 0.14, "triangle", vol + 0.02, 0.19, { endFreq: base + 900, release: 0.18 });
     }
 
     function triggerPerfectFeedback() {
-      playTone(700, 0.05, "triangle", 0.022, 0, { endFreq: 760, release: 0.06 });
-      playTone(920, 0.07, "triangle", 0.022, 0.05, { endFreq: 1040, release: 0.08 });
-      playTone(1240, 0.14, "triangle", 0.024, 0.12, { endFreq: 1440, release: 0.16 });
-      if (navigator.vibrate) {
-        navigator.vibrate([70, 30, 100]);
-      }
+      // אקורד מנצח
+      playTone(523, 0.07, "triangle", 0.065, 0,    { endFreq: 540, release: 0.09 });
+      playTone(659, 0.07, "triangle", 0.065, 0.06, { endFreq: 680, release: 0.09 });
+      playTone(784, 0.08, "triangle", 0.07,  0.12, { endFreq: 820, release: 0.10 });
+      playTone(1047,0.18, "triangle", 0.075, 0.18, { endFreq: 1200, release: 0.22 });
+      // sparkle על גבי
+      playTone(2093, 0.04, "sine", 0.03, 0.20, { endFreq: 2400, release: 0.06 });
+      playTone(2637, 0.04, "sine", 0.025,0.24, { endFreq: 3000, release: 0.06 });
+      if (navigator.vibrate) navigator.vibrate([70, 30, 100]);
     }
 
     function playSound(name, data = {}) {
       if (!soundEnabled) return;
-      if (name === "correct") {
-        playCorrectVariation();
-        return;
-      }
-      if (name === "wrong") {
-        playWrongVariation();
-        return;
-      }
-      if (name === "streak") {
-        playStreakSound(data.streak);
-        return;
-      }
+      if (name === "correct") { playCorrectVariation(); return; }
+      if (name === "wrong")   { playWrongVariation();   return; }
+      if (name === "streak")  { playStreakSound(data.streak); return; }
+
       if (name === "levelup") {
-        playTone(520, 0.08, "triangle", 0.028, 0, { endFreq: 560, release: 0.09 });
-        playTone(660, 0.08, "triangle", 0.028, 0.06, { endFreq: 740, release: 0.09 });
-        playTone(880, 0.14, "triangle", 0.03, 0.12, { endFreq: 1040, release: 0.16 });
+        // טרומבון ניצחון
+        playTone(392, 0.08, "triangle", 0.07, 0,    { endFreq: 420, release: 0.10 });
+        playTone(523, 0.08, "triangle", 0.07, 0.08, { endFreq: 560, release: 0.10 });
+        playTone(659, 0.09, "triangle", 0.075,0.16, { endFreq: 700, release: 0.11 });
+        playTone(784, 0.20, "triangle", 0.08, 0.24, { endFreq: 900, release: 0.26 });
+        playTone(1047,0.12, "sine",     0.045,0.28, { endFreq: 1200,release: 0.16 });
         return;
       }
+
       if (name === "evolution") {
-        playTone(500, 0.07, "triangle", 0.026, 0, { endFreq: 560, release: 0.08 });
-        playTone(740, 0.09, "triangle", 0.026, 0.06, { endFreq: 860, release: 0.1 });
-        playTone(980, 0.16, "triangle", 0.028, 0.14, { endFreq: 1220, release: 0.18 });
+        playTone(440, 0.07, "triangle", 0.065, 0,    { endFreq: 500, release: 0.09 });
+        playTone(660, 0.09, "triangle", 0.07,  0.07, { endFreq: 780, release: 0.11 });
+        playTone(880, 0.11, "triangle", 0.075, 0.16, { endFreq: 1040,release: 0.14 });
+        playTone(1320,0.18, "triangle", 0.08,  0.26, { endFreq: 1600,release: 0.22 });
+        playTone(1760,0.08, "sine",     0.04,  0.36, { endFreq: 2100,release: 0.12 });
         return;
       }
+
       if (name === "stageclear") {
-        playTone(660, 0.07, "triangle", 0.022, 0, { endFreq: 720, release: 0.08 });
-        playTone(830, 0.09, "triangle", 0.022, 0.06, { endFreq: 930, release: 0.1 });
-        playTone(990, 0.12, "triangle", 0.024, 0.12, { endFreq: 1130, release: 0.14 });
+        playTone(587, 0.07, "triangle", 0.065, 0,    { endFreq: 640, release: 0.09 });
+        playTone(740, 0.08, "triangle", 0.07,  0.07, { endFreq: 820, release: 0.10 });
+        playTone(880, 0.10, "triangle", 0.075, 0.14, { endFreq: 990, release: 0.13 });
+        playTone(1175,0.16, "triangle", 0.08,  0.22, { endFreq: 1360,release: 0.20 });
         return;
       }
+
       if (name === "bosswin") {
-        playTone(440, 0.08, "triangle", 0.03, 0, { endFreq: 500, release: 0.09 });
-        playTone(660, 0.08, "triangle", 0.03, 0.07, { endFreq: 760, release: 0.09 });
-        playTone(880, 0.11, "triangle", 0.032, 0.14, { endFreq: 1020, release: 0.12 });
-        playTone(1175, 0.18, "triangle", 0.035, 0.23, { endFreq: 1400, release: 0.2 });
+        // פנפרה אפית
+        playTone(293, 0.08, "triangle", 0.06,  0,    { endFreq: 330, release: 0.10 });
+        playTone(440, 0.08, "triangle", 0.065, 0.08, { endFreq: 490, release: 0.10 });
+        playTone(587, 0.09, "triangle", 0.07,  0.16, { endFreq: 660, release: 0.11 });
+        playTone(880, 0.12, "triangle", 0.075, 0.24, { endFreq: 1000,release: 0.14 });
+        playTone(1175,0.22, "triangle", 0.08,  0.34, { endFreq: 1400,release: 0.28 });
+        playTone(440, 0.10, "sine",     0.04,  0.38, { endFreq: 440, release: 0.14 }); // bass pedal
+        if (navigator.vibrate) navigator.vibrate([100, 40, 150, 40, 200]);
         return;
       }
+
       if (name === "bossattack") {
-        playTone(80,  0.18, "sawtooth", 0.01, 0,    { endFreq: 55,  release: 0.22 });
-        playTone(110, 0.12, "sawtooth", 0.01, 0.04, { endFreq: 75,  release: 0.18 });
-        playTone(220, 0.07, "square",   0.01, 0.08, { endFreq: 160, release: 0.12 });
+        playTone(60,  0.22, "sawtooth", 0.045, 0,    { endFreq: 40,  release: 0.28 });
+        playTone(90,  0.16, "sawtooth", 0.04,  0.05, { endFreq: 60,  release: 0.22 });
+        playTone(180, 0.10, "square",   0.035, 0.10, { endFreq: 130, release: 0.16 });
+        if (navigator.vibrate) navigator.vibrate([80]);
         return;
       }
+
       if (name === "bosshit") {
-        playTone(600, 0.09, "square",   0.008, 0,    { endFreq: 800,  release: 0.07 });
-        playTone(900, 0.07, "triangle", 0.01,  0.04, { endFreq: 1100, release: 0.08 });
+        playTone(700,  0.06, "square",   0.04, 0,    { endFreq: 900,  release: 0.08 });
+        playTone(1050, 0.08, "triangle", 0.045, 0.04, { endFreq: 1300, release: 0.10 });
         return;
       }
+
       if (name === "worldunlock") {
-        playTone(560, 0.08, "triangle", 0.03, 0.28, { endFreq: 640, release: 0.09 });
-        playTone(760, 0.1, "triangle", 0.032, 0.38, { endFreq: 920, release: 0.11 });
-        playTone(980, 0.13, "triangle", 0.034, 0.5, { endFreq: 1260, release: 0.15 });
-        playTone(1320, 0.2, "triangle", 0.035, 0.64, { endFreq: 1680, release: 0.22 });
+        // מנגינה קסומה עולה
+        [
+          [523, 0.07, 0],
+          [659, 0.07, 0.1],
+          [784, 0.08, 0.2],
+          [1047,0.10, 0.3],
+          [1319,0.12, 0.42],
+          [1568,0.22, 0.56],
+        ].forEach(([f, d, delay]) =>
+          playTone(f, d, "triangle", 0.065 + delay * 0.02, delay, { endFreq: f * 1.06, release: d + 0.06 })
+        );
+        // sparkle
+        playTone(2093, 0.06, "sine", 0.03, 0.62, { endFreq: 2600, release: 0.08 });
+        if (navigator.vibrate) navigator.vibrate([60, 30, 80, 30, 120]);
         return;
       }
+
       if (name === "wordmastered") {
-        playTone(820, 0.05, "triangle", 0.021, 0, { endFreq: 900, release: 0.06 });
-        playTone(1100, 0.09, "triangle", 0.022, 0.05, { endFreq: 1240, release: 0.1 });
+        playTone(880,  0.06, "triangle", 0.055, 0,    { endFreq: 960,  release: 0.08 });
+        playTone(1175, 0.10, "triangle", 0.06,  0.06, { endFreq: 1320, release: 0.13 });
         return;
       }
+
       if (name === "dailybonus") {
-        playTone(620, 0.06, "triangle", 0.024, 0, { endFreq: 700, release: 0.07 });
-        playTone(860, 0.08, "triangle", 0.025, 0.06, { endFreq: 980, release: 0.09 });
-        playTone(1180, 0.15, "triangle", 0.027, 0.13, { endFreq: 1400, release: 0.17 });
+        playTone(523, 0.06, "triangle", 0.06,  0,    { endFreq: 560, release: 0.08 });
+        playTone(784, 0.08, "triangle", 0.065, 0.07, { endFreq: 860, release: 0.10 });
+        playTone(1047,0.16, "triangle", 0.07,  0.14, { endFreq: 1250,release: 0.20 });
         return;
       }
-      if (name === "perfect") {
-        triggerPerfectFeedback();
-      }
+
+      if (name === "perfect") { triggerPerfectFeedback(); }
     }
 
 
@@ -7595,6 +7670,39 @@ function spawnStar(){
  setTimeout(()=>s.remove(), 600);
 }
 
+// ══ Answer visual effects ══════════════════════════════
+function spawnScreenFlash(type) {
+  const el = document.createElement('div');
+  el.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:9999;background:'+
+    (type==='correct'?'rgba(52,211,153,0.14)':'rgba(248,113,113,0.14)')+
+    ';animation:screenFlash 0.32s ease-out forwards;';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 370);
+}
+
+function spawnAnswerParticles(btn, isCorrect) {
+  if (!btn) return;
+  const rect = btn.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top  + rect.height / 2;
+  const count = isCorrect ? 10 : 6;
+  const chars = isCorrect ? ['⭐','✨','🌟','💫','✓','★'] : ['💥','✗','❌','•'];
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement('div');
+    const angle = (360 / count) * i + (Math.random() - 0.5) * 35;
+    const dist  = 55 + Math.random() * 55;
+    const rad   = (angle * Math.PI) / 180;
+    const dx = Math.cos(rad) * dist;
+    const dy = Math.sin(rad) * dist;
+    el.textContent = chars[i % chars.length];
+    el.style.cssText = 'position:fixed;left:'+cx+'px;top:'+cy+'px;font-size:'+(isCorrect?12+Math.random()*8:11+Math.random()*6)+'px;pointer-events:none;z-index:9999;--dx:'+dx+'px;--dy:'+dy+'px;animation:answerParticle 0.65s ease-out forwards;';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 680);
+  }
+}
+// ══════════════════════════════════════════════════════
+
+
 async function handleAnswer(buttonEl, selectedAnswer) {
       if (!currentQuestion || answeredCurrent) return;
       answeredCurrent = true;
@@ -7631,6 +7739,8 @@ async function handleAnswer(buttonEl, selectedAnswer) {
         stageWrongAnswers += 1;
         buttonEl.classList.add("wrong");
         playSound("wrong");
+        spawnScreenFlash("wrong");
+        spawnAnswerParticles(buttonEl, false);
         // Combo break drama — only when a meaningful streak is broken
         const brokenStreak = streak;
         streak = 0;
@@ -7678,6 +7788,10 @@ async function handleAnswer(buttonEl, selectedAnswer) {
       clearCorrectionFeedback();
       buttonEl.classList.add("correct");
       playSound("correct");
+      // ✨ screen flash ירוק
+      spawnScreenFlash("correct");
+      // 🌟 particles מהכפתור
+      spawnAnswerParticles(buttonEl, true);
       if (isBossStage()) {
         triggerBossHit();
         showBossDialogue("praise");
