@@ -1386,19 +1386,25 @@ function updateMiniStageProgress(world,stage,current,total){
 
       .world-road {
         display: flex;
-        justify-content: center;
-        overflow: hidden;
+        justify-content: flex-start;
+        overflow-x: auto;
+        overflow-y: visible;
         margin-bottom: 10px;
-        padding-bottom: 0;
+        padding-bottom: 4px;
+        gap: 6px;
       }
 
       .world-pill {
-        display: none;
+        display: inline-flex;
+        flex: 0 0 auto;
+        font-size: 11px;
+        padding: 7px 10px;
+        cursor: pointer;
+        white-space: nowrap;
       }
 
       .world-pill.active {
         display: inline-flex;
-        max-width: 100%;
         font-size: 12px;
         padding: 8px 12px;
       }
@@ -1965,21 +1971,47 @@ function updateMiniStageProgress(world,stage,current,total){
 /* v27 safe world cleanup */
 .world-road{
   display:flex;
-  justify-content:center;
-  overflow:visible;
+  justify-content:flex-start;
+  overflow-x:auto;
+  overflow-y:visible;
   margin-bottom:10px;
-  padding-bottom:0;
+  padding-bottom:4px;
+  gap:8px;
+  scroll-snap-type:x proximity;
 }
+/* תלמידים — כל ה-pills גלויים */
 .world-pill{
-  display:none;
+  display:inline-flex;
+  flex:0 0 auto;
+  padding:8px 12px;
+  cursor:pointer;
+  font-size:12px;
+  white-space:nowrap;
 }
 .world-pill.active{
   display:inline-flex;
-  max-width:100%;
   text-align:center;
-  white-space:normal;
+  white-space:nowrap;
   line-height:1.3;
   padding:10px 14px;
+}
+/* Review mode — כל 6 עולמות כולל נעולים */
+body.review-mode .world-pill {
+  display:inline-flex;
+  padding:8px 12px;
+  cursor:pointer;
+  font-size:12px;
+}
+body.review-mode .world-pill.active {
+  border-color: rgba(168,85,247,0.7);
+  background: linear-gradient(135deg, rgba(124,58,237,0.22), rgba(168,85,247,0.16));
+  color: #d8b4fe;
+}
+/* בreview mode — עולמות נעולים גם גלויים וניתנים ללחיצה */
+body.review-mode .world-pill.locked-world {
+  opacity: 0.7;
+  cursor: pointer;
+  pointer-events: auto;
 }
 .world-counter{
   text-align:center;
@@ -2477,9 +2509,16 @@ function updateMiniStageProgress(world,stage,current,total){
   transform: translateY(-1px);
 }
 .world-pill[data-world].locked-world {
-  opacity: 0.38;
-  cursor: default;
-  pointer-events: none;
+  display: none;          /* תלמידים לא רואים עולמות נעולים */
+}
+
+/* Review Mode — הצג את כל 6 העולמות כולל נעולים */
+body.review-mode .world-pill[data-world].locked-world {
+  display: inline-flex;
+  opacity: 0.6;
+  cursor: pointer;
+  pointer-events: auto;
+  border-style: dashed;
 }
 
 /* 9 — Smash best badge on button */
@@ -3535,8 +3574,9 @@ function updateMiniStageProgress(world,stage,current,total){
         <div id="teacher-summary" style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:10px;"></div>
 
         <!-- Tabs -->
-        <div style="display:flex; gap:8px; margin-bottom:10px;">
+        <div style="display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
           <button id="tt-all"     class="teacher-tab active-tab" onclick="switchTeacherTab('all')">📋 כל התלמידים</button>
+          <button id="tt-class"   class="teacher-tab" onclick="switchTeacherTab('class')">🏫 לפי כיתה</button>
           <button id="tt-today"   class="teacher-tab" onclick="switchTeacherTab('today')">📅 נכנסו היום</button>
           <button id="tt-absent"  class="teacher-tab" onclick="switchTeacherTab('absent')">⚠️ לא נכנסו 3+ ימים</button>
         </div>
@@ -4935,12 +4975,21 @@ function updateMiniStageProgress(world,stage,current,total){
     // World pill navigation
     document.addEventListener("click", (event) => {
       const pill = event.target.closest(".world-pill[data-world]");
-      if (!pill || pill.classList.contains("locked-world")) return;
+      // בreview mode — מאפשרים גישה לכל העולמות כולל נעולים
+      if (!pill) return;
+      if (!isReviewMode && pill.classList.contains("locked-world")) return;
       if (activeScreenName !== "map-screen") return;
       const targetWorld = Number(pill.dataset.world);
       if (targetWorld === currentWorld) return;
       currentWorld = targetWorld;
-      loadUnlockedStage();
+      if (isReviewMode) {
+        // In review mode keep all stages unlocked
+        unlockedStage = 10;
+        selectedStage = 1;
+        currentStage  = 1;
+      } else {
+        loadUnlockedStage();
+      }
       cachedStageKey = "";
       choicePoolCacheKey = "";
       updateHeroUI(currentProfile);
@@ -7436,7 +7485,7 @@ async function handleAnswer(buttonEl, selectedAnswer) {
 
     function switchTeacherTab(tab) {
       teacherCurrentTab = tab;
-      ["all","today","absent"].forEach(t => {
+      ["all","class","today","absent"].forEach(t => {
         const btn = document.getElementById("tt-" + t);
         if (btn) btn.classList.toggle("active-tab", t === tab);
       });
@@ -7528,7 +7577,108 @@ async function handleAnswer(buttonEl, selectedAnswer) {
         </div>`;
     }
 
+    function renderTeacherByClass() {
+      const el = document.getElementById("teacher-student-list");
+      if (!el) return;
+
+      let students = teacherAllStudents;
+      if (teacherClassFilter) students = students.filter(s => s.class_code === teacherClassFilter);
+
+      if (!students.length) {
+        el.innerHTML = '<div style="text-align:center;color:#64748b;padding:16px;">אין תלמידים להצגה</div>';
+        return;
+      }
+
+      const today = new Date().toISOString().slice(0, 10);
+      const threeDaysAgo = new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 10);
+
+      // Group by class_code
+      const groups = {};
+      students.forEach(s => {
+        const cls = s.class_code || "ללא כיתה";
+        if (!groups[cls]) groups[cls] = [];
+        groups[cls].push(s);
+      });
+
+      const sortedClasses = Object.keys(groups).sort();
+
+      el.innerHTML = sortedClasses.map(cls => {
+        const members = groups[cls].sort((a, b) => (b.words_learned || 0) - (a.words_learned || 0));
+        const todayCount   = members.filter(s => String(s.last_daily_bonus_at || "").slice(0, 10) === today).length;
+        const absentCount  = members.filter(s => {
+          const last = String(s.last_daily_bonus_at || "").slice(0, 10);
+          return !last || last < threeDaysAgo;
+        }).length;
+        const totalWords   = members.reduce((sum, s) => sum + (s.words_learned || 0), 0);
+        const avgWords     = members.length ? Math.round(totalWords / members.length) : 0;
+
+        const rows = members.map((s, i) => {
+          const lastLogin = String(s.last_daily_bonus_at || "").slice(0, 10);
+          const isToday   = lastLogin === today;
+          const isAbsent  = !lastLogin || lastLogin < threeDaysAgo;
+          const pLvl      = getPrestigeLevel(s.level || 1);
+          const levelTxt  = pLvl > 0 ? `✦P${pLvl}` : `רמה ${s.level || 1}`;
+          const worldIcon = ["🌿","🌊","🏞️","🏰","⚡","🔥"][(s.current_world || 1) - 1] || "🌿";
+          const statusBadge = isToday
+            ? `<span class="teacher-badge-today">✅ היום</span>`
+            : isAbsent
+              ? `<span class="teacher-badge-absent">⚠️ ${lastLogin ? lastLogin.slice(5) : "מעולם לא"}</span>`
+              : `<span style="color:#94a3b8;">${lastLogin ? lastLogin.slice(5) : "—"}</span>`;
+          const rowClass = isToday ? "teacher-row today-row" : isAbsent ? "teacher-row absent-row" : "teacher-row";
+          return `
+          <div class="${rowClass}">
+            <div class="teacher-rank-num">${i + 1}</div>
+            <div>
+              <div class="teacher-student-name">${escHtml(s.display_name || "?")}</div>
+              <div class="teacher-student-meta">${worldIcon} עולם ${s.current_world || 1} • ${levelTxt} • ${statusBadge}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+              <div class="teacher-student-stats">
+                <span style="color:#93c5fd;">📖 ${s.words_learned || 0}</span>
+                ${s.smash_best > 0 ? `<span style="color:#c4b5fd;">⚡ ${s.smash_best}</span>` : ""}
+              </div>
+              <div style="display:flex;gap:5px;">
+                <button onclick="openTeacherRename('${s.id}','${escHtml(s.display_name||'')}')"
+                  style="width:auto;padding:3px 9px;font-size:11px;min-height:0;border-radius:8px;
+                  background:rgba(96,165,250,0.18);border:1px solid rgba(96,165,250,0.35);color:#93c5fd;font-weight:800;">
+                  ✏️ שם
+                </button>
+                <button onclick="openTeacherReset('${s.id}','${escHtml(s.display_name||'')}')"
+                  style="width:auto;padding:3px 9px;font-size:11px;min-height:0;border-radius:8px;
+                  background:rgba(248,113,113,0.14);border:1px solid rgba(248,113,113,0.32);color:#fca5a5;font-weight:800;">
+                  🔄 אפס
+                </button>
+              </div>
+            </div>
+          </div>`;
+        }).join("");
+
+        return `
+        <div style="margin-bottom:16px;">
+          <div style="
+            display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap;
+            gap:8px; padding:10px 14px; border-radius:14px; margin-bottom:8px;
+            background:linear-gradient(135deg,rgba(59,130,246,0.18),rgba(96,165,250,0.12));
+            border:1px solid rgba(96,165,250,0.3);
+          ">
+            <div style="font-size:17px;font-weight:900;color:#93c5fd;">🏫 כיתה ${escHtml(cls)}</div>
+            <div style="display:flex;gap:12px;font-size:12px;font-weight:800;">
+              <span style="color:#f1f5f9;">👥 ${members.length}</span>
+              <span style="color:#34d399;">✅ ${todayCount} היום</span>
+              <span style="color:#f87171;">⚠️ ${absentCount} נעדרים</span>
+              <span style="color:#93c5fd;">📖 ממוצע ${avgWords}</span>
+            </div>
+          </div>
+          <div style="display:grid;gap:8px;">${rows}</div>
+        </div>`;
+      }).join("");
+    }
+
     function renderTeacherStudents() {
+      if (teacherCurrentTab === "class") {
+        renderTeacherByClass();
+        return;
+      }
       const el = document.getElementById("teacher-student-list");
       if (!el) return;
       const students = getFilteredStudents();
@@ -7737,6 +7887,7 @@ async function handleAnswer(buttonEl, selectedAnswer) {
 
     function enterReviewMode() {
       isReviewMode = true;
+      document.body.classList.add("review-mode");
       reviewModeSnapshot = {
         currentWorld,
         unlockedStage,
@@ -7751,10 +7902,11 @@ async function handleAnswer(buttonEl, selectedAnswer) {
       selectedStage = 1;
       if (currentProfile) {
         currentProfile.unlocked_stage = 10;
-        currentProfile.current_world  = 1;
+        currentProfile.current_world  = 6;  // כל 6 עולמות גלויים ב-Review Mode
       }
       showScreen("map-screen");
       updateHeroUI(currentProfile);
+      renderWorldRoad();   // וודא שכל 6 העולמות מוצגים מיד
       renderStageMap();
       const banner = document.getElementById("review-mode-banner");
       if (banner) banner.classList.add("show");
@@ -7763,6 +7915,7 @@ async function handleAnswer(buttonEl, selectedAnswer) {
     function exitReviewMode() {
       if (!isReviewMode) return;
       isReviewMode = false;
+      document.body.classList.remove("review-mode");
       if (reviewModeSnapshot) {
         currentWorld  = reviewModeSnapshot.currentWorld;
         unlockedStage = reviewModeSnapshot.unlockedStage;
