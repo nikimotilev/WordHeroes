@@ -550,7 +550,7 @@ function updateMiniStageProgress(world,stage,current,total){
     }
 
     .journey-panel {
-      overflow: hidden;
+      overflow: visible;
     }
 
     .journey-title {
@@ -577,36 +577,54 @@ function updateMiniStageProgress(world,stage,current,total){
       scroll-snap-type: x proximity;
     }
 
-    .world-pill {
-      flex: 0 0 auto;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.08);
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 800;
-      white-space: nowrap;
+    .world-select-wrap {
+      margin-bottom: 10px;
     }
-
-    .world-pill.active {
-      background: linear-gradient(135deg, rgba(74,222,128,0.18), rgba(59,130,246,0.18));
-      color: var(--text);
-      border-color: rgba(251,191,36,0.35);
+    .world-select {
+      width: 100%;
+      background: rgba(255,255,255,0.09);
+      color: #f8fafc;
+      border: 1.5px solid rgba(251,191,36,0.35);
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 800;
+      padding: 10px 14px;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23fbbf24' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: left 12px center;
+      margin-top: 0;
+    }
+    .world-select:focus {
+      outline: none;
+      border-color: rgba(251,191,36,0.7);
+      box-shadow: 0 0 0 3px rgba(251,191,36,0.1);
+    }
+    .world-select option {
+      background: #0f1e35;
+      color: #f8fafc;
+      font-weight: 700;
     }
 
     .stage-rail {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 14px 10px;
-      padding: 10px 0 14px;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      align-items: center;
+      overflow-x: visible;
+      gap: 0;
+      padding: 20px 4px 8px;
       margin: 0;
-      direction: rtl;
+      direction: ltr;
+      justify-content: space-between;
     }
 
     .stage-node {
       position: relative;
-      width: 100%;
+      flex: 0 0 auto;
+      width: auto;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -1411,16 +1429,17 @@ function updateMiniStageProgress(world,stage,current,total){
 
       .stage-rail {
         display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 8px 6px;
-        overflow: visible;
-        padding: 2px 0 8px;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        gap: 0;
+        overflow-x: visible;
+        padding: 20px 2px 8px;
         margin: 0;
+        direction: ltr;
       }
 
       .stage-node {
-        width: 56px;
+        width: auto;
         gap: 4px;
       }
 
@@ -1949,8 +1968,7 @@ function updateMiniStageProgress(world,stage,current,total){
 }
 @media (max-width: 640px){
   .stage-rail{
-    grid-template-columns: repeat(5, minmax(0,1fr));
-    gap:10px 6px;
+    padding: 18px 2px 6px;
   }
   .leader-row{
     grid-template-columns: 28px 42px 1fr;
@@ -2247,22 +2265,21 @@ body.review-mode .world-pill.locked-world {
 }
 
 .stage-rail {
-  gap: 8px 6px;
-  padding: 2px 0 8px;
+  padding: 20px 4px 8px;
 }
 
 .stage-node {
-  gap: 4px;
+  gap: 5px;
 }
 
 .stage-orb {
-  width: 52px;
-  height: 52px;
-  font-size: 18px;
+  width: 28px;
+  height: 28px;
+  font-size: 13px;
 }
 
 .stage-label-mini {
-  font-size: 10px;
+  display: none;
 }
 
 .stage-start-wrap {
@@ -2347,24 +2364,23 @@ body.review-mode .world-pill.locked-world {
   }
 
   .stage-rail {
-    gap: 5px 4px;
-    padding: 0 0 4px;
+    padding: 18px 2px 6px;
   }
 
   .stage-node {
-    width: 48px;
-    gap: 2px;
+    width: auto;
+    gap: 4px;
   }
 
   .stage-orb {
-    width: 42px;
-    height: 42px;
-    font-size: 15px;
-    border-radius: 13px;
+    width: 26px;
+    height: 26px;
+    font-size: 12px;
+    border-radius: 50%;
   }
 
   .stage-label-mini {
-    font-size: 9px;
+    display: none;
   }
 
   .stage-start-wrap {
@@ -2522,6 +2538,131 @@ body.review-mode .world-pill[data-world].locked-world {
 }
 
 /* 9 — Smash best badge on button */
+
+/* ══════════════════════════════════════════
+   STAGE PATH — שביל שלבים חדש (אפשרות ד)
+══════════════════════════════════════════ */
+.stage-rail {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  overflow-x: visible;
+  gap: 0;
+  padding: 20px 4px 8px;
+  margin: 0;
+  direction: ltr;
+  justify-content: space-between;
+  grid-template-columns: unset;
+}
+.stage-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  flex: 0 0 auto;
+  width: auto;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  cursor: pointer;
+}
+.stage-orb {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 13px;
+  border: 2px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.08);
+  transition: transform 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s;
+  position: relative;
+  z-index: 1;
+  color: var(--muted);
+}
+.stage-node:hover .stage-orb {
+  transform: translateY(-2px);
+}
+.stage-node.completed .stage-orb {
+  background: rgba(22,163,74,0.2);
+  border-color: rgba(52,211,153,0.7);
+  color: #4ade80;
+}
+.stage-node.current .stage-orb {
+  background: rgba(245,158,11,0.18);
+  border-color: rgba(245,158,11,0.95);
+  border-width: 2.5px;
+  box-shadow: 0 0 0 5px rgba(245,158,11,0.13);
+  color: #fcd34d;
+}
+.stage-node.current .stage-orb::before {
+  content: '▼';
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  color: #fbbf24;
+  animation: stageArrowBounce 1s ease-in-out infinite;
+  border: none;
+  background: none;
+  width: auto; height: auto; border-radius: 0;
+}
+@keyframes stageArrowBounce {
+  0%,100% { transform: translateX(-50%) translateY(0); }
+  50%      { transform: translateX(-50%) translateY(-3px); }
+}
+.stage-node.locked .stage-orb {
+  opacity: 0.35;
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.1);
+}
+.stage-node.selected .stage-orb {
+  transform: scale(1.15);
+}
+.stage-node.has-decay .stage-orb::after {
+  content: '!';
+  position: absolute;
+  top: -3px; right: -3px;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: #ef4444;
+  color: white;
+  font-size: 8px; font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 2;
+}
+.stage-stars {
+  font-size: 8px;
+  letter-spacing: -1px;
+  color: #f59e0b;
+  min-height: 10px;
+  line-height: 1;
+}
+.stage-stars.dim { color: rgba(251,191,36,0.22); }
+.stage-conn {
+  flex: 1 1 0;
+  min-width: 4px;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.1);
+  align-self: center;
+  margin-bottom: 15px;
+  transition: background 0.25s;
+}
+.stage-conn.done       { background: rgba(52,211,153,0.65); }
+.stage-conn.transition { background: linear-gradient(90deg,rgba(52,211,153,.65),rgba(245,158,11,.9)); }
+.stage-label-mini { display: none; }
+
+
+/* ══════════════════════════════════════════ */
+
 /* ═══════════════════════════════════
    PRESTIGE SYSTEM
 ═══════════════════════════════════ */
@@ -2970,24 +3111,33 @@ body.review-mode .world-pill[data-world].locked-world {
 
     /* ── Daily Quest Panel ─────────────────────────────── */
     .daily-quest-panel {
-      padding: 12px 14px;
+      padding: 10px 14px;
     }
     .dq-title {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 900;
       color: #fbbf24;
-      margin-bottom: 10px;
+      margin-bottom: 0;
       display: flex;
       align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
+      gap: 7px;
+      cursor: pointer;
+      user-select: none;
     }
+    .dq-title.dq-open { margin-bottom: 8px; }
+    .dq-chevron {
+      margin-right: auto;
+      font-size: 11px;
+      color: #64748b;
+      transition: transform 0.2s;
+    }
+    .dq-title.dq-open .dq-chevron { transform: rotate(180deg); }
     .dq-count {
       background: rgba(251,191,36,0.18);
       border: 1px solid rgba(251,191,36,0.4);
       border-radius: 999px;
-      padding: 1px 8px;
-      font-size: 12px;
+      padding: 1px 7px;
+      font-size: 11px;
       color: #fde68a;
     }
     .dq-count.dq-count-done {
@@ -2996,43 +3146,49 @@ body.review-mode .world-pill[data-world].locked-world {
       color: #86efac;
     }
     .dq-timer {
-      margin-right: auto;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
       color: #64748b;
     }
     .dq-list {
-      display: grid;
-      gap: 8px;
+      display: none;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 6px;
     }
+    .dq-list.dq-visible { display: grid; }
     .dq-item {
       display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      border-radius: 14px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      padding: 8px 9px;
+      border-radius: 12px;
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.08);
     }
     .dq-item.dq-done {
-      background: rgba(52,211,153,0.1);
-      border-color: rgba(52,211,153,0.3);
+      background: rgba(52,211,153,0.08);
+      border-color: rgba(52,211,153,0.25);
     }
-    .dq-icon { font-size: 20px; flex-shrink: 0; }
+    .dq-item-top { display: flex; align-items: center; gap: 5px; width: 100%; }
+    .dq-icon { font-size: 14px; flex-shrink: 0; }
     .dq-info { flex: 1; min-width: 0; }
     .dq-label {
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 800;
       color: #f1f5f9;
-      line-height: 1.3;
+      line-height: 1.25;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .dq-item.dq-done .dq-label { color: #86efac; }
     .dq-progress-bar {
-      height: 5px;
+      height: 4px;
       background: rgba(255,255,255,0.1);
       border-radius: 999px;
       overflow: hidden;
-      margin-top: 5px;
+      width: 100%;
     }
     .dq-progress-fill {
       height: 100%;
@@ -3041,26 +3197,20 @@ body.review-mode .world-pill[data-world].locked-world {
       transition: width 0.4s ease;
     }
     .dq-item.dq-done .dq-progress-fill { background: linear-gradient(90deg, #34d399, #10b981); }
-    .dq-right {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 2px;
-      flex-shrink: 0;
-    }
-    .dq-progress-text {
-      font-size: 11px;
-      font-weight: 800;
-      color: #94a3b8;
-    }
-    .dq-item.dq-done .dq-progress-text { color: #34d399; }
+    .dq-right { display: none; }
     .dq-reward {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 900;
       color: #fbbf24;
       white-space: nowrap;
     }
     .dq-item.dq-done .dq-reward { color: #34d399; }
+    .dq-progress-text {
+      font-size: 10px;
+      font-weight: 800;
+      color: #64748b;
+    }
+    .dq-item.dq-done .dq-progress-text { color: #34d399; }
 
     /* ── Enhanced streak fire ──────────────────────────── */
     @keyframes streakPulse {
@@ -3374,20 +3524,35 @@ body.review-mode .world-pill[data-world].locked-world {
       <div class="map-layout">
         <div class="panel journey-panel">
           
-          <div id="world-road" class="world-road"></div>
+          <!-- בחירת עולם — תיבה נפתחת -->
+          <div class="world-select-wrap">
+            <select id="world-select" class="world-select"></select>
+            <div id="world-counter" class="world-counter" style="display:none"></div>
+          </div>
 
           <div id="stage-map" class="stage-rail">
-            <button class="stage-node stage-btn" data-stage="1"><div class="stage-orb">1</div><div class="stage-label-mini">Stage 1</div></button>
-            <button class="stage-node stage-btn" data-stage="2"><div class="stage-orb">2</div><div class="stage-label-mini">Stage 2</div></button>
-            <button class="stage-node stage-btn" data-stage="3"><div class="stage-orb">3</div><div class="stage-label-mini">Stage 3</div></button>
-            <button class="stage-node stage-btn" data-stage="4"><div class="stage-orb">4</div><div class="stage-label-mini">Stage 4</div></button>
-            <button class="stage-node stage-btn" data-stage="5"><div class="stage-orb">5</div><div class="stage-label-mini">Stage 5</div></button>
-            <button class="stage-node stage-btn" data-stage="6"><div class="stage-orb">6</div><div class="stage-label-mini">Stage 6</div></button>
-            <button class="stage-node stage-btn" data-stage="7"><div class="stage-orb">7</div><div class="stage-label-mini">Stage 7</div></button>
-            <button class="stage-node stage-btn" data-stage="8"><div class="stage-orb">8</div><div class="stage-label-mini">Stage 8</div></button>
-            <button class="stage-node stage-btn" data-stage="9"><div class="stage-orb">9</div><div class="stage-label-mini">Stage 9</div></button>
-            <button class="stage-node stage-btn" data-stage="10"><div class="stage-orb">👑</div><div class="stage-label-mini">Final</div></button>
+            <button class="stage-node stage-btn" data-stage="1"><div class="stage-orb">1</div></button>
+            <div class="stage-conn" data-conn="1"></div>
+            <button class="stage-node stage-btn" data-stage="2"><div class="stage-orb">2</div></button>
+            <div class="stage-conn" data-conn="2"></div>
+            <button class="stage-node stage-btn" data-stage="3"><div class="stage-orb">3</div></button>
+            <div class="stage-conn" data-conn="3"></div>
+            <button class="stage-node stage-btn" data-stage="4"><div class="stage-orb">4</div></button>
+            <div class="stage-conn" data-conn="4"></div>
+            <button class="stage-node stage-btn" data-stage="5"><div class="stage-orb">5</div></button>
+            <div class="stage-conn" data-conn="5"></div>
+            <button class="stage-node stage-btn" data-stage="6"><div class="stage-orb">6</div></button>
+            <div class="stage-conn" data-conn="6"></div>
+            <button class="stage-node stage-btn" data-stage="7"><div class="stage-orb">7</div></button>
+            <div class="stage-conn" data-conn="7"></div>
+            <button class="stage-node stage-btn" data-stage="8"><div class="stage-orb">8</div></button>
+            <div class="stage-conn" data-conn="8"></div>
+            <button class="stage-node stage-btn" data-stage="9"><div class="stage-orb">9</div></button>
+            <div class="stage-conn" data-conn="9"></div>
+            <button class="stage-node stage-btn" data-stage="10"><div class="stage-orb">👑</div></button>
           </div>
+
+          <!-- Focus bar removed — השלב הנוכחי ברור מהשביל -->
 
           <div class="stage-start-wrap">
             <button id="journey-start-btn" class="journey-main-btn">🚀 התקדם במסע</button>
@@ -4132,13 +4297,24 @@ body.review-mode .world-pill[data-world].locked-world {
       const doneCount = quests.filter(q => isQuestDone(q.id)).length;
       const allDone   = doneCount === quests.length;
 
-      // Update title with count + timer
+      // Check open state (persisted in sessionStorage)
+      const isOpen = sessionStorage.getItem("dq_open") === "1";
+
       if (titleEl) {
         titleEl.innerHTML = `
           <span>⚡ Daily Quests</span>
           <span class="dq-count ${allDone ? "dq-count-done" : ""}">${doneCount}/${quests.length}</span>
-          <span class="dq-timer">${allDone ? "✅ הושלמו!" : getQuestResetTimer()}</span>`;
+          <span class="dq-timer">${allDone ? "✅ הושלמו!" : getQuestResetTimer()}</span>
+          <span class="dq-chevron">▼</span>`;
+        titleEl.className = "dq-title" + (isOpen ? " dq-open" : "");
+        titleEl.onclick = () => {
+          const nowOpen = sessionStorage.getItem("dq_open") === "1";
+          sessionStorage.setItem("dq_open", nowOpen ? "0" : "1");
+          renderDailyQuests();
+        };
       }
+
+      container.className = "dq-list" + (isOpen ? " dq-visible" : "");
 
       container.innerHTML = quests.map(q => {
         const done = isQuestDone(q.id);
@@ -4146,14 +4322,16 @@ body.review-mode .world-pill[data-world].locked-world {
         const pct  = Math.round((prog / q.goal) * 100);
         return `
         <div class="dq-item${done ? " dq-done" : ""}">
-          <div class="dq-icon">${done ? "✅" : q.icon}</div>
-          <div class="dq-info">
-            <div class="dq-label">${q.label}</div>
-            <div class="dq-progress-bar">
-              <div class="dq-progress-fill" style="width:${pct}%"></div>
+          <div class="dq-item-top">
+            <div class="dq-icon">${done ? "✅" : q.icon}</div>
+            <div class="dq-info">
+              <div class="dq-label">${q.label}</div>
             </div>
           </div>
-          <div class="dq-right">
+          <div class="dq-progress-bar">
+            <div class="dq-progress-fill" style="width:${pct}%"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;width:100%">
             <div class="dq-progress-text">${prog}/${q.goal}</div>
             <div class="dq-reward">${done ? "" : q.reward}</div>
           </div>
@@ -4170,7 +4348,6 @@ body.review-mode .world-pill[data-world].locked-world {
         if (currentProfile.level > prevLevel) triggerLevelUpEffect(currentProfile.level);
         updateHeroUI(currentProfile);
         persistProfileProgress();
-        // Show special toast
         const toast = document.getElementById("quest-toast");
         if (toast) {
           toast.textContent = `🏆 כל המשימות הושלמו! +${BONUS} XP בונוס!`;
@@ -4972,27 +5149,37 @@ body.review-mode .world-pill[data-world].locked-world {
       document.getElementById("avatar-gender").value = btn.dataset.gender;
     });
 
-    // World pill navigation
-    document.addEventListener("click", (event) => {
-      const pill = event.target.closest(".world-pill[data-world]");
-      // בreview mode — מאפשרים גישה לכל העולמות כולל נעולים
-      if (!pill) return;
-      if (!isReviewMode && pill.classList.contains("locked-world")) return;
+    // World select navigation
+    document.addEventListener("change", (event) => {
+      if (event.target.id !== "world-select") return;
       if (activeScreenName !== "map-screen") return;
-      const targetWorld = Number(pill.dataset.world);
+      const targetWorld = Number(event.target.value);
       if (targetWorld === currentWorld) return;
+
       currentWorld = targetWorld;
+      cachedStageKey = "";
+      choicePoolCacheKey = "";
+
       if (isReviewMode) {
-        // In review mode keep all stages unlocked
         unlockedStage = 10;
         selectedStage = 1;
         currentStage  = 1;
       } else {
-        loadUnlockedStage();
+        const profileWorld = Number(currentProfile?.current_world || 1);
+        if (targetWorld < profileWorld) {
+          unlockedStage = 10;
+          currentStage  = 10;
+          selectedStage = 10;
+        } else {
+          unlockedStage = clamp(Number(currentProfile?.unlocked_stage || 1), 1, 10);
+          currentStage  = unlockedStage;
+          selectedStage = unlockedStage;
+        }
       }
-      cachedStageKey = "";
-      choicePoolCacheKey = "";
-      updateHeroUI(currentProfile);
+
+      renderStageMap();
+      updateWorldUI();
+      scrollToCurrentStage();
     });
 
     function usernameToEmail(username) {
@@ -5031,6 +5218,9 @@ body.review-mode .world-pill[data-world].locked-world {
       if (name === "map-screen") {
         renderDailyQuests();
         updateSmashBtnBadge();
+        updateWorldUI();          // מבטיח world pills + counter
+        renderStageMap();         // מבטיח שלבים + כפתור
+        requestAnimationFrame(() => scrollToCurrentStage());
       }
       if (name === "game-screen") {
         ensureEffectsHost();
@@ -5355,25 +5545,23 @@ function updateHeroUI(profile) {
     }
 
     function renderWorldRoad() {
-      const road = id("world-road");
-      const counter = id("world-counter");
-      if (!road) return;
+      const sel = document.getElementById("world-select");
+      if (!sel) return;
 
       const maxUnlockedWorld = isReviewMode ? 6 : Number(currentProfile?.current_world || currentWorld);
-      road.textContent = "";
-      const fragment = document.createDocumentFragment();
-      for (let world = 1; world <= 6; world += 1) {
-        const data = getWorldData(world);
-        const pill = document.createElement("div");
-        const isLocked = world > maxUnlockedWorld;
-        pill.className = `world-pill${world === currentWorld ? " active" : ""}${isLocked ? " locked-world" : ""}`;
-        pill.textContent = `${data.icon} עולם ${world} · ${data.name}`;
-        pill.setAttribute("data-world", world);
-        if (isLocked) pill.title = "השלם את העולם הקודם כדי לפתוח";
-        fragment.appendChild(pill);
+      sel.innerHTML = "";
+
+      for (let w = 1; w <= 6; w++) {
+        const d = getWorldData(w);
+        const locked = !isReviewMode && w > maxUnlockedWorld;
+        if (locked) continue;
+        const opt = document.createElement("option");
+        opt.value = w;
+        const tag = (w < maxUnlockedWorld) ? " ✓" : isReviewMode && w > Number(currentProfile?.current_world || 1) ? " 🔒" : "";
+        opt.textContent = `${d.icon}  עולם ${w}: ${d.name}${tag}`;
+        if (w === currentWorld) opt.selected = true;
+        sel.appendChild(opt);
       }
-      road.appendChild(fragment);
-      setText(counter, `📍 עולם ${currentWorld} מתוך 6`);
     }
 
     function shuffleArray(array) {
@@ -5598,27 +5786,39 @@ function updateHeroUI(profile) {
       if (!journeyStartBtn) return;
       if (isReviewMode) {
         journeyStartBtn.textContent = "🎮 בדוק שלב";
+        journeyStartBtn.style.display = "";
         journeyStartBtn.disabled = false;
         return;
       }
       const status = getStageStatus(selectedStage);
       if (status === "completed") {
-        journeyStartBtn.textContent = "🔁 שחק שוב";
+        journeyStartBtn.textContent = "🔁 חזור על שלב";
+        journeyStartBtn.style.display = "";
         journeyStartBtn.disabled = false;
       } else if (status === "ready") {
         journeyStartBtn.textContent = "🚀 התקדם במסע";
+        journeyStartBtn.style.display = "";
         journeyStartBtn.disabled = false;
       } else {
-        journeyStartBtn.textContent = "🔒 השלב נעול";
+        journeyStartBtn.style.display = "none";
         journeyStartBtn.disabled = true;
       }
     }
 
-    function centerSelectedStageNode() {
-      const selectedBtn = stageMapEl.querySelector(`.stage-btn[data-stage="${selectedStage}"]`);
+    function centerSelectedStageNode(smooth = false) {
+      const targetStage = selectedStage;
+      const selectedBtn = stageMapEl.querySelector(`.stage-btn[data-stage="${targetStage}"]`);
       if (!selectedBtn) return;
       const left = selectedBtn.offsetLeft - (stageMapEl.clientWidth / 2) + (selectedBtn.clientWidth / 2);
-      stageMapEl.scrollTo({ left: Math.max(0, left), behavior: "auto" });
+      stageMapEl.scrollTo({ left: Math.max(0, left), behavior: smooth ? "smooth" : "auto" });
+    }
+
+    function scrollToCurrentStage() {
+      // Always scroll to the active (unlocked) stage when entering the map
+      const currentBtn = stageMapEl.querySelector(`.stage-btn[data-stage="${unlockedStage}"]`);
+      if (!currentBtn) return;
+      const left = currentBtn.offsetLeft - (stageMapEl.clientWidth / 2) + (currentBtn.clientWidth / 2);
+      stageMapEl.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
     }
 
     function resetStageRunState() {
@@ -6098,6 +6298,20 @@ function updateHeroUI(profile) {
 
       updateJourneyCard();
       centerSelectedStageNode();
+
+      // ── Update connectors ──
+      for (let s = 1; s <= 9; s++) {
+        const conn = document.querySelector(`.stage-conn[data-conn="${s}"]`);
+        if (!conn) continue;
+        conn.className = 'stage-conn';
+        if (isReviewMode) {
+          conn.classList.add('done');
+        } else if (s < unlockedStage - 1) {
+          conn.classList.add('done');
+        } else if (s === unlockedStage - 1) {
+          conn.classList.add('transition');
+        }
+      }
     }
 
     
@@ -7016,6 +7230,78 @@ function updateHeroUI(profile) {
     }
 
     
+    // ══════════════════════════════════════════════════════
+    // WORLD UNLOCK MODAL — בחירת עולם אסטטית
+    // ══════════════════════════════════════════════════════
+    function showWorldUnlockModal(newWorld) {
+      const overlay = document.getElementById('world-unlock-overlay');
+      const badge   = document.getElementById('wum-badge');
+      const title   = document.getElementById('wum-title');
+      const sub     = document.getElementById('wum-sub');
+      const grid    = document.getElementById('wum-worlds');
+      const closeBtn= document.getElementById('wum-close');
+      if (!overlay) return;
+
+      const newData = getWorldData(newWorld);
+      badge.textContent = newData.icon;
+      title.textContent = `עולם ${newWorld} נפתח! ${newData.name}`;
+      sub.textContent   = newData.desc;
+
+      // Build world grid — show all worlds, highlight unlocked ones
+      grid.innerHTML = '';
+      const maxWorld = newWorld; // newly unlocked
+      for (let w = 1; w <= 6; w++) {
+        const d = getWorldData(w);
+        const unlocked = w <= maxWorld;
+        const isCurrent = w === newWorld;
+        const card = document.createElement('div');
+        card.style.cssText = `
+          border-radius:16px;padding:14px 10px;text-align:center;cursor:${unlocked ? 'pointer' : 'default'};
+          background:${isCurrent ? 'rgba(251,191,36,0.14)' : unlocked ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.03)'};
+          border:1.5px solid ${isCurrent ? 'rgba(251,191,36,0.7)' : unlocked ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.06)'};
+          opacity:${unlocked ? '1' : '0.4'};
+          transition:transform 0.15s,background 0.15s;
+        `;
+        card.innerHTML = `
+          <div style="font-size:26px;margin-bottom:4px">${d.icon}</div>
+          <div style="font-size:11px;font-weight:900;color:${isCurrent ? '#fbbf24' : '#e2e8f0'};margin-bottom:2px">עולם ${w}</div>
+          <div style="font-size:10px;color:#64748b;font-weight:700;line-height:1.3">${d.name}</div>
+          ${isCurrent ? '<div style="font-size:9px;background:rgba(251,191,36,0.2);color:#fbbf24;border-radius:6px;padding:2px 6px;margin-top:4px;font-weight:900">חדש! ✨</div>' : ''}
+          ${!unlocked ? '<div style="font-size:14px;margin-top:4px">🔒</div>' : ''}
+        `;
+        if (unlocked) {
+          card.addEventListener('mouseenter', () => { card.style.transform = 'translateY(-2px)'; card.style.background = isCurrent ? 'rgba(251,191,36,0.2)' : 'rgba(255,255,255,0.11)'; });
+          card.addEventListener('mouseleave', () => { card.style.transform = ''; card.style.background = isCurrent ? 'rgba(251,191,36,0.14)' : 'rgba(255,255,255,0.07)'; });
+          card.addEventListener('click', () => {
+            currentWorld = w;
+            selectedStage = 1;
+            unlockedStage = (w === newWorld) ? 1 : (currentProfile?.unlocked_stage || 1);
+            closeWorldUnlockModal();
+            updateHeroUI(currentProfile);
+            renderWorldRoad();
+            renderStageMap();
+            scrollToCurrentStage();
+          });
+        }
+        grid.appendChild(card);
+      }
+
+      closeBtn.onclick = () => {
+        closeWorldUnlockModal();
+        updateHeroUI(currentProfile);
+        renderWorldRoad();
+        renderStageMap();
+        scrollToCurrentStage();
+      };
+
+      overlay.style.display = 'flex';
+    }
+
+    function closeWorldUnlockModal() {
+      const overlay = document.getElementById('world-unlock-overlay');
+      if (overlay) overlay.style.display = 'none';
+    }
+
     async function completeStage() {
       setWidth(stageFillEl, "100%");
 
@@ -7082,7 +7368,19 @@ function updateHeroUI(profile) {
           updateBossUI();
           playSound("bosswin");
           setTimeout(() => playSound("worldunlock"), 270);
-          showStageComplete("WORLD COMPLETE", `ניצחת את ${defeatedBossName} ופתחת את עולם ${currentWorld}!`, { emoji: "🌍", theme: "world-theme", symbols: ["🌟", "🌍", "🏆", "✨"], autoCloseMs: 2300, buttonText: "לעולם הבא" });
+          showCelebration({
+            title: "WORLD COMPLETE",
+            subText: `ניצחת את ${defeatedBossName} ופתחת את עולם ${currentWorld}!`,
+            emoji: "🌍",
+            theme: "world-theme",
+            symbols: ["🌟", "🌍", "🏆", "✨"],
+            autoCloseMs: 2300,
+            buttonText: "לעולם הבא",
+            onClose: () => {
+              showScreen("map-screen");
+              showWorldUnlockModal(currentWorld);
+            }
+          });
           return;
         }
 
@@ -7969,5 +8267,19 @@ async function handleAnswer(buttonEl, selectedAnswer) {
       checkProfile();
     });
   </script>
+  <!-- ══ World Unlock Modal ══════════════════════════════ -->
+  <div id="world-unlock-overlay" style="display:none;position:fixed;inset:0;z-index:9000;background:rgba(5,11,22,0.88);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px;">
+    <div id="world-unlock-modal" style="background:linear-gradient(160deg,#0f2540,#081120);border:1px solid rgba(255,255,255,0.1);border-radius:24px;padding:26px 22px;max-width:440px;width:100%;text-align:center;direction:rtl;">
+      <div id="wum-badge" style="font-size:48px;margin-bottom:8px;"></div>
+      <div id="wum-title" style="font-size:22px;font-weight:900;color:#fbbf24;margin-bottom:6px;"></div>
+      <div id="wum-sub"   style="font-size:14px;color:#94a3b8;margin-bottom:20px;line-height:1.5;"></div>
+      <!-- world grid -->
+      <div id="wum-worlds" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;"></div>
+      <button id="wum-close" style="width:100%;min-height:50px;font-size:18px;font-weight:900;border-radius:16px;background:linear-gradient(135deg,#2563eb,#3b82f6);color:white;border:none;cursor:pointer;">
+        🚀 קדימה לעולם הבא
+      </button>
+    </div>
+  </div>
+
 </body>
 </html>
