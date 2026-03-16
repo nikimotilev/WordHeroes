@@ -1819,7 +1819,8 @@ function updateMiniStageProgress(world,stage,current,total){
   background:linear-gradient(135deg, rgba(251,191,36,0.18), rgba(59,130,246,0.14));
   border:1px solid rgba(251,191,36,0.28);
 }
-.champion-card .leader-row{
+.leader-row.my-row { background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.25); }
+    .champion-card .leader-row{
   background:transparent;
   padding:0;
 }
@@ -2719,6 +2720,50 @@ function updateMiniStageProgress(world,stage,current,total){
       margin-bottom: 2px;
       font-size: 12px;
     }
+
+    /* ── Leaderboard tabs ───────────────────────────────── */
+    .lb-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .lb-tab {
+      flex: 1;
+      padding: 8px 10px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 800;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #94a3b8;
+      cursor: pointer;
+      text-align: center;
+      transition: none;
+      min-height: unset;
+      box-shadow: none;
+      width: auto;
+    }
+    .lb-tab.active {
+      background: rgba(251,191,36,0.16);
+      border-color: rgba(251,191,36,0.45);
+      color: #fde68a;
+    }
+    .lb-class-select {
+      width: 100%;
+      margin-top: 8px;
+      margin-bottom: 4px;
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #f8fafc;
+      appearance: none;
+      cursor: pointer;
+      display: none;
+    }
+    .lb-class-select.show { display: block; }
 </style>
 </head>
 <body>
@@ -2778,27 +2823,27 @@ function updateMiniStageProgress(world,stage,current,total){
 
         <div id="hero-chooser" class="hero-grid" style="margin-top:0;">
           <button type="button" class="hero-choice selected" data-class="mage" data-gender="male">
-            <img src="heroes/mage_male_lv1.webp" alt="Mage Boy" class="hero-choice-img" />
+            <img src="HEROES/mage_male_lv1.webp" alt="Mage Boy" class="hero-choice-img" />
             <span class="hero-choice-label">Mage Boy</span>
           </button>
           <button type="button" class="hero-choice" data-class="mage" data-gender="female">
-            <img src="heroes/mage_female_lv1.webp" alt="Mage Girl" class="hero-choice-img" />
+            <img src="HEROES/mage_female_lv1.webp" alt="Mage Girl" class="hero-choice-img" />
             <span class="hero-choice-label">Mage Girl</span>
           </button>
           <button type="button" class="hero-choice" data-class="knight" data-gender="male">
-            <img src="heroes/knight_male_lv1.webp" alt="Knight Boy" class="hero-choice-img" />
+            <img src="HEROES/knight_male_lv1.webp" alt="Knight Boy" class="hero-choice-img" />
             <span class="hero-choice-label">Knight Boy</span>
           </button>
           <button type="button" class="hero-choice" data-class="knight" data-gender="female">
-            <img src="heroes/knight_female_lv1.webp" alt="Knight Girl" class="hero-choice-img" />
+            <img src="HEROES/knight_female_lv1.webp" alt="Knight Girl" class="hero-choice-img" />
             <span class="hero-choice-label">Knight Girl</span>
           </button>
           <button type="button" class="hero-choice" data-class="ranger" data-gender="male">
-            <img src="heroes/ranger_male_lv1.webp" alt="Ranger Boy" class="hero-choice-img" />
+            <img src="HEROES/ranger_male_lv1.webp" alt="Ranger Boy" class="hero-choice-img" />
             <span class="hero-choice-label">Ranger Boy</span>
           </button>
           <button type="button" class="hero-choice" data-class="ranger" data-gender="female">
-            <img src="heroes/ranger_female_lv1.webp" alt="Ranger Girl" class="hero-choice-img" />
+            <img src="HEROES/ranger_female_lv1.webp" alt="Ranger Girl" class="hero-choice-img" />
             <span class="hero-choice-label">Ranger Girl</span>
           </button>
         </div>
@@ -2860,6 +2905,13 @@ function updateMiniStageProgress(world,stage,current,total){
 
         <div class="panel leaderboard-panel">
           <div class="world-title">🏆 Leaderboard</div>
+          <div class="lb-tabs">
+            <button class="lb-tab active" id="lb-tab-global" type="button">🌍 גלובלי</button>
+            <button class="lb-tab" id="lb-tab-class" type="button">🏫 כיתתי</button>
+          </div>
+          <select id="lb-class-filter" class="lb-class-select">
+            <option value="">הכיתה שלי</option>
+          </select>
           <div id="champion-card"></div>
           <div class="leaderboard-preview-note">Top 5 class heroes</div>
           <div id="leaderboard-list" class="leaderboard-list"></div>
@@ -3755,6 +3807,17 @@ function updateMiniStageProgress(world,stage,current,total){
         openLeaderboardModal();
       });
     }
+
+    const lbTabGlobal = id("lb-tab-global");
+    const lbTabClass  = id("lb-tab-class");
+    const lbClassSel  = id("lb-class-filter");
+
+    if (lbTabGlobal) lbTabGlobal.addEventListener("click", () => switchLbTab("global"));
+    if (lbTabClass)  lbTabClass.addEventListener("click",  () => switchLbTab("class"));
+    if (lbClassSel)  lbClassSel.addEventListener("change", () => {
+      classLeaderboardCache.ts = 0;
+      loadClassLeaderboard(true);
+    });
     if (closeLeaderboardBtn) {
       closeLeaderboardBtn.addEventListener("click", (event) => {
         event.preventDefault();
@@ -4257,7 +4320,7 @@ function updateMiniStageProgress(world,stage,current,total){
       else if (level >= 15) stage = "lv15";
       else if (level >= 10) stage = "lv10";
       else if (level >= 5) stage = "lv5";
-      return `heroes/${heroClass}_${gender}_${stage}.webp`;
+      return `HEROES/${heroClass}_${gender}_${stage}.webp`;
     }
 
     function getClassLabel(heroClass) {
@@ -5148,7 +5211,14 @@ function updateHeroUI(profile) {
     function openLeaderboardModal() {
       if (activeScreenName !== "map-screen") return;
       if (!leaderboardOverlay || !leaderboardModalList) return;
-      leaderboardModalList.innerHTML = leaderboardCache.html.join("") || '<div class="mini-note">אין עדיין שחקנים בלוח המלא</div>';
+      const html = lbActiveTab === "class"
+        ? (classLeaderboardCache.html.join("") || '<div class="mini-note">אין שחקנים בכיתה זו</div>')
+        : (leaderboardCache.html.join("") || '<div class="mini-note">אין עדיין שחקנים בלוח המלא</div>');
+      leaderboardModalList.innerHTML = html;
+      const title = document.querySelector("#leaderboard-modal .modal-title");
+      if (title) title.textContent = lbActiveTab === "class"
+        ? `🏫 כיתה ${getLbClassFilter() || getMyClassCode()}`
+        : "🏆 הלוח המלא";
       leaderboardOverlay.style.display = "flex";
       leaderboardOverlay.classList.add("show");
       leaderboardOverlay.setAttribute("aria-hidden", "false");
@@ -5194,6 +5264,143 @@ function updateHeroUI(profile) {
         yourRankEl.textContent = myIndex >= 0
           ? `📊 הדירוג שלך: מקום ${myIndex + 1} מתוך ${data.length}`
           : `📊 מוצגים כרגע ${Math.min(20, data.length)} השחקנים המובילים`;
+      }
+    }
+
+
+    // ══════════════════════════════════════════════════════
+    // CLASS LEADERBOARD
+    // ══════════════════════════════════════════════════════
+    let lbActiveTab = "global"; // "global" | "class"
+    let lbClassFilter = "";     // "" = my class, else specific class code
+    let classLeaderboardCache = { data: null, html: [], ts: 0, classCode: "" };
+    const CLASS_LB_TTL = 60_000;
+
+    function getLbClassFilter() {
+      const sel = id("lb-class-filter");
+      return sel ? sel.value : "";
+    }
+
+    function getMyClassCode() {
+      return currentProfile?.class_code || "";
+    }
+
+    // Populate class selector with all available classes
+    function populateClassSelector(allData) {
+      const sel = id("lb-class-filter");
+      if (!sel) return;
+      const classes = [...new Set(allData.map(p => p.class_code).filter(Boolean))].sort();
+      const myClass = getMyClassCode();
+      sel.innerHTML = `<option value="">הכיתה שלי (${myClass || "?"})</option>`;
+      classes.forEach(cls => {
+        if (cls !== myClass) {
+          const opt = document.createElement("option");
+          opt.value = cls;
+          opt.textContent = `כיתה ${cls}`;
+          sel.appendChild(opt);
+        }
+      });
+    }
+
+    async function loadClassLeaderboard(force = false) {
+      if (!leaderboardList) return;
+      const targetClass = getLbClassFilter() || getMyClassCode();
+      const now = Date.now();
+      const championCard = document.getElementById("champion-card");
+      const yourRankEl = document.getElementById("your-rank");
+
+      if (!force && classLeaderboardCache.data &&
+          classLeaderboardCache.classCode === targetClass &&
+          (now - classLeaderboardCache.ts) < CLASS_LB_TTL) {
+        renderClassLeaderboard(classLeaderboardCache.data, targetClass);
+        return;
+      }
+
+      leaderboardList.innerHTML = '<div class="mini-note">טוען לוח כיתתי...</div>';
+      if (championCard) championCard.innerHTML = "";
+      if (yourRankEl) yourRankEl.textContent = "";
+
+      const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("id, display_name, class_code, level, xp, words_learned, avatar_class, avatar_gender, current_world, smash_best")
+        .eq("class_code", targetClass)
+        .order("words_learned", { ascending: false })
+        .order("xp", { ascending: false })
+        .limit(30);
+
+      if (error || !data || data.length === 0) {
+        leaderboardList.innerHTML = `<div class="mini-note">אין שחקנים בכיתה ${targetClass}</div>`;
+        if (championCard) championCard.innerHTML = "";
+        return;
+      }
+
+      classLeaderboardCache = { data, html: [], ts: Date.now(), classCode: targetClass };
+      renderClassLeaderboard(data, targetClass);
+    }
+
+    function renderClassLeaderboard(data, targetClass) {
+      const championCard = document.getElementById("champion-card");
+      const yourRankEl = document.getElementById("your-rank");
+      const PREVIEW = 5;
+
+      const renderRow = (player, rank) => {
+        const heroSrc = getHeroImagePath(player.avatar_class || "mage", player.avatar_gender || "male", player.level || 1);
+        const safeName = escHtml(player.display_name) || "Player";
+        const worldNum = player.current_world || 1;
+        const worldIcon = ["🌿","🌊","🏞️","🏰","⚡","🔥"][worldNum - 1] || "🌿";
+        const smashBest = player.smash_best || 0;
+        const isMe = player.id === currentProfile?.id;
+        return `
+        <div class="leader-row${isMe ? ' my-row' : ''}">
+          <div class="leader-rank">${rank === 1 ? "👑" : rank}</div>
+          <div class="leader-avatar"><img src="${heroSrc}" alt="Hero" /></div>
+          <div>
+            <div class="leader-name">${safeName}${isMe ? ' <span style="color:#fbbf24;font-size:11px;">אתה</span>' : ""}</div>
+            <div class="leader-sub">${worldIcon} עולם ${worldNum} • 📖 ${player.words_learned || 0} מילים${smashBest > 0 ? ` • ⚡ ${smashBest}` : ""} • רמה ${player.level || 1}</div>
+          </div>
+        </div>`;
+      };
+
+      if (championCard && data[0]) {
+        championCard.innerHTML = `
+          <div class="champion-card">
+            <div class="mini-note" style="margin-top:0;margin-bottom:10px;">🏆 מוביל כיתה ${targetClass}</div>
+            ${renderRow(data[0], 1)}
+          </div>`;
+      }
+
+      const preview = data.slice(1, PREVIEW);
+      leaderboardList.innerHTML = preview.length
+        ? preview.map((p, i) => renderRow(p, i + 2)).join("")
+        : '<div class="mini-note">רק שחקן אחד בכיתה</div>';
+
+      // Full modal cache
+      classLeaderboardCache.html = data.map((p, i) => renderRow(p, i + 1));
+
+      if (yourRankEl && currentProfile?.id) {
+        const myIdx = data.findIndex(p => p.id === currentProfile.id);
+        yourRankEl.textContent = myIdx >= 0
+          ? `📊 מקום ${myIdx + 1} מתוך ${data.length} בכיתה`
+          : `📊 ${data.length} שחקנים בכיתה ${targetClass}`;
+      }
+    }
+
+    function switchLbTab(tab) {
+      lbActiveTab = tab;
+      const tabGlobal = id("lb-tab-global");
+      const tabClass  = id("lb-tab-class");
+      const clsSel    = id("lb-class-filter");
+      const previewNote = document.querySelector(".leaderboard-preview-note");
+
+      if (tabGlobal) tabGlobal.classList.toggle("active", tab === "global");
+      if (tabClass)  tabClass.classList.toggle("active", tab === "class");
+      if (clsSel)    clsSel.classList.toggle("show", tab === "class");
+      if (previewNote) previewNote.textContent = tab === "global" ? "Top 5 class heroes" : "Top 5 בכיתה";
+
+      if (tab === "global") {
+        loadLeaderboard();
+      } else {
+        loadClassLeaderboard();
       }
     }
 
@@ -5260,6 +5467,8 @@ function updateHeroUI(profile) {
       leaderboardCache = { data, html: builtHtml, ts: Date.now() };
 
       renderLeaderboardFromCache(leaderboardCache);
+      // Populate class selector with all known classes
+      populateClassSelector(data);
     }
 
 
