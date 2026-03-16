@@ -1361,12 +1361,18 @@
       .stage-rail {
         display: flex;
         flex-wrap: nowrap;
+        align-items: flex-start;
         justify-content: space-between;
         gap: 0;
         overflow-x: visible;
         padding: 20px 2px 8px;
         margin: 0;
         direction: ltr;
+      }
+
+      /* orb is 38px at this breakpoint: (38−3)/2 = 17.5 → 18px */
+      .stage-conn {
+        margin-top: 18px;
       }
 
       .stage-node {
@@ -2194,8 +2200,10 @@ body.review-mode .world-pill.locked-world {
   margin-top: 8px;
   padding-top: 8px;
   padding-bottom: max(6px, env(safe-area-inset-bottom));
+  /* backdrop-filter removed: nesting it inside a panel that already has
+     backdrop-filter:blur causes GPU compositing failures (checkerboard glitch).
+     The gradient alone is sufficient for the visual fade effect. */
   background: linear-gradient(180deg, rgba(8,17,32,0), rgba(8,17,32,0.9) 22%, rgba(8,17,32,0.98));
-  backdrop-filter: blur(8px);
 }
 
 .journey-main-btn {
@@ -2266,6 +2274,11 @@ body.review-mode .world-pill.locked-world {
 
   .stage-rail {
     padding: 18px 2px 6px;
+  }
+
+  /* orb is 26px at mobile: (26−3)/2 = 11.5 → 12px */
+  .stage-conn {
+    margin-top: 12px;
   }
 
   .stage-node {
@@ -2587,7 +2600,7 @@ body.review-mode .world-pill[data-world].locked-world {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  align-items: center;
+  align-items: flex-start;
   overflow-x: visible;
   gap: 0;
   padding: 20px 4px 8px;
@@ -2690,7 +2703,11 @@ body.review-mode .world-pill[data-world].locked-world {
   height: 3px;
   border-radius: 2px;
   background: rgba(255,255,255,0.1);
-  align-self: center;
+  align-self: flex-start;
+  /* (orb-height 28px − conn-height 3px) / 2 = 12.5 → 13px
+     pins the connector to the horizontal centerline of every orb,
+     regardless of node content or box-shadow size */
+  margin-top: 13px;
   transition: background 0.25s;
 }
 .stage-conn.done       { background: rgba(52,211,153,0.65); }
