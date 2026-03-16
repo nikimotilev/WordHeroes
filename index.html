@@ -2823,27 +2823,27 @@ function updateMiniStageProgress(world,stage,current,total){
 
         <div id="hero-chooser" class="hero-grid" style="margin-top:0;">
           <button type="button" class="hero-choice selected" data-class="mage" data-gender="male">
-            <img src="HEROES/mage_male_lv1.webp" alt="Mage Boy" class="hero-choice-img" />
+            <img src="heroes/mage_male_lv1.webp" alt="Mage Boy" class="hero-choice-img" />
             <span class="hero-choice-label">Mage Boy</span>
           </button>
           <button type="button" class="hero-choice" data-class="mage" data-gender="female">
-            <img src="HEROES/mage_female_lv1.webp" alt="Mage Girl" class="hero-choice-img" />
+            <img src="heroes/mage_female_lv1.webp" alt="Mage Girl" class="hero-choice-img" />
             <span class="hero-choice-label">Mage Girl</span>
           </button>
           <button type="button" class="hero-choice" data-class="knight" data-gender="male">
-            <img src="HEROES/knight_male_lv1.webp" alt="Knight Boy" class="hero-choice-img" />
+            <img src="heroes/knight_male_lv1.webp" alt="Knight Boy" class="hero-choice-img" />
             <span class="hero-choice-label">Knight Boy</span>
           </button>
           <button type="button" class="hero-choice" data-class="knight" data-gender="female">
-            <img src="HEROES/knight_female_lv1.webp" alt="Knight Girl" class="hero-choice-img" />
+            <img src="heroes/knight_female_lv1.webp" alt="Knight Girl" class="hero-choice-img" />
             <span class="hero-choice-label">Knight Girl</span>
           </button>
           <button type="button" class="hero-choice" data-class="ranger" data-gender="male">
-            <img src="HEROES/ranger_male_lv1.webp" alt="Ranger Boy" class="hero-choice-img" />
+            <img src="heroes/ranger_male_lv1.webp" alt="Ranger Boy" class="hero-choice-img" />
             <span class="hero-choice-label">Ranger Boy</span>
           </button>
           <button type="button" class="hero-choice" data-class="ranger" data-gender="female">
-            <img src="HEROES/ranger_female_lv1.webp" alt="Ranger Girl" class="hero-choice-img" />
+            <img src="heroes/ranger_female_lv1.webp" alt="Ranger Girl" class="hero-choice-img" />
             <span class="hero-choice-label">Ranger Girl</span>
           </button>
         </div>
@@ -4320,7 +4320,7 @@ function updateMiniStageProgress(world,stage,current,total){
       else if (level >= 15) stage = "lv15";
       else if (level >= 10) stage = "lv10";
       else if (level >= 5) stage = "lv5";
-      return `HEROES/${heroClass}_${gender}_${stage}.webp`;
+      return `heroes/${heroClass}_${gender}_${stage}.webp`;
     }
 
     function getClassLabel(heroClass) {
