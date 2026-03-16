@@ -2861,7 +2861,27 @@ function updateMiniStageProgress(world,stage,current,total){
       margin-bottom: 10px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .dq-count {
+      background: rgba(251,191,36,0.18);
+      border: 1px solid rgba(251,191,36,0.4);
+      border-radius: 999px;
+      padding: 1px 8px;
+      font-size: 12px;
+      color: #fde68a;
+    }
+    .dq-count.dq-count-done {
+      background: rgba(52,211,153,0.18);
+      border-color: rgba(52,211,153,0.4);
+      color: #86efac;
+    }
+    .dq-timer {
+      margin-right: auto;
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748b;
     }
     .dq-list {
       display: grid;
@@ -2875,7 +2895,6 @@ function updateMiniStageProgress(world,stage,current,total){
       border-radius: 14px;
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.08);
-      transition: none;
     }
     .dq-item.dq-done {
       background: rgba(52,211,153,0.1);
@@ -2904,12 +2923,24 @@ function updateMiniStageProgress(world,stage,current,total){
       transition: width 0.4s ease;
     }
     .dq-item.dq-done .dq-progress-fill { background: linear-gradient(90deg, #34d399, #10b981); }
+    .dq-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+    .dq-progress-text {
+      font-size: 11px;
+      font-weight: 800;
+      color: #94a3b8;
+    }
+    .dq-item.dq-done .dq-progress-text { color: #34d399; }
     .dq-reward {
       font-size: 11px;
       font-weight: 900;
       color: #fbbf24;
       white-space: nowrap;
-      flex-shrink: 0;
     }
     .dq-item.dq-done .dq-reward { color: #34d399; }
 
@@ -3756,26 +3787,87 @@ function updateMiniStageProgress(world,stage,current,total){
       setTimeout(() => { el.style.display = "none"; }, 2600);
     }
 
+    function getQuestResetTimer() {
+      const now = new Date();
+      const tomorrow = new Date(now);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0, 0, 0, 0);
+      const diff = tomorrow - now;
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      return h > 0 ? `מתרענן בעוד ${h}ש׳ ${m}ד׳` : `מתרענן בעוד ${m} דקות`;
+    }
+
+    function getAllQuestsDoneKey() {
+      return `wh_dq_all_done_${currentProfile?.id || "guest"}_${getTodayStamp()}`;
+    }
+
+    function isAllQuestsDoneBonusAwarded() {
+      return localStorage.getItem(getAllQuestsDoneKey()) === "1";
+    }
+
+    function markAllQuestsDoneBonusAwarded() {
+      localStorage.setItem(getAllQuestsDoneKey(), "1");
+    }
+
     function renderDailyQuests() {
       const container = document.getElementById("dq-list");
+      const titleEl   = document.querySelector(".dq-title");
       if (!container) return;
-      const quests = getTodayQuests();
+
+      const quests    = getTodayQuests();
+      const doneCount = quests.filter(q => isQuestDone(q.id)).length;
+      const allDone   = doneCount === quests.length;
+
+      // Update title with count + timer
+      if (titleEl) {
+        titleEl.innerHTML = `
+          <span>⚡ Daily Quests</span>
+          <span class="dq-count ${allDone ? "dq-count-done" : ""}">${doneCount}/${quests.length}</span>
+          <span class="dq-timer">${allDone ? "✅ הושלמו!" : getQuestResetTimer()}</span>`;
+      }
+
       container.innerHTML = quests.map(q => {
         const done = isQuestDone(q.id);
         const prog = done ? q.goal : getQuestProgress(q.id);
         const pct  = Math.round((prog / q.goal) * 100);
         return `
         <div class="dq-item${done ? " dq-done" : ""}">
-          <div class="dq-icon">${q.icon}</div>
+          <div class="dq-icon">${done ? "✅" : q.icon}</div>
           <div class="dq-info">
             <div class="dq-label">${q.label}</div>
             <div class="dq-progress-bar">
               <div class="dq-progress-fill" style="width:${pct}%"></div>
             </div>
           </div>
-          <div class="dq-reward">${done ? "✅" : q.reward}</div>
+          <div class="dq-right">
+            <div class="dq-progress-text">${prog}/${q.goal}</div>
+            <div class="dq-reward">${done ? "" : q.reward}</div>
+          </div>
         </div>`;
       }).join("");
+
+      // All-done bonus: +100 XP one time
+      if (allDone && !isAllQuestsDoneBonusAwarded() && currentProfile?.id) {
+        markAllQuestsDoneBonusAwarded();
+        const BONUS = 100;
+        const prevLevel = getLevelFromXp(currentProfile.xp || 0);
+        currentProfile.xp = (currentProfile.xp || 0) + BONUS;
+        currentProfile.level = getLevelFromXp(currentProfile.xp);
+        if (currentProfile.level > prevLevel) triggerLevelUpEffect(currentProfile.level);
+        updateHeroUI(currentProfile);
+        persistProfileProgress();
+        // Show special toast
+        const toast = document.getElementById("quest-toast");
+        if (toast) {
+          toast.textContent = `🏆 כל המשימות הושלמו! +${BONUS} XP בונוס!`;
+          toast.style.display = "block";
+          toast.style.animation = "none";
+          void toast.offsetWidth;
+          toast.style.animation = "questToast 3s ease-out forwards";
+          setTimeout(() => { toast.style.display = "none"; }, 3100);
+        }
+      }
     }
 
     function getTodayStamp() {
@@ -4544,6 +4636,9 @@ function updateMiniStageProgress(world,stage,current,total){
       [authScreen, setupScreen, mapScreen, gameScreen].forEach(screen => screen.classList.remove("active"));
       document.getElementById(name).classList.add("active");
       activeScreenName = name;
+      if (name === "map-screen") {
+        renderDailyQuests();
+      }
       if (name === "game-screen") {
         ensureEffectsHost();
         hardResetCelebrations();
