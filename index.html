@@ -2998,6 +2998,98 @@ function updateMiniStageProgress(world,stage,current,total){
       animation: burstStar 0.7s ease-out forwards;
     }
 
+    /* ══════════════════════════════════════
+       TEACHER DASHBOARD
+    ══════════════════════════════════════ */
+    .teacher-tab {
+      flex: 1;
+      min-height: 40px;
+      font-size: 13px;
+      font-weight: 800;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #94a3b8;
+      padding: 8px 10px;
+      cursor: pointer;
+      width: auto;
+    }
+    .teacher-tab.active-tab {
+      background: rgba(37,99,235,0.22);
+      border-color: rgba(96,165,250,0.45);
+      color: #93c5fd;
+    }
+    .teacher-summary-card {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 16px;
+      padding: 14px 10px;
+      text-align: center;
+    }
+    .teacher-summary-num {
+      font-size: 28px;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .teacher-summary-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748b;
+    }
+    .teacher-row {
+      display: grid;
+      grid-template-columns: 36px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px;
+      padding: 10px 12px;
+    }
+    .teacher-row.absent-row {
+      background: rgba(248,113,113,0.08);
+      border-color: rgba(248,113,113,0.22);
+    }
+    .teacher-row.today-row {
+      background: rgba(52,211,153,0.08);
+      border-color: rgba(52,211,153,0.22);
+    }
+    .teacher-rank-num {
+      font-size: 18px;
+      font-weight: 900;
+      text-align: center;
+      color: #fbbf24;
+    }
+    .teacher-student-name {
+      font-size: 15px;
+      font-weight: 800;
+      color: #f1f5f9;
+    }
+    .teacher-student-meta {
+      font-size: 12px;
+      color: #64748b;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+    .teacher-student-stats {
+      text-align: right;
+      font-size: 12px;
+      font-weight: 800;
+      color: #94a3b8;
+      white-space: nowrap;
+    }
+    .teacher-student-stats span {
+      display: block;
+    }
+    .teacher-badge-today { color: #34d399; }
+    .teacher-badge-absent { color: #f87171; }
+    @media (max-width: 640px) {
+      #teacher-summary { grid-template-columns: repeat(3,1fr); gap: 8px; }
+      .teacher-summary-num { font-size: 22px; }
+      .teacher-tab { font-size: 11px; padding: 7px 6px; }
+    }
+
     /* ── Quest complete toast ──────────────────────────── */
     @keyframes questToast {
       0%   { opacity: 0; transform: translateX(-50%) translateY(20px) scale(0.9); }
@@ -3046,6 +3138,20 @@ function updateMiniStageProgress(world,stage,current,total){
           <button id="login-btn" class="auth-login-btn">התחברות</button>
           <button id="signup-btn" class="auth-signup-btn">אין לי משתמש עדיין — הרשמה</button>
           <div id="message" class="message info"></div>
+
+          <!-- Discreet teacher access -->
+          <div style="margin-top:16px; text-align:center;">
+            <button id="teacher-toggle-btn" style="
+              background:none; border:none; box-shadow:none;
+              color:rgba(255,255,255,0.18); font-size:11px; font-weight:600;
+              cursor:pointer; padding:4px 8px; width:auto; margin:0;
+              letter-spacing:0.05em;
+            ">🏫</button>
+          </div>
+          <div id="teacher-code-panel" style="display:none; margin-top:8px;">
+            <input id="teacher-code-input" type="password" placeholder="קוד גישה" autocomplete="off"
+              style="margin-top:0; font-size:14px; text-align:center; letter-spacing:0.1em;" />
+          </div>
         </div>
       </div>
     </div>
@@ -3317,6 +3423,45 @@ function updateMiniStageProgress(world,stage,current,total){
         <div class="modal-sub">20 השחקנים המובילים כרגע</div>
         <div id="leaderboard-modal-list" class="leaderboard-modal-list"></div>
         <button id="close-leaderboard-btn" class="secondary">סגירה</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         TEACHER DASHBOARD SCREEN
+    ══════════════════════════════════════ -->
+    <div id="teacher-screen" class="screen">
+      <div style="max-width:700px; margin:0 auto;">
+
+        <div class="panel" style="text-align:center; padding:16px 18px 12px;">
+          <div style="font-size:32px; font-weight:900; margin-bottom:4px;">🏫 דשבורד מורה</div>
+          <div style="color:#94a3b8; font-size:14px; font-weight:700; margin-bottom:12px;">Word Heroes — מצב צפייה</div>
+          <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:10px;">
+            <select id="teacher-class-select" style="width:auto; min-width:140px; margin-top:0; font-size:14px; padding:8px 12px;">
+              <option value="">כל הכיתות</option>
+            </select>
+            <button id="teacher-refresh-btn" class="secondary" style="width:auto; padding:8px 16px; font-size:14px; margin-top:0;">🔄 רענן</button>
+            <button id="teacher-logout-btn" class="secondary" style="width:auto; padding:8px 16px; font-size:14px; margin-top:0;">יציאה</button>
+          </div>
+          <div id="teacher-last-updated" style="font-size:11px; color:#475569;"></div>
+        </div>
+
+        <!-- Summary cards -->
+        <div id="teacher-summary" style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:10px;"></div>
+
+        <!-- Tabs -->
+        <div style="display:flex; gap:8px; margin-bottom:10px;">
+          <button id="tt-all"     class="teacher-tab active-tab" onclick="switchTeacherTab('all')">📋 כל התלמידים</button>
+          <button id="tt-today"   class="teacher-tab" onclick="switchTeacherTab('today')">📅 נכנסו היום</button>
+          <button id="tt-absent"  class="teacher-tab" onclick="switchTeacherTab('absent')">⚠️ לא נכנסו 3+ ימים</button>
+        </div>
+
+        <!-- Student list -->
+        <div class="panel" style="padding:12px;">
+          <div id="teacher-student-list" style="display:grid; gap:8px;">
+            <div style="text-align:center; color:#64748b; padding:20px;">טוען...</div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -4635,7 +4780,8 @@ function updateMiniStageProgress(world,stage,current,total){
         hardResetCelebrations();
         clearGameEffects();
       }
-      [authScreen, setupScreen, mapScreen, gameScreen].forEach(screen => screen.classList.remove("active"));
+      const teacherScreen = document.getElementById("teacher-screen");
+      [authScreen, setupScreen, mapScreen, gameScreen, teacherScreen].filter(Boolean).forEach(screen => screen.classList.remove("active"));
       document.getElementById(name).classList.add("active");
       activeScreenName = name;
       if (name === "map-screen") {
@@ -6998,6 +7144,196 @@ async function handleAnswer(buttonEl, selectedAnswer) {
       showScreen("map-screen");
       loadLeaderboard();
     }
+
+    // ══════════════════════════════════════════════════════
+    // TEACHER DASHBOARD
+    // ══════════════════════════════════════════════════════
+
+    const TEACHER_CODE = "teacher2025"; // קוד מורה — שנה לפי הצורך
+    let teacherAllStudents = [];
+    let teacherCurrentTab  = "all";
+    let teacherClassFilter = "";
+
+    function isTeacherMode() {
+      return activeScreenName === "teacher-screen";
+    }
+
+    function teacherLogin() {
+      const code = (document.getElementById("teacher-code-input")?.value || "").trim();
+      if (code !== TEACHER_CODE) {
+        setMainMessage("קוד מורה שגוי", "error");
+        return;
+      }
+      document.getElementById("teacher-code-input").value = "";
+      showScreen("teacher-screen");
+      loadTeacherDashboard();
+    }
+
+    function teacherLogout() {
+      showScreen("auth-screen");
+      teacherAllStudents = [];
+    }
+
+    function switchTeacherTab(tab) {
+      teacherCurrentTab = tab;
+      ["all","today","absent"].forEach(t => {
+        const btn = document.getElementById("tt-" + t);
+        if (btn) btn.classList.toggle("active-tab", t === tab);
+      });
+      renderTeacherStudents();
+    }
+
+    async function loadTeacherDashboard(force = false) {
+      const listEl  = document.getElementById("teacher-student-list");
+      const sumEl   = document.getElementById("teacher-summary");
+      const lastEl  = document.getElementById("teacher-last-updated");
+      if (listEl) listEl.innerHTML = '<div style="text-align:center;color:#64748b;padding:20px;">טוען...</div>';
+
+      // Fetch all profiles
+      const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("id, display_name, class_code, level, xp, words_learned, last_daily_bonus_at, smash_best, current_world, avatar_class, avatar_gender")
+        .order("words_learned", { ascending: false });
+
+      if (error || !data) {
+        if (listEl) listEl.innerHTML = `<div style="color:#f87171;text-align:center;">שגיאה בטעינה: ${error?.message || "Unknown"}</div>`;
+        return;
+      }
+
+      teacherAllStudents = data;
+
+      // Populate class selector
+      const classSel = document.getElementById("teacher-class-select");
+      if (classSel) {
+        const classes = [...new Set(data.map(p => p.class_code).filter(Boolean))].sort();
+        classSel.innerHTML = '<option value="">כל הכיתות</option>' +
+          classes.map(c => `<option value="${c}"${c === teacherClassFilter ? " selected" : ""}>כיתה ${c}</option>`).join("");
+      }
+
+      if (lastEl) lastEl.textContent = "עודכן: " + new Date().toLocaleTimeString("he-IL");
+
+      renderTeacherSummary();
+      renderTeacherStudents();
+    }
+
+    function getFilteredStudents() {
+      let students = teacherAllStudents;
+      if (teacherClassFilter) students = students.filter(s => s.class_code === teacherClassFilter);
+      const today = new Date().toISOString().slice(0, 10);
+      const threeDaysAgo = new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 10);
+      if (teacherCurrentTab === "today") {
+        students = students.filter(s => String(s.last_daily_bonus_at || "").slice(0, 10) === today);
+      } else if (teacherCurrentTab === "absent") {
+        students = students.filter(s => {
+          const last = String(s.last_daily_bonus_at || "").slice(0, 10);
+          return !last || last < threeDaysAgo;
+        });
+      }
+      return students;
+    }
+
+    function renderTeacherSummary() {
+      const el = document.getElementById("teacher-summary");
+      if (!el) return;
+      let students = teacherAllStudents;
+      if (teacherClassFilter) students = students.filter(s => s.class_code === teacherClassFilter);
+      const today = new Date().toISOString().slice(0, 10);
+      const todayCount  = students.filter(s => String(s.last_daily_bonus_at || "").slice(0, 10) === today).length;
+      const threeDaysAgo = new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 10);
+      const absentCount = students.filter(s => {
+        const last = String(s.last_daily_bonus_at || "").slice(0, 10);
+        return !last || last < threeDaysAgo;
+      }).length;
+      const totalWords  = students.reduce((sum, s) => sum + (s.words_learned || 0), 0);
+      el.innerHTML = `
+        <div class="teacher-summary-card">
+          <div class="teacher-summary-num" style="color:#60a5fa;">${students.length}</div>
+          <div class="teacher-summary-label">תלמידים סה"כ</div>
+        </div>
+        <div class="teacher-summary-card">
+          <div class="teacher-summary-num" style="color:#34d399;">${todayCount}</div>
+          <div class="teacher-summary-label">נכנסו היום</div>
+        </div>
+        <div class="teacher-summary-card">
+          <div class="teacher-summary-num" style="color:#f87171;">${absentCount}</div>
+          <div class="teacher-summary-label">לא נכנסו 3+ ימים</div>
+        </div>`;
+    }
+
+    function renderTeacherStudents() {
+      const el = document.getElementById("teacher-student-list");
+      if (!el) return;
+      const students = getFilteredStudents();
+      const today = new Date().toISOString().slice(0, 10);
+      const threeDaysAgo = new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 10);
+
+      if (!students.length) {
+        el.innerHTML = '<div style="text-align:center;color:#64748b;padding:16px;">אין תלמידים להצגה</div>';
+        return;
+      }
+
+      el.innerHTML = students.map((s, i) => {
+        const lastLogin = String(s.last_daily_bonus_at || "").slice(0, 10);
+        const isToday   = lastLogin === today;
+        const isAbsent  = !lastLogin || lastLogin < threeDaysAgo;
+        const pLvl      = getPrestigeLevel(s.level || 1);
+        const levelTxt  = pLvl > 0 ? `✦P${pLvl}` : `רמה ${s.level || 1}`;
+        const worldIcon = ["🌿","🌊","🏞️","🏰","⚡","🔥"][(s.current_world || 1) - 1] || "🌿";
+        const statusBadge = isToday
+          ? `<span class="teacher-badge-today">✅ היום</span>`
+          : isAbsent
+            ? `<span class="teacher-badge-absent">⚠️ ${lastLogin ? lastLogin.slice(5) : "מעולם לא"}</span>`
+            : `<span style="color:#94a3b8;">${lastLogin ? lastLogin.slice(5) : "—"}</span>`;
+        const rowClass = isToday ? "teacher-row today-row" : isAbsent ? "teacher-row absent-row" : "teacher-row";
+        return `
+        <div class="${rowClass}">
+          <div class="teacher-rank-num">${i + 1}</div>
+          <div>
+            <div class="teacher-student-name">${escHtml(s.display_name || "?")} <span style="font-size:11px;color:#64748b;font-weight:700;">${s.class_code || ""}</span></div>
+            <div class="teacher-student-meta">${worldIcon} עולם ${s.current_world || 1} • ${levelTxt} • ${statusBadge}</div>
+          </div>
+          <div class="teacher-student-stats">
+            <span style="color:#93c5fd;">📖 ${s.words_learned || 0} מילים</span>
+            ${s.smash_best > 0 ? `<span style="color:#c4b5fd;">⚡ ${s.smash_best}</span>` : ""}
+          </div>
+        </div>`;
+      }).join("");
+    }
+
+    // Wire up teacher UI events after DOM is ready
+    window.addEventListener("load", () => {
+      const teacherToggleBtn = document.getElementById("teacher-toggle-btn");
+      const teacherCodePanel = document.getElementById("teacher-code-panel");
+      const teacherLoginBtn  = document.getElementById("teacher-login-btn");
+      const teacherLogoutBtn = document.getElementById("teacher-logout-btn");
+      const teacherRefreshBtn= document.getElementById("teacher-refresh-btn");
+      const teacherClassSel  = document.getElementById("teacher-class-select");
+
+      // Toggle hidden panel on 🏫 click
+      if (teacherToggleBtn) {
+        teacherToggleBtn.addEventListener("click", () => {
+          const panel = document.getElementById("teacher-code-panel");
+          if (!panel) return;
+          const isOpen = panel.style.display !== "none";
+          panel.style.display = isOpen ? "none" : "block";
+          if (!isOpen) panel.querySelector("input")?.focus();
+        });
+      }
+
+      if (teacherLogoutBtn) teacherLogoutBtn.addEventListener("click", teacherLogout);
+      if (teacherRefreshBtn) teacherRefreshBtn.addEventListener("click", () => loadTeacherDashboard(true));
+      if (teacherClassSel) teacherClassSel.addEventListener("change", () => {
+        teacherClassFilter = teacherClassSel.value;
+        renderTeacherSummary();
+        renderTeacherStudents();
+      });
+
+      // Enter in code field → login
+      const teacherInput = document.getElementById("teacher-code-input");
+      if (teacherInput) teacherInput.addEventListener("keydown", e => {
+        if (e.key === "Enter") teacherLogin();
+      });
+    });
 
     async function logout() {
       await supabaseClient.auth.signOut();
