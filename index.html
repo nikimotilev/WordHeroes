@@ -1634,6 +1634,85 @@ function updateMiniStageProgress(world,stage,current,total){
   border: 1px solid rgba(248,113,113,0.28);
 }
 .boss-panel.show { display: block; }
+
+/* ═══ BOSS ENHANCEMENTS ═══ */
+@keyframes bossAttack {
+  0%   { opacity: 0; }
+  15%  { opacity: 1; }
+  60%  { opacity: 0.7; }
+  100% { opacity: 0; }
+}
+#boss-attack-flash {
+  display: none;
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 200;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(239,68,68,0.6) 100%);
+  animation: bossAttack 0.55s ease-out forwards;
+}
+#boss-dialogue {
+  display: none;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 800;
+  color: #fde68a;
+  background: rgba(239,68,68,0.12);
+  border: 1px solid rgba(239,68,68,0.25);
+  border-radius: 12px;
+  padding: 7px 14px;
+  margin: 0 0 8px;
+  font-style: italic;
+  animation: fadeIn 0.25s ease;
+}
+#boss-dialogue.show   { display: block; }
+#boss-dialogue.taunt  { color: #f87171; }
+#boss-dialogue.praise { color: #34d399; background: rgba(52,211,153,0.1); border-color: rgba(52,211,153,0.28); }
+@keyframes bossAttackShake {
+  0%,100% { transform: translateX(0) scale(1); }
+  20% { transform: translateX(-8px) scale(1.14); }
+  40% { transform: translateX(8px) scale(1.1); }
+  60% { transform: translateX(-5px) scale(1.05); }
+  80% { transform: translateX(4px) scale(1.02); }
+}
+.boss-name.attacking { animation: bossAttackShake 0.48s ease; }
+.boss-win-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, rgba(251,191,36,0.26), rgba(245,158,11,0.2));
+  border: 1px solid rgba(251,191,36,0.55);
+  border-radius: 999px;
+  padding: 6px 16px;
+  font-size: 14px;
+  font-weight: 900;
+  color: #fde68a;
+  margin-top: 10px;
+}
+
+/* ═══ REVIEW MODE ═══ */
+.teacher-review-banner {
+  display: none;
+  text-align: center;
+  padding: 10px 16px;
+  margin-bottom: 10px;
+  background: linear-gradient(135deg, rgba(124,58,237,0.28), rgba(168,85,247,0.2));
+  border: 1px solid rgba(168,85,247,0.5);
+  border-radius: 16px;
+  font-weight: 900;
+  font-size: 14px;
+  color: #d8b4fe;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.teacher-review-banner.show { display: flex; }
+.teacher-review-exit {
+  width: auto; padding: 4px 12px; font-size: 12px; min-height: 0;
+  border-radius: 8px; background: rgba(168,85,247,0.25);
+  border: 1px solid rgba(168,85,247,0.45); color: #d8b4fe;
+  font-weight: 800; cursor: pointer;
+}
 .boss-head {
   display: flex;
   align-items: center;
@@ -3220,6 +3299,10 @@ function updateMiniStageProgress(world,stage,current,total){
     </div>
 
     <div id="map-screen" class="screen">
+      <div id="review-mode-banner" class="teacher-review-banner">
+        🎮 Review Mode — כל השלבים פתוחים
+        <button class="teacher-review-exit" onclick="exitReviewMode()">יציאה</button>
+      </div>
       <div class="panel map-hero-panel">
         <button id="sound-toggle-btn" type="button" class="sound-icon-btn" title="Sound">🔊</button>
         <div class="hero-card">
@@ -3304,6 +3387,8 @@ function updateMiniStageProgress(world,stage,current,total){
         <div class="bar"><div id="top-stage-fill" class="bar-fill" style="width:0%;"></div></div>
       </div>
 
+      <div id="boss-attack-flash"></div>
+      <div id="boss-dialogue"></div>
       <div id="boss-banner" class="boss-banner">🐉 BOSS BATTLE • Word Dragon</div>
       <div id="boss-panel" class="boss-panel">
         <div class="boss-head">
@@ -3440,6 +3525,7 @@ function updateMiniStageProgress(world,stage,current,total){
               <option value="">כל הכיתות</option>
             </select>
             <button id="teacher-refresh-btn" class="secondary" style="width:auto; padding:8px 16px; font-size:14px; margin-top:0;">🔄 רענן</button>
+            <button id="teacher-review-btn" style="width:auto; padding:8px 16px; font-size:14px; margin-top:0; border-radius:12px; background:linear-gradient(135deg,#7c3aed,#a855f7); box-shadow:0 6px 18px rgba(124,58,237,0.3); font-weight:800; color:white; border:none; cursor:pointer;">🎮 Review Mode</button>
             <button id="teacher-logout-btn" class="secondary" style="width:auto; padding:8px 16px; font-size:14px; margin-top:0;">יציאה</button>
           </div>
           <div id="teacher-last-updated" style="font-size:11px; color:#475569;"></div>
@@ -3557,6 +3643,8 @@ function updateMiniStageProgress(world,stage,current,total){
     const soundToggleBtn = id("sound-toggle-btn");
 
     let currentProfile = null;
+    let isReviewMode = false;
+    let reviewModeSnapshot = null;
     let currentQuestion = null;
     let streak = 0;
     let answeredCurrent = false;
@@ -3791,6 +3879,17 @@ function updateMiniStageProgress(world,stage,current,total){
         playTone(1175, 0.18, "triangle", 0.035, 0.23, { endFreq: 1400, release: 0.2 });
         return;
       }
+      if (name === "bossattack") {
+        playTone(80,  0.18, "sawtooth", 0.01, 0,    { endFreq: 55,  release: 0.22 });
+        playTone(110, 0.12, "sawtooth", 0.01, 0.04, { endFreq: 75,  release: 0.18 });
+        playTone(220, 0.07, "square",   0.01, 0.08, { endFreq: 160, release: 0.12 });
+        return;
+      }
+      if (name === "bosshit") {
+        playTone(600, 0.09, "square",   0.008, 0,    { endFreq: 800,  release: 0.07 });
+        playTone(900, 0.07, "triangle", 0.01,  0.04, { endFreq: 1100, release: 0.08 });
+        return;
+      }
       if (name === "worldunlock") {
         playTone(560, 0.08, "triangle", 0.03, 0.28, { endFreq: 640, release: 0.09 });
         playTone(760, 0.1, "triangle", 0.032, 0.38, { endFreq: 920, release: 0.11 });
@@ -3855,6 +3954,7 @@ function updateMiniStageProgress(world,stage,current,total){
     }
 
     function recordDRPlay() {
+      if (isReviewMode) return; // 🎮 review mode
       const key = _getGlobalDRKey();
       localStorage.setItem(key, String(getGlobalStagesToday() + 1));
     }
@@ -3924,6 +4024,7 @@ function updateMiniStageProgress(world,stage,current,total){
 
     // Call whenever a stat changes — awards XP if quest just completed
     function updateQuestProgress(stat, amount = 1) {
+      if (isReviewMode) return; // 🎮 review mode
       const quests = getTodayQuests();
       quests.forEach(q => {
         if (q.stat !== stat) return;
@@ -4445,12 +4546,30 @@ function updateMiniStageProgress(world,stage,current,total){
 
 
     const WORLD_META = {
-      1: { name: "Forest of Words", icon: "🌿", desc: "בסיס חזק של מילים יומיומיות ושימושיות.", bossName: "🐉 Word Dragon", failName: "Word Dragon" },
-      2: { name: "River of Actions", icon: "🌊", desc: "פעלים ומבנים חשובים לקראת קריאה ברמת בגרות.", bossName: "🐍 Verb Hydra", failName: "Verb Hydra" },
-      3: { name: "Valley of Ideas", icon: "🏞️", desc: "מילים להבנת רעיונות, דעות וקטעי קריאה.", bossName: "👻 Grammar Spirit", failName: "Grammar Spirit" },
-      4: { name: "Reading Kingdom", icon: "🏰", desc: "אוצר מילים אקדמי וקריאת טקסטים מתקדמים.", bossName: "🗿 Knowledge Titan", failName: "Knowledge Titan" },
-      5: { name: "Academy of Power", icon: "⚡", desc: "חשיבה, ניתוח, טענות והכנה חזקה ל-Module E.", bossName: "🤖 Tech Overlord", failName: "Tech Overlord" },
-      6: { name: "Bagrut Temple", icon: "🔥", desc: "העולם האחרון: Final Boss ואוצר מילים קרוב לבגרות E/F.", bossName: "🐲 Final Bagrut Dragon", failName: "Final Bagrut Dragon" }
+      1: { name: "Forest of Words", icon: "🌿", desc: "בסיס חזק של מילים יומיומיות ושימושיות.", bossName: "🐉 Word Dragon", failName: "Word Dragon",
+           winTitle: { id:"dragon_slayer",   emoji:"🐉", label:"Dragon Slayer",  rarity:"epic" },
+           taunts:  ["You dare face me?!", "Your words are WEAK!", "Feel my flames!", "Is that all you have?!", "Pathetic!"],
+           praises: ["Lucky hit...", "Don't celebrate yet!", "A scratch, nothing more."] },
+      2: { name: "River of Actions", icon: "🌊", desc: "פעלים ומבנים חשובים לקראת קריאה ברמת בגרות.", bossName: "🐍 Verb Hydra", failName: "Verb Hydra",
+           winTitle: { id:"hydra_slayer",    emoji:"🐍", label:"Hydra Slayer",   rarity:"epic" },
+           taunts:  ["Another head grows back!", "You cannot defeat ALL of me!", "Foolish student!", "Wrong answer... AGAIN!", "My venom is your failure!"],
+           praises: ["One head falls... but I have more!", "Not bad... for a human.", "You're smarter than you look."] },
+      3: { name: "Valley of Ideas", icon: "🏞️", desc: "מילים להבנת רעיונות, דעות וקטעי קריאה.", bossName: "👻 Grammar Spirit", failName: "Grammar Spirit",
+           winTitle: { id:"spirit_banisher", emoji:"👻", label:"Spirit Banisher", rarity:"epic" },
+           taunts:  ["Language is my domain!", "You cannot grasp the meaning!", "Words haunt you...", "Silence! The spirit speaks!", "Your mind is clouded!"],
+           praises: ["The spirit wavers...", "You feel the meaning!", "A worthy opponent..."] },
+      4: { name: "Reading Kingdom", icon: "🏰", desc: "אוצר מילים אקדמי וקריאת טקסטים מתקדמים.", bossName: "🗿 Knowledge Titan", failName: "Knowledge Titan",
+           winTitle: { id:"titan_crusher",   emoji:"🗿", label:"Titan Crusher",  rarity:"epic" },
+           taunts:  ["KNOWLEDGE IS POWER!", "You are not worthy!", "My wisdom crushes you!", "WRONG! WRONG! WRONG!", "The Titan is undefeated!"],
+           praises: ["The Titan cracks...", "Impressive knowledge.", "You read well, young one."] },
+      5: { name: "Academy of Power", icon: "⚡", desc: "חשיבה, ניתוח, טענות והכנה חזקה ל-Module E.", bossName: "🤖 Tech Overlord", failName: "Tech Overlord",
+           winTitle: { id:"overlord_defeat", emoji:"🤖", label:"System Override", rarity:"epic" },
+           taunts:  ["ERROR DETECTED IN YOUR BRAIN!", "PROCESSING... FAILURE!", "I AM SUPERIOR!", "INCORRECT. RETRY.", "Your logic is FLAWED!"],
+           praises: ["MINOR DAMAGE SUSTAINED.", "CALCULATING COUNTER-MOVE...", "You are... adequate."] },
+      6: { name: "Bagrut Temple", icon: "🔥", desc: "העולם האחרון: Final Boss ואוצר מילים קרוב לבגרות E/F.", bossName: "🐲 Final Bagrut Dragon", failName: "Final Bagrut Dragon",
+           winTitle: { id:"bagrut_master",   emoji:"🔥", label:"Bagrut Master",  rarity:"legendary" },
+           taunts:  ["You face the FINAL DRAGON!", "Your English ends HERE!", "The Bagrut will CRUSH you!", "IMPOSSIBLE to defeat me!", "Feel the fire of the Bagrut!"],
+           praises: ["The final dragon staggers...", "You... surprise me.", "Perhaps you ARE ready for the Bagrut..."] }
     };
 
 
@@ -4622,6 +4741,7 @@ function updateMiniStageProgress(world,stage,current,total){
 
     // Stat tracking helpers
     function recordStageCleared(perfect, bossWin) {
+      if (isReviewMode) return; // 🎮 review mode
       const uid = currentProfile?.id || "guest";
       const k = "wh_stages_cleared_" + uid;
       localStorage.setItem(k, String(Number(localStorage.getItem(k)||0)+1));
@@ -4637,6 +4757,7 @@ function updateMiniStageProgress(world,stage,current,total){
     }
 
     function recordStreak(s) {
+      if (isReviewMode) return; // 🎮 review mode
       const uid = currentProfile?.id || "guest";
       const k = "wh_max_streak_" + uid;
       const prev = Number(localStorage.getItem(k)||0);
@@ -4647,6 +4768,55 @@ function updateMiniStageProgress(world,stage,current,total){
 
     function getWorldData(worldNumber) {
       return WORLD_META[worldNumber] || WORLD_META[1];
+    }
+
+    // ── Boss enhancement helpers ───────────────────────────
+    function showBossDialogue(type) {
+      const el = document.getElementById("boss-dialogue");
+      if (!el || !isBossStage()) return;
+      const world = getWorldData(currentWorld);
+      const lines = type === "taunt" ? (world.taunts || []) : (world.praises || []);
+      if (!lines.length) return;
+      const line = lines[Math.floor(Math.random() * lines.length)];
+      el.textContent = `"${line}"`;
+      el.className = `show ${type}`;
+      clearTimeout(el._hideTimer);
+      el._hideTimer = setTimeout(() => { el.className = ""; }, 2200);
+    }
+
+    function triggerBossAttack() {
+      const flash = document.getElementById("boss-attack-flash");
+      if (flash) {
+        flash.style.display = "block";
+        flash.style.animation = "none";
+        void flash.offsetWidth;
+        flash.style.animation = "bossAttack 0.55s ease-out forwards";
+        setTimeout(() => { flash.style.display = "none"; }, 580);
+      }
+      if (bossEls.name) {
+        bossEls.name.classList.remove("attacking");
+        void bossEls.name.offsetWidth;
+        bossEls.name.classList.add("attacking");
+        setTimeout(() => bossEls.name?.classList.remove("attacking"), 500);
+      }
+      playSound("bossattack");
+    }
+
+    function triggerBossHit() {
+      if (bossEls.hpFill) {
+        bossEls.hpFill.style.filter = "brightness(2)";
+        setTimeout(() => { if (bossEls.hpFill) bossEls.hpFill.style.filter = ""; }, 200);
+      }
+      playSound("bosshit");
+    }
+
+    function awardBossWinTitle() {
+      const t = getWorldData(currentWorld).winTitle;
+      if (!t || !currentProfile?.id) return;
+      const key = `wh_boss_title_${currentProfile.id}_w${currentWorld}`;
+      if (localStorage.getItem(key)) return;
+      localStorage.setItem(key, "1");
+      setTimeout(() => showTitleToast(t), 800);
     }
 
     function getRankTitle(rank){
@@ -4855,6 +5025,7 @@ function updateMiniStageProgress(world,stage,current,total){
 
     async function updateProfileRecord(values) {
       if (!currentProfile?.id) return { error: null };
+      if (isReviewMode) return { error: null }; // 🎮 review mode — no saving
       return await supabaseClient
         .from("profiles")
         .update(values)
@@ -5003,6 +5174,7 @@ function updateMiniStageProgress(world,stage,current,total){
 
     function awardXp(amount) {
       if (!currentProfile || amount <= 0) return;
+      if (isReviewMode) return; // 🎮 review mode — no XP
       const previousLevel = getLevelFromXp(currentProfile.xp || 0);
       currentProfile.xp = Math.max(0, Number(currentProfile.xp || 0) + amount);
       currentProfile.level = getLevelFromXp(currentProfile.xp);
@@ -5138,7 +5310,7 @@ function updateHeroUI(profile) {
       const counter = id("world-counter");
       if (!road) return;
 
-      const maxUnlockedWorld = Number(currentProfile?.current_world || currentWorld);
+      const maxUnlockedWorld = isReviewMode ? 6 : Number(currentProfile?.current_world || currentWorld);
       road.textContent = "";
       const fragment = document.createDocumentFragment();
       for (let world = 1; world <= 6; world += 1) {
@@ -5374,9 +5546,13 @@ function updateHeroUI(profile) {
     }
 
     function updateJourneyCard() {
-      const status = getStageStatus(selectedStage);
       if (!journeyStartBtn) return;
-
+      if (isReviewMode) {
+        journeyStartBtn.textContent = "🎮 בדוק שלב";
+        journeyStartBtn.disabled = false;
+        return;
+      }
+      const status = getStageStatus(selectedStage);
       if (status === "completed") {
         journeyStartBtn.textContent = "🔁 שחק שוב";
         journeyStartBtn.disabled = false;
@@ -5414,7 +5590,7 @@ function updateHeroUI(profile) {
     }
 
     function startSelectedStage() {
-      if (selectedStage > unlockedStage) return;
+      if (!isReviewMode && selectedStage > unlockedStage) return;
       activeGameMode = "journey";
       resetWordSmashState();
       if (gameScreen) gameScreen.classList.remove("word-smash-mode");
@@ -5427,6 +5603,9 @@ function updateHeroUI(profile) {
       resetStageRunState();
       showScreen("game-screen");
       updateBossUI();
+      if (isBossStage()) {
+        setTimeout(() => showBossDialogue("taunt"), 600);
+      }
       loadQuestion();
     }
 
@@ -5825,7 +6004,9 @@ function updateHeroUI(profile) {
         const stage = Number(btn.dataset.stage);
         btn.classList.remove("locked", "completed", "current", "selected", "has-decay");
 
-        if (stage < unlockedStage) {
+        if (isReviewMode) {
+          btn.classList.add(stage === selectedStage ? "current" : "completed");
+        } else if (stage < unlockedStage) {
           btn.classList.add("completed");
         } else if (stage === unlockedStage) {
           btn.classList.add("current");
@@ -5896,6 +6077,7 @@ function updateHeroUI(profile) {
     }
 
     function invalidateLeaderboardCache() {
+      if (isReviewMode) return; // 🎮 review mode
       leaderboardCache.ts = 0;
     }
 
@@ -6071,6 +6253,7 @@ function updateHeroUI(profile) {
     }
 
     async function loadLeaderboard(force = false) {
+      if (isReviewMode) return; // 🎮 review mode — no leaderboard changes
       if (!leaderboardList) return;
       const now = Date.now();
 
@@ -6644,6 +6827,7 @@ function updateHeroUI(profile) {
 
     function persistProfileProgress() {
       if (!currentProfile?.id) return;
+      if (isReviewMode) return; // 🎮 review mode — no saving
       clearTimeout(persistDebounceTimer);
       persistDebounceTimer = setTimeout(() => {
         updateProfileRecord(getProfileStatsPayload())
@@ -6655,6 +6839,7 @@ function updateHeroUI(profile) {
 
     async function saveWordResult(wordId, isCorrect, direction) {
       if (!currentProfile?.id) return;
+      if (isReviewMode) return; // 🎮 review mode — no saving
 
       const currentState = stageMasteryMap[wordId] || {};
       const payload = {
@@ -6785,6 +6970,31 @@ function updateHeroUI(profile) {
     async function completeStage() {
       setWidth(stageFillEl, "100%");
 
+      // ── Review Mode: show result, no saving ──────────────
+      if (isReviewMode) {
+        const isBoss = isBossStage() && !!bossBattleStats;
+        const wonBoss = isBoss && bossBattleStats.correct >= bossBattleStats.requiredCorrect;
+        showCelebration({
+          title: isBoss ? (wonBoss ? "⚔️ Boss Defeated! (Review)" : "💥 Boss Won (Review)") : "✅ STAGE REVIEWED",
+          subText: isBoss
+            ? `${bossBattleStats.correct} / ${bossBattleStats.requiredCorrect} hits • מצב סקירה`
+            : "מצב סקירה — אין שמירה",
+          emoji: isBoss ? (wonBoss ? "⚔️" : "💥") : "🎮",
+          theme: wonBoss ? "world-theme" : isBoss ? "fail-theme" : "stage-theme",
+          symbols: wonBoss ? ["⚔️","🏆","✨"] : ["🎮","✅","🔍"],
+          autoCloseMs: 1600,
+          buttonText: "חזרה למפה",
+          onClose: () => {
+            showScreen("map-screen");
+            unlockedStage = 10;
+            const banner = document.getElementById("review-mode-banner");
+            if (banner) banner.classList.add("show");
+            renderStageMap();
+          }
+        });
+        return;
+      }
+
       if (isBossStage() && bossBattleStats) {
         const wonBoss = bossBattleStats.correct >= bossBattleStats.requiredCorrect;
         const defeatedBossName = getBossData().failName;
@@ -6805,6 +7015,8 @@ function updateHeroUI(profile) {
           stageXpGained += bossBonusXp;
           awardXp(bossBonusXp);
           persistProfileProgress();
+          awardBossWinTitle();
+          const prevWorld = currentWorld;
           currentWorld += 1;
           unlockedStage = 1;
           selectedStage = 1;
@@ -6829,6 +7041,7 @@ function updateHeroUI(profile) {
         stageXpGained += bossBonusXp;
         awardXp(bossBonusXp);
         persistProfileProgress();
+        awardBossWinTitle();
         currentProfile.current_world = 6;
         currentProfile.unlocked_stage = 10;
         selectedStage = 10;
@@ -6938,8 +7151,13 @@ function updateHeroUI(profile) {
       let correctWord = null;
 
       if (isBossStage() && bossBattleStats) {
-        const remaining = stageWords.filter(word => !stageMasteredWordIds.has(word.id));
-        const bossPool = remaining.length ? remaining : stageWords;
+        let bossPool;
+        if (isReviewMode) {
+          bossPool = stageWords.length ? stageWords : [];
+        } else {
+          const remaining = stageWords.filter(word => !stageMasteredWordIds.has(word.id));
+          bossPool = remaining.length ? remaining : stageWords;
+        }
         correctWord = chooseWeightedWord(bossPool, progressMap);
         correctWord = avoidImmediateRepeat(correctWord, bossPool, progressMap);
       } else {
@@ -7045,7 +7263,9 @@ async function handleAnswer(buttonEl, selectedAnswer) {
       const prevProgress = stageMasteryMap[currentQuestion.correctWord.id] || {};
       const wasKnownBefore = prevProgress.en_he_correct || prevProgress.he_en_correct;
       const wasMasteredBefore = stageMasteredWordIds.has(currentQuestion.correctWord.id);
-      applyLocalWordResult(currentQuestion.correctWord.id, isCorrect, currentQuestion.direction);
+      if (!isReviewMode) {
+        applyLocalWordResult(currentQuestion.correctWord.id, isCorrect, currentQuestion.direction);
+      }
       saveWordResult(currentQuestion.correctWord.id, isCorrect, currentQuestion.direction).catch(error => {
         console.error("Word save failed:", error?.message || error);
       });
@@ -7095,6 +7315,10 @@ async function handleAnswer(buttonEl, selectedAnswer) {
         refreshMainUI();
         showCorrectionFeedback();
         updateQuestionSubline();
+        if (isBossStage()) {
+          triggerBossAttack();
+          showBossDialogue("taunt");
+        }
         setGameMessage(isBossStage() ? "לא נכון. תראה את התשובה ואז נמשיך." : "לא נכון. קח רגע לראות את התשובה הנכונה.", "error");
         autoNextTimer = setTimeout(() => {
           loadQuestion();
@@ -7107,6 +7331,10 @@ async function handleAnswer(buttonEl, selectedAnswer) {
       clearCorrectionFeedback();
       buttonEl.classList.add("correct");
       playSound("correct");
+      if (isBossStage()) {
+        triggerBossHit();
+        showBossDialogue("praise");
+      }
       spawnStar();
       spawnBurstStars(streak >= 5 ? 8 : 4);
       streak += 1;
@@ -7132,14 +7360,14 @@ async function handleAnswer(buttonEl, selectedAnswer) {
       const masteredNow = !wasMasteredBefore && stageMasteredWordIds.has(currentQuestion.correctWord.id);
       const updatedProgress = stageMasteryMap[currentQuestion.correctWord.id] || {};
       const knownNow = !wasKnownBefore && (updatedProgress.en_he_correct || updatedProgress.he_en_correct);
-      if (knownNow) {
+      if (knownNow && !isReviewMode) {
         currentProfile.words_learned = (currentProfile.words_learned || 0) + 1;
         updateQuestProgress("words", 1);
       }
-      if (masteredNow) {
+      if (masteredNow && !isReviewMode) {
         playSound("wordmastered");
         setTipBanner("⭐ Word Mastered");
-      } else if (knownNow) {
+      } else if (knownNow && !isReviewMode) {
         setTipBanner("📖 New Word!");
       }
       spawnXpFly(xpGain, questionWordEl);
@@ -7167,7 +7395,14 @@ async function handleAnswer(buttonEl, selectedAnswer) {
       gameScreen.classList.remove("boss-mode");
       updateBossUI();
       showScreen("map-screen");
-      loadLeaderboard();
+      if (isReviewMode) {
+        unlockedStage = 10;
+        const banner = document.getElementById("review-mode-banner");
+        if (banner) banner.classList.add("show");
+        renderStageMap();
+      } else {
+        loadLeaderboard();
+      }
     }
 
     // ══════════════════════════════════════════════════════
@@ -7221,7 +7456,15 @@ async function handleAnswer(buttonEl, selectedAnswer) {
         .order("words_learned", { ascending: false });
 
       if (error || !data) {
-        if (listEl) listEl.innerHTML = `<div style="color:#f87171;text-align:center;">שגיאה בטעינה: ${error?.message || "Unknown"}</div>`;
+        if (listEl) listEl.innerHTML = `<div style="color:#f87171;text-align:center;padding:16px;">
+          שגיאה בטעינה: ${error?.message || "Unknown"}<br>
+          <span style="font-size:12px;color:#94a3b8;margin-top:8px;display:block;">ייתכן שה-RLS מונע גישה. ודא שהמורה מחובר עם חשבון Supabase תקין.</span>
+        </div>`;
+        return;
+      }
+
+      if (data.length === 0) {
+        if (listEl) listEl.innerHTML = '<div style="text-align:center;color:#64748b;padding:20px;">אין תלמידים רשומים עדיין</div>';
         return;
       }
 
@@ -7473,6 +7716,8 @@ async function handleAnswer(buttonEl, selectedAnswer) {
 
       if (teacherLogoutBtn) teacherLogoutBtn.addEventListener("click", teacherLogout);
       if (teacherRefreshBtn) teacherRefreshBtn.addEventListener("click", () => loadTeacherDashboard(true));
+      const teacherReviewBtn = document.getElementById("teacher-review-btn");
+      if (teacherReviewBtn) teacherReviewBtn.addEventListener("click", enterReviewMode);
       if (teacherClassSel) teacherClassSel.addEventListener("change", () => {
         teacherClassFilter = teacherClassSel.value;
         renderTeacherSummary();
@@ -7485,6 +7730,54 @@ async function handleAnswer(buttonEl, selectedAnswer) {
         if (e.key === "Enter") teacherLogin();
       });
     });
+
+    // ══════════════════════════════════════════════════════
+    // REVIEW MODE
+    // ══════════════════════════════════════════════════════
+
+    function enterReviewMode() {
+      isReviewMode = true;
+      reviewModeSnapshot = {
+        currentWorld,
+        unlockedStage,
+        currentStage,
+        selectedStage,
+        profile_unlocked_stage: currentProfile?.unlocked_stage,
+        profile_current_world:  currentProfile?.current_world,
+      };
+      currentWorld  = 1;
+      unlockedStage = 10;
+      currentStage  = 1;
+      selectedStage = 1;
+      if (currentProfile) {
+        currentProfile.unlocked_stage = 10;
+        currentProfile.current_world  = 1;
+      }
+      showScreen("map-screen");
+      updateHeroUI(currentProfile);
+      renderStageMap();
+      const banner = document.getElementById("review-mode-banner");
+      if (banner) banner.classList.add("show");
+    }
+
+    function exitReviewMode() {
+      if (!isReviewMode) return;
+      isReviewMode = false;
+      if (reviewModeSnapshot) {
+        currentWorld  = reviewModeSnapshot.currentWorld;
+        unlockedStage = reviewModeSnapshot.unlockedStage;
+        currentStage  = reviewModeSnapshot.currentStage;
+        selectedStage = reviewModeSnapshot.selectedStage;
+        if (currentProfile) {
+          currentProfile.unlocked_stage = reviewModeSnapshot.profile_unlocked_stage;
+          currentProfile.current_world  = reviewModeSnapshot.profile_current_world;
+        }
+        reviewModeSnapshot = null;
+      }
+      const banner = document.getElementById("review-mode-banner");
+      if (banner) banner.classList.remove("show");
+      showScreen("teacher-screen");
+    }
 
     async function logout() {
       await supabaseClient.auth.signOut();
