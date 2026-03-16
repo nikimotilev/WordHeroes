@@ -3848,6 +3848,38 @@ body.review-mode .world-pill[data-world].locked-world {
           </div>
         </div>
 
+        <!-- Teacher Avatar Picker Modal -->
+        <div id="teacher-avatar-modal" style="
+          display:none; position:fixed; inset:0; background:rgba(2,8,23,0.88);
+          z-index:1000; align-items:center; justify-content:center; padding:20px;
+        ">
+          <div style="
+            background:linear-gradient(180deg,rgba(30,41,59,0.98),rgba(15,23,42,0.98));
+            border:1px solid rgba(255,255,255,0.12); border-radius:24px;
+            padding:24px; max-width:420px; width:100%; text-align:center;
+          ">
+            <div style="font-size:22px;font-weight:900;margin-bottom:4px;">🎭 שינוי דמות</div>
+            <div id="teacher-avatar-modal-sub" style="font-size:13px;color:#94a3b8;margin-bottom:16px;"></div>
+            <!-- Hero grid -->
+            <div id="teacher-avatar-grid" style="
+              display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:18px;
+            ">
+              <!-- filled by JS -->
+            </div>
+            <div style="display:flex; gap:10px;">
+              <button id="teacher-avatar-confirm" style="flex:1; min-height:48px; font-size:16px; border-radius:14px;
+                background:linear-gradient(135deg,#7c3aed,#a855f7); font-weight:800; color:white; border:none; cursor:pointer;">
+                שמור דמות
+              </button>
+              <button onclick="closeTeacherAvatarModal()" style="flex:1; min-height:48px; font-size:16px; border-radius:14px;
+                background:rgba(255,255,255,0.09); color:#e2e8f0; border:none; cursor:pointer; font-weight:800;">
+                ביטול
+              </button>
+            </div>
+            <div id="teacher-avatar-status" style="font-size:13px;margin-top:10px;min-height:18px;"></div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -8163,6 +8195,11 @@ async function handleAnswer(buttonEl, selectedAnswer) {
                   background:rgba(96,165,250,0.18);border:1px solid rgba(96,165,250,0.35);color:#93c5fd;font-weight:800;">
                   ✏️ שם
                 </button>
+                <button onclick="openTeacherChangeAvatar('${s.id}','${escHtml(s.display_name||'')}','${s.avatar_class||'mage'}','${s.avatar_gender||'male'}')"
+                  style="width:auto;padding:3px 9px;font-size:11px;min-height:0;border-radius:8px;
+                  background:rgba(168,85,247,0.18);border:1px solid rgba(168,85,247,0.4);color:#d8b4fe;font-weight:800;">
+                  🎭 דמות
+                </button>
                 <button onclick="openTeacherReset('${s.id}','${escHtml(s.display_name||'')}')"
                   style="width:auto;padding:3px 9px;font-size:11px;min-height:0;border-radius:8px;
                   background:rgba(248,113,113,0.14);border:1px solid rgba(248,113,113,0.32);color:#fca5a5;font-weight:800;">
@@ -8240,6 +8277,11 @@ async function handleAnswer(buttonEl, selectedAnswer) {
                 style="width:auto;padding:3px 9px;font-size:11px;min-height:0;border-radius:8px;
                 background:rgba(96,165,250,0.18);border:1px solid rgba(96,165,250,0.35);color:#93c5fd;font-weight:800;">
                 ✏️ שם
+              </button>
+              <button onclick="openTeacherChangeAvatar('${s.id}','${escHtml(s.display_name||'')}','${s.avatar_class||'mage'}','${s.avatar_gender||'male'}')"
+                style="width:auto;padding:3px 9px;font-size:11px;min-height:0;border-radius:8px;
+                background:rgba(168,85,247,0.18);border:1px solid rgba(168,85,247,0.4);color:#d8b4fe;font-weight:800;">
+                🎭 דמות
               </button>
               <button onclick="openTeacherReset('${s.id}','${escHtml(s.display_name||'')}')"
                 style="width:auto;padding:3px 9px;font-size:11px;min-height:0;border-radius:8px;
@@ -8362,6 +8404,95 @@ async function handleAnswer(buttonEl, selectedAnswer) {
           setTimeout(closeTeacherModal, 1200);
         }
       });
+    }
+
+    // ── Change avatar (class + gender) ────────────────────
+    const HERO_OPTIONS = [
+      { cls: "mage",   gender: "male",   label: "Mage Boy",    img: "heroes/mage_male_lv1.webp"   },
+      { cls: "mage",   gender: "female", label: "Mage Girl",   img: "heroes/mage_female_lv1.webp" },
+      { cls: "knight", gender: "male",   label: "Knight Boy",  img: "heroes/knight_male_lv1.webp" },
+      { cls: "knight", gender: "female", label: "Knight Girl", img: "heroes/knight_female_lv1.webp"},
+      { cls: "ranger", gender: "male",   label: "Ranger Boy",  img: "heroes/ranger_male_lv1.webp" },
+      { cls: "ranger", gender: "female", label: "Ranger Girl", img: "heroes/ranger_female_lv1.webp"},
+    ];
+
+    let _avatarPickerStudentId   = null;
+    let _avatarPickerSelectedCls = "mage";
+    let _avatarPickerSelectedGen = "male";
+
+    function openTeacherChangeAvatar(studentId, studentName, currentCls, currentGen) {
+      _avatarPickerStudentId   = studentId;
+      _avatarPickerSelectedCls = currentCls || "mage";
+      _avatarPickerSelectedGen = currentGen || "male";
+
+      const modal   = document.getElementById("teacher-avatar-modal");
+      const subEl   = document.getElementById("teacher-avatar-modal-sub");
+      const statusEl = document.getElementById("teacher-avatar-status");
+      const confirmBtn = document.getElementById("teacher-avatar-confirm");
+      if (!modal) return;
+
+      subEl.textContent    = `תלמיד/ה: ${studentName}`;
+      statusEl.textContent = "";
+
+      _renderAvatarGrid();
+
+      confirmBtn.onclick = async () => {
+        statusEl.style.color  = "#94a3b8";
+        statusEl.textContent  = "שומר...";
+        confirmBtn.disabled   = true;
+        const { error } = await supabaseClient
+          .from("profiles")
+          .update({ avatar_class: _avatarPickerSelectedCls, avatar_gender: _avatarPickerSelectedGen })
+          .eq("id", _avatarPickerStudentId);
+        confirmBtn.disabled = false;
+        if (error) { statusEl.style.color = "#f87171"; statusEl.textContent = "שגיאה: " + error.message; return; }
+        // Update local cache
+        const s = teacherAllStudents.find(s => s.id === _avatarPickerStudentId);
+        if (s) { s.avatar_class = _avatarPickerSelectedCls; s.avatar_gender = _avatarPickerSelectedGen; }
+        statusEl.style.color  = "#34d399";
+        statusEl.textContent  = "✅ הדמות עודכנה בהצלחה!";
+        setTimeout(closeTeacherAvatarModal, 1200);
+      };
+
+      modal.style.display = "flex";
+    }
+
+    function _renderAvatarGrid() {
+      const grid = document.getElementById("teacher-avatar-grid");
+      if (!grid) return;
+      grid.innerHTML = HERO_OPTIONS.map(h => {
+        const isSelected = h.cls === _avatarPickerSelectedCls && h.gender === _avatarPickerSelectedGen;
+        return `
+        <button type="button"
+          onclick="_selectAvatarOption('${h.cls}','${h.gender}')"
+          style="
+            display:flex; flex-direction:column; align-items:center; gap:6px;
+            padding:10px 6px; border-radius:16px; cursor:pointer;
+            background:${isSelected
+              ? "linear-gradient(135deg,rgba(168,85,247,0.3),rgba(96,165,250,0.25))"
+              : "rgba(255,255,255,0.07)"};
+            border:2px solid ${isSelected ? "rgba(168,85,247,0.9)" : "rgba(255,255,255,0.1)"};
+            transition:all 0.18s;
+          ">
+          <img src="${h.img}" alt="${h.label}"
+            style="width:64px;height:64px;object-fit:contain;pointer-events:none;" />
+          <span style="font-size:12px;font-weight:800;color:${isSelected ? "#e9d5ff" : "#cbd5e1"};
+            pointer-events:none;">${h.label}</span>
+          ${isSelected ? '<span style="font-size:10px;color:#a78bfa;font-weight:900;pointer-events:none;">✓ נבחר</span>' : ""}
+        </button>`;
+      }).join("");
+    }
+
+    function _selectAvatarOption(cls, gender) {
+      _avatarPickerSelectedCls = cls;
+      _avatarPickerSelectedGen = gender;
+      _renderAvatarGrid();
+    }
+
+    function closeTeacherAvatarModal() {
+      const modal = document.getElementById("teacher-avatar-modal");
+      if (modal) modal.style.display = "none";
+      _avatarPickerStudentId = null;
     }
 
     // Wire up all startup logic after DOM is ready
