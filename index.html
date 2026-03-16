@@ -2573,6 +2573,115 @@ body.review-mode .world-pill[data-world].locked-world {
   border-style: dashed;
 }
 
+/* ══════════════════════════════════════════════════════
+   POKEMON EVOLUTION ANIMATION
+══════════════════════════════════════════════════════ */
+#evo-overlay {
+  position: fixed; inset: 0; z-index: 10000;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.3s; direction: rtl; overflow: hidden;
+}
+#evo-overlay.evo-show { opacity: 1; }
+.evo-bg {
+  position: absolute; inset: 0; background: #000;
+  animation: evoBgPulse 1.8s ease-in-out infinite;
+}
+@keyframes evoBgPulse {
+  0%,100%{background:#000} 50%{background:#060a14}
+}
+.evo-center {
+  position: relative; z-index: 2;
+  display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center;
+}
+.evo-label {
+  font-size: 22px; font-weight: 900; color: #fbbf24;
+  letter-spacing: .06em; text-shadow: 0 0 20px rgba(251,191,36,.6);
+  animation: evoLabelPulse .9s ease-in-out infinite;
+}
+@keyframes evoLabelPulse {
+  0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.75;transform:scale(.97)}
+}
+.evo-stage {
+  position: relative; width: 180px; height: 180px;
+  display: flex; align-items: center; justify-content: center;
+}
+.evo-img {
+  width: 160px; height: 160px; object-fit: contain; transition: filter .15s;
+  filter: drop-shadow(0 0 20px rgba(255,255,255,.1));
+}
+.evo-img.evo-silhouette-anim { animation: evoSilhouette 2.2s ease-in-out forwards; }
+@keyframes evoSilhouette {
+  0%  {filter:drop-shadow(0 0 10px rgba(255,255,255,.1))}
+  20% {filter:brightness(0) invert(1) drop-shadow(0 0 30px rgba(255,255,255,.9))}
+  40% {filter:brightness(0) drop-shadow(0 0 20px rgba(100,180,255,.7))}
+  60% {filter:brightness(10) saturate(0) drop-shadow(0 0 40px rgba(255,255,255,1))}
+  80% {filter:brightness(50) saturate(0) drop-shadow(0 0 60px rgba(255,255,255,1))}
+  100%{filter:brightness(100) saturate(0) drop-shadow(0 0 80px rgba(255,255,255,1))}
+}
+.evo-name { font-size:18px; font-weight:900; color:#e2e8f0; letter-spacing:.04em; }
+.evo-flash {
+  position:absolute; inset:0; background:white; opacity:0; pointer-events:none; z-index:5;
+}
+.evo-particles {
+  position:absolute; inset:0; pointer-events:none; z-index:3; overflow:hidden;
+}
+.evo-spark {
+  position:absolute; width:6px; height:6px; border-radius:50%;
+  background:#fbbf24; box-shadow:0 0 8px #fbbf24,0 0 16px #f59e0b;
+  animation:evoSpark linear forwards;
+}
+@keyframes evoSpark {
+  0%  {opacity:0;transform:scale(0)}
+  30% {opacity:1;transform:scale(1.4)}
+  100%{opacity:0;transform:scale(0) translateY(-40px)}
+}
+.evo-done-panel {
+  position:relative; z-index:6; flex-direction:column; align-items:center;
+  gap:12px; text-align:center; padding:0 24px;
+  animation:evoDoneIn .6s cubic-bezier(.34,1.56,.64,1) forwards;
+}
+@keyframes evoDoneIn {
+  0%  {opacity:0;transform:scale(.6) translateY(20px)}
+  100%{opacity:1;transform:scale(1) translateY(0)}
+}
+.evo-done-img-wrap {
+  position:relative; width:200px; height:200px;
+  display:flex; align-items:center; justify-content:center;
+}
+.evo-done-img {
+  width:180px; height:180px; object-fit:contain;
+  animation:evoRevealImg .8s cubic-bezier(.34,1.56,.64,1) forwards;
+  filter:drop-shadow(0 0 30px rgba(251,191,36,.5));
+}
+@keyframes evoRevealImg {
+  0%  {opacity:0;transform:scale(.3);filter:brightness(10) saturate(0)}
+  40% {opacity:1;filter:brightness(3) saturate(.3)}
+  70% {transform:scale(1.12);filter:brightness(1.4) saturate(.8)}
+  100%{transform:scale(1);filter:drop-shadow(0 0 30px rgba(251,191,36,.5))}
+}
+.evo-done-glow {
+  position:absolute; inset:-20px; border-radius:50%;
+  background:radial-gradient(circle,rgba(251,191,36,.35) 0%,transparent 70%);
+  animation:evoDoneGlow 1.5s ease-in-out infinite;
+}
+@keyframes evoDoneGlow {
+  0%,100%{opacity:.6;transform:scale(.9)} 50%{opacity:1;transform:scale(1.1)}
+}
+.evo-done-title { font-size:24px; font-weight:900; color:#fbbf24; text-shadow:0 0 24px rgba(251,191,36,.7); letter-spacing:.05em; }
+.evo-done-sub   { font-size:16px; font-weight:800; color:#e2e8f0; }
+.evo-done-sub2  { font-size:13px; color:#94a3b8; font-weight:700; }
+.evo-done-btn {
+  margin-top:8px; width:200px; min-height:50px; font-size:20px; font-weight:900;
+  border-radius:16px; background:linear-gradient(135deg,#f59e0b,#fbbf24); color:#422006;
+  border:none; cursor:pointer; box-shadow:0 8px 24px rgba(245,158,11,.4);
+  animation:evoBtnPulse 1s ease-in-out infinite;
+}
+@keyframes evoBtnPulse {
+  0%,100%{box-shadow:0 8px 24px rgba(245,158,11,.4)}
+  50%{box-shadow:0 8px 36px rgba(245,158,11,.7);transform:scale(1.02)}
+}
+/* ══════════════════════════════════════════════════════ */
+
 /* 9 — Smash best badge on button */
 
 /* ══════════════════════════════════════════
@@ -7259,28 +7368,24 @@ function updateHeroUI(profile) {
     }
 
     function maybeShowEvolutionModal(previousLevel, newLevel, heroClass) {
-      // Regular evolution milestones
       const milestones = [5, 10, 15, 20, 25];
       const unlocked = milestones.find(level => previousLevel < level && newLevel >= level && level > lastShownEvolutionLevel);
       if (unlocked) {
         saveLastShownEvolutionLevel(unlocked);
-        playSound("evolution");
-        showCelebration({
-          title: getEvolutionTitle(unlocked),
-          subText: getEvolutionSubText(heroClass, unlocked),
-          emoji: unlocked >= 25 ? "👑" : "🦸",
-          theme: "evolution-theme",
-          symbols: ["✨", "🧬", "⭐", "⚡"],
-          autoCloseMs: 1700,
-          buttonText: "איזה כיף!"
+        const gender  = currentProfile?.avatar_gender || "male";
+        const oldPath = getHeroImagePath(heroClass, gender, previousLevel);
+        const newPath = getHeroImagePath(heroClass, gender, unlocked);
+        showPokemonEvolution({
+          heroClass, gender, oldPath, newPath,
+          level: unlocked,
+          isLegendary: unlocked >= 25
         });
         return;
       }
 
-      // Prestige milestones: every new prestige level
+      // Prestige milestones
       if (isPrestige(newLevel) && newLevel > previousLevel) {
         const pLvl = getPrestigeLevel(newLevel);
-        // Only show modal on first hit of each prestige level
         const pKey = `wh_prestige_shown_${currentProfile?.id || "guest"}_p${pLvl}`;
         if (localStorage.getItem(pKey)) return;
         localStorage.setItem(pKey, "1");
@@ -7297,6 +7402,129 @@ function updateHeroUI(profile) {
           buttonText: "מדהים!"
         });
       }
+    }
+
+    // ══════════════════════════════════════════════════════
+    // POKEMON-STYLE EVOLUTION ANIMATION
+    // ══════════════════════════════════════════════════════
+    function showPokemonEvolution({ heroClass, gender, oldPath, newPath, level, isLegendary }) {
+      // Pre-load new image
+      const preload = new Image();
+      preload.src = newPath;
+
+      const overlay = document.createElement("div");
+      overlay.id = "evo-overlay";
+      overlay.innerHTML = `
+        <div class="evo-bg"></div>
+        <div class="evo-center">
+          <div id="evo-label" class="evo-label">מה קורה?!</div>
+          <div class="evo-stage">
+            <img id="evo-img" class="evo-img" src="${oldPath}" alt="hero"/>
+            <div id="evo-silhouette" class="evo-silhouette"></div>
+          </div>
+          <div id="evo-name" class="evo-name">${getClassLabel(heroClass)} מתפתח!</div>
+        </div>
+        <div id="evo-flash" class="evo-flash"></div>
+        <div id="evo-particles" class="evo-particles"></div>
+        <div id="evo-done-panel" class="evo-done-panel" style="display:none">
+          <div id="evo-done-img-wrap" class="evo-done-img-wrap">
+            <img id="evo-done-img" src="${newPath}" alt="evolved" class="evo-done-img"/>
+            <div class="evo-done-glow"></div>
+          </div>
+          <div class="evo-done-title">${isLegendary ? "👑 LEGENDARY FORM" : "✨ EVOLUTION UNLOCKED"}</div>
+          <div class="evo-done-sub">Level ${level} — ${getClassLabel(heroClass)}</div>
+          <div class="evo-done-sub2">${isLegendary ? "צורה אגדית נפתחה!" : getEvolutionSubText(heroClass, level)}</div>
+          <button id="evo-done-btn" class="evo-done-btn">🔥 אדיר!</button>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+
+      const img      = overlay.querySelector("#evo-img");
+      const sil      = overlay.querySelector("#evo-silhouette");
+      const label    = overlay.querySelector("#evo-label");
+      const name     = overlay.querySelector("#evo-name");
+      const flash    = overlay.querySelector("#evo-flash");
+      const donePanel= overlay.querySelector("#evo-done-panel");
+      const doneBtn  = overlay.querySelector("#evo-done-btn");
+
+      // spawn sparkle particles continuously
+      let particleInterval;
+      function spawnEvoParticles() {
+        const host = overlay.querySelector("#evo-particles");
+        for (let i = 0; i < 3; i++) {
+          const p = document.createElement("div");
+          p.className = "evo-spark";
+          p.style.cssText = `left:${10 + Math.random()*80}%;top:${10+Math.random()*80}%;animation-delay:${Math.random()*0.4}s;animation-duration:${0.6+Math.random()*0.5}s`;
+          host.appendChild(p);
+          setTimeout(() => p.remove(), 1200);
+        }
+      }
+
+      function doFlash(cb) {
+        flash.style.opacity = "1";
+        flash.style.transition = "opacity 0.05s";
+        setTimeout(() => {
+          flash.style.transition = "opacity 0.18s";
+          flash.style.opacity    = "0";
+          setTimeout(cb, 200);
+        }, 70);
+      }
+
+      function runEvolution() {
+        // Phase 1: שלב הכנה (0.8s)
+        particleInterval = setInterval(spawnEvoParticles, 220);
+        overlay.classList.add("evo-show");
+
+        setTimeout(() => {
+          // Phase 2: silhouette (בהירות לבנה) בדמות הישנה
+          img.classList.add("evo-silhouette-anim");
+          name.textContent = getClassLabel(heroClass) + " מתפתח!";
+          label.textContent = "...";
+          playSound("evolution");
+        }, 800);
+
+        // Phase 3: flash sequence — 4 פלאשים מואצים
+        const flashTimes = [1600, 1900, 2150, 2350, 2500, 2620, 2720, 2800];
+        flashTimes.forEach(t => setTimeout(() => doFlash(() => {}), t));
+
+        setTimeout(() => {
+          // Phase 4: החלפה לדמות החדשה
+          clearInterval(particleInterval);
+          img.style.display = "none";
+          sil.style.display = "none";
+
+          flash.style.transition = "none";
+          flash.style.opacity    = "1";
+
+          setTimeout(() => {
+            // הצגת panel ה-reveal
+            donePanel.style.display = "flex";
+            flash.style.transition  = "opacity 0.55s";
+            flash.style.opacity     = "0";
+            playSound("worldunlock");
+            if (navigator.vibrate) navigator.vibrate([80, 30, 120, 30, 180]);
+            // stop bg particles
+            overlay.querySelector("#evo-particles").innerHTML = "";
+            // spawn celebration burst
+            for (let i = 0; i < 18; i++) {
+              setTimeout(() => spawnEvoParticles(), i * 60);
+            }
+          }, 80);
+        }, 2900);
+      }
+
+      doneBtn.addEventListener("click", () => {
+        clearInterval(particleInterval);
+        overlay.style.transition = "opacity 0.35s";
+        overlay.style.opacity    = "0";
+        setTimeout(() => {
+          overlay.remove();
+          updateHeroUI(currentProfile);
+        }, 370);
+      });
+
+      // small delay so DOM paints first
+      requestAnimationFrame(() => requestAnimationFrame(runEvolution));
     }
 
     function closeStageComplete() {
