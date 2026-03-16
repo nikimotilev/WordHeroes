@@ -3462,6 +3462,31 @@ function updateMiniStageProgress(world,stage,current,total){
           </div>
         </div>
 
+        <!-- Teacher Action Modal -->
+        <div id="teacher-action-modal" style="
+          display:none; position:fixed; inset:0; background:rgba(2,8,23,0.82);
+          z-index:999; align-items:center; justify-content:center; padding:20px;
+        ">
+          <div style="
+            background:linear-gradient(180deg,rgba(30,41,59,0.98),rgba(15,23,42,0.98));
+            border:1px solid rgba(255,255,255,0.12); border-radius:24px;
+            padding:24px; max-width:360px; width:100%; text-align:center;
+          ">
+            <div id="teacher-modal-title" style="font-size:22px;font-weight:900;margin-bottom:6px;"></div>
+            <div id="teacher-modal-sub" style="font-size:13px;color:#94a3b8;margin-bottom:16px;line-height:1.5;"></div>
+            <input id="teacher-modal-input" type="text" placeholder="שם גיבור חדש"
+              style="display:none; margin-bottom:14px; font-size:16px; text-align:center;" maxlength="12"
+              autocorrect="off" autocapitalize="off" spellcheck="false" />
+            <div style="display:flex; gap:10px;">
+              <button id="teacher-modal-confirm" style="flex:1; min-height:48px; font-size:16px; border-radius:14px;
+                background:linear-gradient(135deg,#2563eb,#3b82f6);">אישור</button>
+              <button onclick="closeTeacherModal()" style="flex:1; min-height:48px; font-size:16px; border-radius:14px;
+                background:rgba(255,255,255,0.09); color:#e2e8f0;">ביטול</button>
+            </div>
+            <div id="teacher-modal-status" style="font-size:13px;margin-top:10px;min-height:18px;"></div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -7292,12 +7317,138 @@ async function handleAnswer(buttonEl, selectedAnswer) {
             <div class="teacher-student-name">${escHtml(s.display_name || "?")} <span style="font-size:11px;color:#64748b;font-weight:700;">${s.class_code || ""}</span></div>
             <div class="teacher-student-meta">${worldIcon} עולם ${s.current_world || 1} • ${levelTxt} • ${statusBadge}</div>
           </div>
-          <div class="teacher-student-stats">
-            <span style="color:#93c5fd;">📖 ${s.words_learned || 0} מילים</span>
-            ${s.smash_best > 0 ? `<span style="color:#c4b5fd;">⚡ ${s.smash_best}</span>` : ""}
+          <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+            <div class="teacher-student-stats">
+              <span style="color:#93c5fd;">📖 ${s.words_learned || 0} מילים</span>
+              ${s.smash_best > 0 ? `<span style="color:#c4b5fd;">⚡ ${s.smash_best}</span>` : ""}
+            </div>
+            <div style="display:flex; gap:5px;">
+              <button onclick="openTeacherRename('${s.id}','${escHtml(s.display_name||'')}')"
+                style="width:auto;padding:3px 9px;font-size:11px;min-height:0;border-radius:8px;
+                background:rgba(96,165,250,0.18);border:1px solid rgba(96,165,250,0.35);color:#93c5fd;font-weight:800;">
+                ✏️ שם
+              </button>
+              <button onclick="openTeacherReset('${s.id}','${escHtml(s.display_name||'')}')"
+                style="width:auto;padding:3px 9px;font-size:11px;min-height:0;border-radius:8px;
+                background:rgba(248,113,113,0.14);border:1px solid rgba(248,113,113,0.32);color:#fca5a5;font-weight:800;">
+                🔄 אפס
+              </button>
+            </div>
           </div>
         </div>`;
       }).join("");
+    }
+
+    // ── Teacher Modal helpers ──────────────────────────
+    let _teacherModalAction = null;
+
+    function openTeacherModal({ title, sub, showInput, inputVal, confirmLabel, confirmStyle, onConfirm }) {
+      const modal   = document.getElementById("teacher-action-modal");
+      const titleEl = document.getElementById("teacher-modal-title");
+      const subEl   = document.getElementById("teacher-modal-sub");
+      const inputEl = document.getElementById("teacher-modal-input");
+      const confirmBtn = document.getElementById("teacher-modal-confirm");
+      const statusEl = document.getElementById("teacher-modal-status");
+      if (!modal) return;
+      titleEl.textContent  = title;
+      subEl.textContent    = sub;
+      statusEl.textContent = "";
+      inputEl.style.display = showInput ? "block" : "none";
+      if (showInput) { inputEl.value = inputVal || ""; setTimeout(() => inputEl.focus(), 80); }
+      confirmBtn.textContent = confirmLabel || "אישור";
+      confirmBtn.style.background = confirmStyle || "linear-gradient(135deg,#2563eb,#3b82f6)";
+      _teacherModalAction = onConfirm;
+      confirmBtn.onclick = async () => {
+        statusEl.style.color = "#94a3b8";
+        statusEl.textContent = "שומר...";
+        confirmBtn.disabled = true;
+        await _teacherModalAction(inputEl.value.trim());
+        confirmBtn.disabled = false;
+      };
+      modal.style.display = "flex";
+    }
+
+    function closeTeacherModal() {
+      const modal = document.getElementById("teacher-action-modal");
+      if (modal) modal.style.display = "none";
+      _teacherModalAction = null;
+    }
+
+    function setTeacherModalStatus(msg, isError = false) {
+      const el = document.getElementById("teacher-modal-status");
+      if (!el) return;
+      el.style.color = isError ? "#f87171" : "#34d399";
+      el.textContent = msg;
+    }
+
+    // ── Rename student ─────────────────────────────────
+    function openTeacherRename(studentId, currentName) {
+      openTeacherModal({
+        title: "✏️ שינוי שם גיבור",
+        sub: `שם נוכחי: ${currentName}`,
+        showInput: true,
+        inputVal: currentName,
+        confirmLabel: "שמור שם",
+        onConfirm: async (newName) => {
+          if (!newName) { setTeacherModalStatus("יש להזין שם", true); return; }
+          if (newName.length < 2 || newName.length > 12) { setTeacherModalStatus("שם חייב להיות 2–12 תווים", true); return; }
+          if (!/^[A-Za-z]/.test(newName)) { setTeacherModalStatus("השם חייב להתחיל באות אנגלית", true); return; }
+          if (!/^[A-Za-z0-9_-]+$/.test(newName)) { setTeacherModalStatus("אותיות אנגלית, מספרים, _ או - בלבד", true); return; }
+          const { error } = await supabaseClient
+            .from("profiles")
+            .update({ display_name: newName })
+            .eq("id", studentId);
+          if (error) { setTeacherModalStatus("שגיאה: " + error.message, true); return; }
+          // Update local cache
+          const s = teacherAllStudents.find(s => s.id === studentId);
+          if (s) s.display_name = newName;
+          setTeacherModalStatus("✅ השם עודכן בהצלחה!");
+          renderTeacherStudents();
+          setTimeout(closeTeacherModal, 1200);
+        }
+      });
+    }
+
+    // ── Reset student ──────────────────────────────────
+    function openTeacherReset(studentId, studentName) {
+      openTeacherModal({
+        title: "🔄 איפוס תלמיד",
+        sub: `האם לאפס את ${studentName} חזרה להתחלה?\n\nXP, רמה, מילים ושלבים יתאפסו. הפעולה בלתי הפיכה.`,
+        showInput: false,
+        confirmLabel: "אפס",
+        confirmStyle: "linear-gradient(135deg,#dc2626,#ef4444)",
+        onConfirm: async () => {
+          const { error } = await supabaseClient
+            .from("profiles")
+            .update({
+              xp: 0,
+              level: 1,
+              words_learned: 0,
+              unlocked_stage: 1,
+              current_world: 1,
+              smash_best: 0,
+              last_daily_bonus_at: null
+            })
+            .eq("id", studentId);
+          if (error) { setTeacherModalStatus("שגיאה: " + error.message, true); return; }
+          // Also clear word progress for this user
+          await supabaseClient
+            .from("user_word_progress")
+            .delete()
+            .eq("user_id", studentId);
+          // Update local cache
+          const s = teacherAllStudents.find(s => s.id === studentId);
+          if (s) {
+            s.xp = 0; s.level = 1; s.words_learned = 0;
+            s.unlocked_stage = 1; s.current_world = 1;
+            s.smash_best = 0; s.last_daily_bonus_at = null;
+          }
+          setTeacherModalStatus("✅ התלמיד אופס בהצלחה!");
+          renderTeacherSummary();
+          renderTeacherStudents();
+          setTimeout(closeTeacherModal, 1200);
+        }
+      });
     }
 
     // Wire up teacher UI events after DOM is ready
