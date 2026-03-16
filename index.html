@@ -2576,113 +2576,140 @@ body.review-mode .world-pill[data-world].locked-world {
 /* ══════════════════════════════════════════════════════
    POKEMON EVOLUTION ANIMATION
 ══════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════
+   POKEMON EVOLUTION — compact modal
+══════════════════════════════════════════════════════ */
 #evo-overlay {
   position: fixed; inset: 0; z-index: 10000;
   display: flex; align-items: center; justify-content: center;
-  opacity: 0; transition: opacity 0.3s; direction: rtl; overflow: hidden;
+  background: rgba(5,11,22,0.82); backdrop-filter: blur(6px);
+  opacity: 0; transition: opacity 0.28s; padding: 20px;
 }
 #evo-overlay.evo-show { opacity: 1; }
-.evo-bg {
-  position: absolute; inset: 0; background: #000;
-  animation: evoBgPulse 1.8s ease-in-out infinite;
+
+.evo-card {
+  position: relative;
+  width: 100%; max-width: 340px;
+  border-radius: 24px;
+  overflow: hidden;
+  background: #070f1e;
+  border: 1.5px solid rgba(255,255,255,0.1);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.7);
+  display: flex; flex-direction: column; align-items: center;
+  padding: 28px 20px 22px;
+  gap: 10px; text-align: center; direction: rtl;
 }
-@keyframes evoBgPulse {
-  0%,100%{background:#000} 50%{background:#060a14}
+.evo-card-bg {
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at 50% 0%, rgba(251,191,36,0.12) 0%, transparent 65%);
+  animation: evoCardBg 2s ease-in-out infinite;
 }
-.evo-center {
-  position: relative; z-index: 2;
-  display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center;
+@keyframes evoCardBg {
+  0%,100%{opacity:0.6} 50%{opacity:1}
 }
 .evo-label {
-  font-size: 22px; font-weight: 900; color: #fbbf24;
-  letter-spacing: .06em; text-shadow: 0 0 20px rgba(251,191,36,.6);
-  animation: evoLabelPulse .9s ease-in-out infinite;
+  font-size: 13px; font-weight: 900; color: #fbbf24;
+  letter-spacing: .1em; text-transform: uppercase;
+  text-shadow: 0 0 14px rgba(251,191,36,.5);
+  animation: evoLabelPulse .85s ease-in-out infinite;
+  position: relative; z-index: 1;
 }
 @keyframes evoLabelPulse {
-  0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.75;transform:scale(.97)}
+  0%,100%{opacity:1} 50%{opacity:.6}
 }
 .evo-stage {
-  position: relative; width: 180px; height: 180px;
+  position: relative; width: 140px; height: 140px;
   display: flex; align-items: center; justify-content: center;
+  z-index: 1;
 }
 .evo-img {
-  width: 160px; height: 160px; object-fit: contain; transition: filter .15s;
-  filter: drop-shadow(0 0 20px rgba(255,255,255,.1));
+  width: 120px; height: 120px; object-fit: contain;
+  filter: drop-shadow(0 4px 16px rgba(0,0,0,0.5));
+  transition: filter .12s;
 }
-.evo-img.evo-silhouette-anim { animation: evoSilhouette 2.2s ease-in-out forwards; }
+.evo-img.evo-silhouette-anim { animation: evoSilhouette 2s ease-in-out forwards; }
 @keyframes evoSilhouette {
-  0%  {filter:drop-shadow(0 0 10px rgba(255,255,255,.1))}
-  20% {filter:brightness(0) invert(1) drop-shadow(0 0 30px rgba(255,255,255,.9))}
-  40% {filter:brightness(0) drop-shadow(0 0 20px rgba(100,180,255,.7))}
-  60% {filter:brightness(10) saturate(0) drop-shadow(0 0 40px rgba(255,255,255,1))}
-  80% {filter:brightness(50) saturate(0) drop-shadow(0 0 60px rgba(255,255,255,1))}
-  100%{filter:brightness(100) saturate(0) drop-shadow(0 0 80px rgba(255,255,255,1))}
+  0%  {filter:drop-shadow(0 4px 16px rgba(0,0,0,.5))}
+  25% {filter:brightness(0) drop-shadow(0 0 18px rgba(255,255,255,.8))}
+  55% {filter:brightness(8) saturate(0) drop-shadow(0 0 30px rgba(255,255,255,1))}
+  85% {filter:brightness(30) saturate(0) drop-shadow(0 0 50px rgba(255,255,255,1))}
+  100%{filter:brightness(80) saturate(0) drop-shadow(0 0 60px rgba(255,255,255,1))}
 }
-.evo-name { font-size:18px; font-weight:900; color:#e2e8f0; letter-spacing:.04em; }
-.evo-flash {
-  position:absolute; inset:0; background:white; opacity:0; pointer-events:none; z-index:5;
+.evo-name {
+  font-size: 15px; font-weight: 900; color: #e2e8f0;
+  letter-spacing: .04em; position: relative; z-index: 1;
 }
 .evo-particles {
-  position:absolute; inset:0; pointer-events:none; z-index:3; overflow:hidden;
+  position: absolute; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+  border-radius: 24px;
 }
 .evo-spark {
-  position:absolute; width:6px; height:6px; border-radius:50%;
-  background:#fbbf24; box-shadow:0 0 8px #fbbf24,0 0 16px #f59e0b;
-  animation:evoSpark linear forwards;
+  position: absolute; width: 5px; height: 5px; border-radius: 50%;
+  background: #fbbf24; box-shadow: 0 0 6px #fbbf24, 0 0 12px #f59e0b;
+  animation: evoSpark linear forwards;
 }
 @keyframes evoSpark {
   0%  {opacity:0;transform:scale(0)}
-  30% {opacity:1;transform:scale(1.4)}
-  100%{opacity:0;transform:scale(0) translateY(-40px)}
+  30% {opacity:1;transform:scale(1.5)}
+  100%{opacity:0;transform:scale(0) translateY(-35px)}
 }
+.evo-flash {
+  position: absolute; inset: 0; background: white; opacity: 0;
+  pointer-events: none; z-index: 10; border-radius: 24px;
+}
+
+/* ── Reveal panel ── */
 .evo-done-panel {
-  position:relative; z-index:6; flex-direction:column; align-items:center;
-  gap:12px; text-align:center; padding:0 24px;
-  animation:evoDoneIn .6s cubic-bezier(.34,1.56,.64,1) forwards;
+  display: none; flex-direction: column; align-items: center;
+  gap: 10px; width: 100%; position: relative; z-index: 2;
+  animation: evoDoneIn .55s cubic-bezier(.34,1.56,.64,1) forwards;
 }
 @keyframes evoDoneIn {
-  0%  {opacity:0;transform:scale(.6) translateY(20px)}
+  0%  {opacity:0;transform:scale(.65) translateY(12px)}
   100%{opacity:1;transform:scale(1) translateY(0)}
 }
 .evo-done-img-wrap {
-  position:relative; width:200px; height:200px;
-  display:flex; align-items:center; justify-content:center;
+  position: relative; width: 150px; height: 150px;
+  display: flex; align-items: center; justify-content: center;
 }
 .evo-done-img {
-  width:180px; height:180px; object-fit:contain;
-  animation:evoRevealImg .8s cubic-bezier(.34,1.56,.64,1) forwards;
-  filter:drop-shadow(0 0 30px rgba(251,191,36,.5));
+  width: 130px; height: 130px; object-fit: contain;
+  animation: evoRevealImg .75s cubic-bezier(.34,1.56,.64,1) forwards;
 }
 @keyframes evoRevealImg {
-  0%  {opacity:0;transform:scale(.3);filter:brightness(10) saturate(0)}
-  40% {opacity:1;filter:brightness(3) saturate(.3)}
-  70% {transform:scale(1.12);filter:brightness(1.4) saturate(.8)}
-  100%{transform:scale(1);filter:drop-shadow(0 0 30px rgba(251,191,36,.5))}
+  0%  {opacity:0;transform:scale(.2);filter:brightness(15) saturate(0)}
+  45% {opacity:1;filter:brightness(2.5) saturate(.4)}
+  72% {transform:scale(1.1);filter:brightness(1.3) saturate(.9)}
+  100%{transform:scale(1);filter:drop-shadow(0 0 22px rgba(251,191,36,.55))}
 }
 .evo-done-glow {
-  position:absolute; inset:-20px; border-radius:50%;
-  background:radial-gradient(circle,rgba(251,191,36,.35) 0%,transparent 70%);
-  animation:evoDoneGlow 1.5s ease-in-out infinite;
+  position: absolute; inset: -16px; border-radius: 50%;
+  background: radial-gradient(circle,rgba(251,191,36,.3) 0%,transparent 68%);
+  animation: evoDoneGlow 1.4s ease-in-out infinite;
 }
 @keyframes evoDoneGlow {
-  0%,100%{opacity:.6;transform:scale(.9)} 50%{opacity:1;transform:scale(1.1)}
+  0%,100%{opacity:.55;transform:scale(.9)} 50%{opacity:1;transform:scale(1.08)}
 }
-.evo-done-title { font-size:24px; font-weight:900; color:#fbbf24; text-shadow:0 0 24px rgba(251,191,36,.7); letter-spacing:.05em; }
-.evo-done-sub   { font-size:16px; font-weight:800; color:#e2e8f0; }
-.evo-done-sub2  { font-size:13px; color:#94a3b8; font-weight:700; }
+.evo-done-title {
+  font-size: 17px; font-weight: 900; color: #fbbf24;
+  text-shadow: 0 0 16px rgba(251,191,36,.6); letter-spacing: .05em;
+}
+.evo-done-sub  { font-size: 13px; font-weight: 800; color: #e2e8f0; }
+.evo-done-sub2 { font-size: 12px; color: #64748b; font-weight: 700; }
 .evo-done-btn {
-  margin-top:8px; width:200px; min-height:50px; font-size:20px; font-weight:900;
-  border-radius:16px; background:linear-gradient(135deg,#f59e0b,#fbbf24); color:#422006;
-  border:none; cursor:pointer; box-shadow:0 8px 24px rgba(245,158,11,.4);
-  animation:evoBtnPulse 1s ease-in-out infinite;
+  width: 100%; min-height: 46px; font-size: 17px; font-weight: 900;
+  border-radius: 14px; background: linear-gradient(135deg,#f59e0b,#fbbf24);
+  color: #422006; border: none; cursor: pointer;
+  box-shadow: 0 6px 18px rgba(245,158,11,.4);
+  animation: evoBtnPulse 1s ease-in-out infinite; margin-top: 4px;
 }
 @keyframes evoBtnPulse {
-  0%,100%{box-shadow:0 8px 24px rgba(245,158,11,.4)}
-  50%{box-shadow:0 8px 36px rgba(245,158,11,.7);transform:scale(1.02)}
+  0%,100%{box-shadow:0 6px 18px rgba(245,158,11,.4)}
+  50%{box-shadow:0 6px 28px rgba(245,158,11,.7);transform:translateY(-1px)}
 }
 /* ══════════════════════════════════════════════════════ */
 
-/* 9 — Smash best badge on button */
+/* 9 — Smash best badge on button *//* 9 — Smash best badge on button */
 
 /* ══════════════════════════════════════════
    STAGE PATH — שביל שלבים חדש (אפשרות ד)
@@ -3302,16 +3329,16 @@ body.review-mode .world-pill[data-world].locked-world {
     }
     .dq-list {
       display: none;
-      grid-template-columns: 1fr 1fr 1fr;
+      flex-direction: column;
       gap: 6px;
     }
-    .dq-list.dq-visible { display: grid; }
+    .dq-list.dq-visible { display: flex; }
     .dq-item {
       display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 4px;
-      padding: 8px 9px;
+      flex-direction: row;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
       border-radius: 12px;
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.08);
@@ -4506,16 +4533,14 @@ body.review-mode .world-pill[data-world].locked-world {
         const pct  = Math.round((prog / q.goal) * 100);
         return `
         <div class="dq-item${done ? " dq-done" : ""}">
-          <div class="dq-item-top">
-            <div class="dq-icon">${done ? "✅" : q.icon}</div>
-            <div class="dq-info">
-              <div class="dq-label">${q.label}</div>
+          <div class="dq-icon">${done ? "✅" : q.icon}</div>
+          <div class="dq-info" style="flex:1;min-width:0">
+            <div class="dq-label">${q.label}</div>
+            <div class="dq-progress-bar">
+              <div class="dq-progress-fill" style="width:${pct}%"></div>
             </div>
           </div>
-          <div class="dq-progress-bar">
-            <div class="dq-progress-fill" style="width:${pct}%"></div>
-          </div>
-          <div style="display:flex;justify-content:space-between;width:100%">
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0">
             <div class="dq-progress-text">${prog}/${q.goal}</div>
             <div class="dq-reward">${done ? "" : q.reward}</div>
           </div>
@@ -7405,125 +7430,115 @@ function updateHeroUI(profile) {
     }
 
     // ══════════════════════════════════════════════════════
-    // POKEMON-STYLE EVOLUTION ANIMATION
+    // POKEMON-STYLE EVOLUTION — compact modal card
     // ══════════════════════════════════════════════════════
     function showPokemonEvolution({ heroClass, gender, oldPath, newPath, level, isLegendary }) {
-      // Pre-load new image
       const preload = new Image();
       preload.src = newPath;
 
       const overlay = document.createElement("div");
       overlay.id = "evo-overlay";
       overlay.innerHTML = `
-        <div class="evo-bg"></div>
-        <div class="evo-center">
-          <div id="evo-label" class="evo-label">מה קורה?!</div>
-          <div class="evo-stage">
-            <img id="evo-img" class="evo-img" src="${oldPath}" alt="hero"/>
-            <div id="evo-silhouette" class="evo-silhouette"></div>
+        <div class="evo-card">
+          <div class="evo-card-bg"></div>
+          <div class="evo-particles" id="evo-particles"></div>
+          <div class="evo-flash" id="evo-flash"></div>
+
+          <!-- Phase 1 & 2: evolution in progress -->
+          <div id="evo-phase1" style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;position:relative;z-index:2">
+            <div id="evo-label" class="evo-label">מה קורה?!</div>
+            <div class="evo-stage">
+              <img id="evo-img" class="evo-img" src="${oldPath}" alt="hero"/>
+            </div>
+            <div id="evo-name" class="evo-name">${getClassLabel(heroClass)} מתפתח!</div>
           </div>
-          <div id="evo-name" class="evo-name">${getClassLabel(heroClass)} מתפתח!</div>
-        </div>
-        <div id="evo-flash" class="evo-flash"></div>
-        <div id="evo-particles" class="evo-particles"></div>
-        <div id="evo-done-panel" class="evo-done-panel" style="display:none">
-          <div id="evo-done-img-wrap" class="evo-done-img-wrap">
-            <img id="evo-done-img" src="${newPath}" alt="evolved" class="evo-done-img"/>
-            <div class="evo-done-glow"></div>
+
+          <!-- Phase 3: reveal -->
+          <div id="evo-done-panel" class="evo-done-panel">
+            <div class="evo-done-img-wrap">
+              <div class="evo-done-glow"></div>
+              <img id="evo-done-img" src="${newPath}" alt="evolved" class="evo-done-img"/>
+            </div>
+            <div class="evo-done-title">${isLegendary ? "👑 LEGENDARY FORM" : "✨ EVOLUTION!"}</div>
+            <div class="evo-done-sub">${getClassLabel(heroClass)} — Level ${level}</div>
+            <div class="evo-done-sub2">${isLegendary ? "צורה אגדית נפתחה!" : getEvolutionSubText(heroClass, level)}</div>
+            <button id="evo-done-btn" class="evo-done-btn">🔥 אדיר!</button>
           </div>
-          <div class="evo-done-title">${isLegendary ? "👑 LEGENDARY FORM" : "✨ EVOLUTION UNLOCKED"}</div>
-          <div class="evo-done-sub">Level ${level} — ${getClassLabel(heroClass)}</div>
-          <div class="evo-done-sub2">${isLegendary ? "צורה אגדית נפתחה!" : getEvolutionSubText(heroClass, level)}</div>
-          <button id="evo-done-btn" class="evo-done-btn">🔥 אדיר!</button>
-        </div>
-      `;
+        </div>`;
       document.body.appendChild(overlay);
 
-      const img      = overlay.querySelector("#evo-img");
-      const sil      = overlay.querySelector("#evo-silhouette");
-      const label    = overlay.querySelector("#evo-label");
-      const name     = overlay.querySelector("#evo-name");
-      const flash    = overlay.querySelector("#evo-flash");
-      const donePanel= overlay.querySelector("#evo-done-panel");
-      const doneBtn  = overlay.querySelector("#evo-done-btn");
-
-      // spawn sparkle particles continuously
+      const img       = overlay.querySelector("#evo-img");
+      const label     = overlay.querySelector("#evo-label");
+      const name      = overlay.querySelector("#evo-name");
+      const flash     = overlay.querySelector("#evo-flash");
+      const phase1    = overlay.querySelector("#evo-phase1");
+      const donePanel = overlay.querySelector("#evo-done-panel");
+      const doneBtn   = overlay.querySelector("#evo-done-btn");
       let particleInterval;
+
       function spawnEvoParticles() {
         const host = overlay.querySelector("#evo-particles");
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 2; i++) {
           const p = document.createElement("div");
           p.className = "evo-spark";
-          p.style.cssText = `left:${10 + Math.random()*80}%;top:${10+Math.random()*80}%;animation-delay:${Math.random()*0.4}s;animation-duration:${0.6+Math.random()*0.5}s`;
+          p.style.cssText = `left:${15+Math.random()*70}%;top:${15+Math.random()*70}%;animation-delay:${Math.random()*0.3}s;animation-duration:${0.55+Math.random()*0.45}s`;
           host.appendChild(p);
-          setTimeout(() => p.remove(), 1200);
+          setTimeout(() => p.remove(), 1100);
         }
       }
 
-      function doFlash(cb) {
-        flash.style.opacity = "1";
-        flash.style.transition = "opacity 0.05s";
+      function doFlash(duration = 60) {
+        flash.style.transition = "none";
+        flash.style.opacity = "0.92";
         setTimeout(() => {
-          flash.style.transition = "opacity 0.18s";
+          flash.style.transition = "opacity 0.14s";
           flash.style.opacity    = "0";
-          setTimeout(cb, 200);
-        }, 70);
+        }, duration);
       }
 
       function runEvolution() {
-        // Phase 1: שלב הכנה (0.8s)
-        particleInterval = setInterval(spawnEvoParticles, 220);
         overlay.classList.add("evo-show");
+        particleInterval = setInterval(spawnEvoParticles, 240);
 
+        // Phase 1 → silhouette
         setTimeout(() => {
-          // Phase 2: silhouette (בהירות לבנה) בדמות הישנה
           img.classList.add("evo-silhouette-anim");
-          name.textContent = getClassLabel(heroClass) + " מתפתח!";
           label.textContent = "...";
           playSound("evolution");
-        }, 800);
+        }, 600);
 
-        // Phase 3: flash sequence — 4 פלאשים מואצים
-        const flashTimes = [1600, 1900, 2150, 2350, 2500, 2620, 2720, 2800];
-        flashTimes.forEach(t => setTimeout(() => doFlash(() => {}), t));
+        // Flash sequence — accelerating
+        [1400, 1680, 1900, 2080, 2230, 2350, 2450, 2530].forEach((t, i) =>
+          setTimeout(() => doFlash(55 - i * 4), t)
+        );
 
+        // Final big flash → reveal
         setTimeout(() => {
-          // Phase 4: החלפה לדמות החדשה
           clearInterval(particleInterval);
-          img.style.display = "none";
-          sil.style.display = "none";
-
           flash.style.transition = "none";
           flash.style.opacity    = "1";
 
           setTimeout(() => {
-            // הצגת panel ה-reveal
+            phase1.style.display    = "none";
             donePanel.style.display = "flex";
-            flash.style.transition  = "opacity 0.55s";
+            flash.style.transition  = "opacity 0.5s";
             flash.style.opacity     = "0";
             playSound("worldunlock");
-            if (navigator.vibrate) navigator.vibrate([80, 30, 120, 30, 180]);
-            // stop bg particles
+            if (navigator.vibrate) navigator.vibrate([70, 25, 110, 25, 160]);
+            // burst particles on reveal
             overlay.querySelector("#evo-particles").innerHTML = "";
-            // spawn celebration burst
-            for (let i = 0; i < 18; i++) {
-              setTimeout(() => spawnEvoParticles(), i * 60);
-            }
-          }, 80);
-        }, 2900);
+            for (let i = 0; i < 14; i++)
+              setTimeout(spawnEvoParticles, i * 55);
+          }, 60);
+        }, 2650);
       }
 
       doneBtn.addEventListener("click", () => {
         clearInterval(particleInterval);
-        overlay.style.transition = "opacity 0.35s";
-        overlay.style.opacity    = "0";
-        setTimeout(() => {
-          overlay.remove();
-          updateHeroUI(currentProfile);
-        }, 370);
+        overlay.style.opacity = "0";
+        setTimeout(() => { overlay.remove(); updateHeroUI(currentProfile); }, 300);
       });
 
-      // small delay so DOM paints first
       requestAnimationFrame(() => requestAnimationFrame(runEvolution));
     }
 
