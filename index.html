@@ -973,6 +973,11 @@ function updateMiniStageProgress(world,stage,current,total){
     .celebration-modal.evolution-theme {
       background: radial-gradient(circle at top, rgba(74,222,128,0.22), rgba(15,23,42,0.97) 58%);
     }
+    .celebration-modal.prestige-theme {
+      background: radial-gradient(circle at top, rgba(250,204,21,0.35), rgba(251,146,60,0.18) 40%, rgba(15,23,42,0.97) 68%);
+      border-color: rgba(250,204,21,0.6);
+      box-shadow: 0 24px 80px rgba(250,204,21,0.22);
+    }
     .celebration-modal.fail-theme {
       background: radial-gradient(circle at top, rgba(248,113,113,0.18), rgba(15,23,42,0.97) 58%);
     }
@@ -2399,6 +2404,58 @@ function updateMiniStageProgress(world,stage,current,total){
 }
 
 /* 9 — Smash best badge on button */
+/* ═══════════════════════════════════
+   PRESTIGE SYSTEM
+═══════════════════════════════════ */
+.avatar-shell.prestige {
+  border-color: rgba(250,204,21,0.9) !important;
+  box-shadow:
+    0 0 0 3px rgba(250,204,21,0.25),
+    0 0 18px rgba(250,204,21,0.35),
+    inset 0 0 20px rgba(250,204,21,0.12) !important;
+  animation: prestigePulse 2.4s ease-in-out infinite;
+}
+@keyframes prestigePulse {
+  0%,100% { box-shadow: 0 0 0 3px rgba(250,204,21,0.25), 0 0 18px rgba(250,204,21,0.35), inset 0 0 20px rgba(250,204,21,0.12); }
+  50%      { box-shadow: 0 0 0 5px rgba(250,204,21,0.35), 0 0 30px rgba(250,204,21,0.55), inset 0 0 28px rgba(250,204,21,0.2); }
+}
+.prestige-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #1c1108;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 900;
+  padding: 2px 8px;
+  vertical-align: middle;
+  letter-spacing: 0.03em;
+}
+.prestige-badge-lb {
+  display: inline-flex;
+  align-items: center;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #1c1108;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 900;
+  padding: 2px 7px;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+.rarity-prestige {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b, #fbbf24);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 900;
+}
+@keyframes prestigeShimmer {
+  0%   { background-position: 0%; }
+  100% { background-position: 200%; }
+}
+
 .smash-lb-badge {
   display: inline-flex;
   align-items: center;
@@ -2494,6 +2551,16 @@ function updateMiniStageProgress(world,stage,current,total){
 @keyframes legendaryShimmer {
   0%,100% { box-shadow: 0 0 6px rgba(251,191,36,0.25); }
   50%      { box-shadow: 0 0 14px rgba(251,191,36,0.5); }
+}
+.rarity-prestige {
+  background: linear-gradient(135deg, rgba(250,204,21,0.3), rgba(251,146,60,0.25), rgba(250,204,21,0.3));
+  border-color: rgba(250,204,21,0.9) !important;
+  color: #fde68a;
+  animation: prestigeCardShimmer 1.8s ease-in-out infinite;
+}
+@keyframes prestigeCardShimmer {
+  0%,100% { box-shadow: 0 0 8px rgba(250,204,21,0.3), 0 0 0 1px rgba(250,204,21,0.4); }
+  50%      { box-shadow: 0 0 20px rgba(250,204,21,0.6), 0 0 0 2px rgba(250,204,21,0.7); }
 }
 
 /* Title unlock toast */
@@ -4133,6 +4200,10 @@ function updateMiniStageProgress(world,stage,current,total){
       { id:"word_warrior", emoji:"⚔️", label:"Word Warrior",   hint:"הגע ל-Level 10",     rarity:"uncommon",  cat:"level",   check:s=>s.level>=10 },
       { id:"elite_hero",   emoji:"🔮", label:"Elite Hero",     hint:"הגע ל-Level 20",     rarity:"rare",      cat:"level",   check:s=>s.level>=20 },
       { id:"legendary",    emoji:"👑", label:"Legendary",      hint:"הגע ל-Level 25",     rarity:"legendary", cat:"level",   check:s=>s.level>=25 },
+      // ── Prestige ───────────────────────────────────────
+      { id:"prestige_1",   emoji:"✦",  label:"Prestige I",     hint:"הגע ל-Prestige 1",   rarity:"prestige",  cat:"prestige",check:s=>s.level>=26 },
+      { id:"prestige_5",   emoji:"✦✦", label:"Prestige V",     hint:"הגע ל-Prestige 5",   rarity:"prestige",  cat:"prestige",check:s=>s.level>=30 },
+      { id:"prestige_max", emoji:"🌠", label:"Prestige X",     hint:"הגע ל-Prestige 10",  rarity:"prestige",  cat:"prestige",check:s=>s.level>=35 },
       // ── Words learned ──────────────────────────────────
       { id:"first_word",   emoji:"📖", label:"First Word",     hint:"למד מילה אחת",       rarity:"common",    cat:"words",   check:s=>s.words>=1   },
       { id:"bookworm",     emoji:"📚", label:"Bookworm",       hint:"למד 20 מילים",       rarity:"common",    cat:"words",   check:s=>s.words>=20  },
@@ -4159,7 +4230,7 @@ function updateMiniStageProgress(world,stage,current,total){
     ];
 
     const TITLE_CAT_LABELS = {
-      level:"דרגה", words:"מילים", journey:"מסע", smash:"Word Smash", streak:"רצף", special:"מיוחד"
+      level:"דרגה", words:"מילים", journey:"מסע", smash:"Word Smash", streak:"רצף", special:"מיוחד", prestige:"✦ Prestige"
     };
 
     function getTitleStats() {
@@ -4619,24 +4690,33 @@ function updateMiniStageProgress(world,stage,current,total){
       return "שלב 4 • Legendary Hero";
     }
 
+    const PRESTIGE_XP_PER_LEVEL = 600; // flat 600 XP per prestige level
+    const MAX_PRESTIGE_LEVEL = 10;      // P1 – P10
+
+    function isPrestige(level) { return level > 25; }
+    function getPrestigeLevel(level) { return Math.max(0, level - 25); }
+
     function xpForLevel(level) {
-      if (level >= 25) return 0;
+      if (level > 25) return PRESTIGE_XP_PER_LEVEL;
+      if (level === 25) return PRESTIGE_XP_PER_LEVEL; // bridge: first prestige costs same
       return 100 + (level * level * 4);
     }
 
     function computeLevelData(totalXp) {
       let level = 1;
       let remaining = Math.max(0, Number(totalXp || 0));
-      while (level < 25) {
+      const hardCap = 25 + MAX_PRESTIGE_LEVEL;
+      while (level < hardCap) {
         const needed = xpForLevel(level);
         if (remaining < needed) break;
         remaining -= needed;
         level += 1;
       }
+      const atCap = level >= hardCap;
       return {
         level,
-        xpInLevel: remaining,
-        xpNeeded: level >= 25 ? 1 : xpForLevel(level)
+        xpInLevel: atCap ? 0 : remaining,
+        xpNeeded: atCap ? 1 : xpForLevel(level)
       };
     }
 
@@ -4658,8 +4738,15 @@ function updateMiniStageProgress(world,stage,current,total){
       currentProfile.xp = Math.max(0, Number(currentProfile.xp || 0) + amount);
       currentProfile.level = getLevelFromXp(currentProfile.xp);
       if (currentProfile.level > previousLevel) {
+        const newLevel = currentProfile.level;
         playSound("levelup");
-        triggerLevelUpEffect(currentProfile.level);
+        if (isPrestige(newLevel)) {
+          const pLvl = getPrestigeLevel(newLevel);
+          triggerLevelUpEffect(`✦ PRESTIGE ${pLvl}`);
+          spawnBurstStars(12);
+        } else {
+          triggerLevelUpEffect(newLevel);
+        }
       }
       updateHeroUI(currentProfile);
       maybeShowEvolutionModal(previousLevel, currentProfile.level, currentProfile.avatar_class);
@@ -4677,7 +4764,19 @@ function getNextEvolutionLevel(level){
 function updateEvolutionHint(level){
   const el=document.getElementById("evolution-hint");
   if(!el) return;
+  if(isPrestige(level)){
+    const p = getPrestigeLevel(level);
+    el.textContent = p >= MAX_PRESTIGE_LEVEL ? "✦ MAX PRESTIGE" : `✦ Prestige ${p} • Next: P${p+1}`;
+    el.style.color = "#fbbf24";
+    return;
+  }
+  if(level===25){
+    el.textContent="✦ Max Level! XP → Prestige";
+    el.style.color="#fbbf24";
+    return;
+  }
   const next=getNextEvolutionLevel(level);
+  el.style.color="";
   if(!next){
     el.textContent="Max Evolution";
   }else{
@@ -4699,26 +4798,34 @@ function updateHeroUI(profile) {
       setText(id("player-class-tag"), profile.class_code || "");
       setText("hero-class-line", heroLine);
       setText("hero-stage-line", getStageLabel(level));
-      setText("level-label", `Level ${level}`);
-      setText("xp-label", level >= 25 ? "MAX LEVEL" : `${xpInLevel} / ${xpNeeded} XP`);
+      const prestigeLvl = getPrestigeLevel(level);
+      const isP = isPrestige(level);
+      const levelLabel = isP ? `✦ Prestige ${prestigeLvl}` : `Level ${level}`;
+      const xpLabel = (level >= 25 + MAX_PRESTIGE_LEVEL)
+        ? "MAX PRESTIGE"
+        : isP
+          ? `${xpInLevel} / ${xpNeeded} XP • Prestige ${prestigeLvl}`
+          : (level >= 25 ? "MAX LEVEL — Ready to Prestige!" : `${xpInLevel} / ${xpNeeded} XP`);
+      setText("level-label", levelLabel);
+      setText("xp-label", xpLabel);
       setWidth("xp-fill", progressWidth);
       setText("stat-xp", xp);
-      setText("stat-level", level);
+      setText("stat-level", isP ? `✦P${prestigeLvl}` : level);
       setText("stat-streak", streak);
-      setClassName("avatar-shell", `avatar-shell ${heroClass}`);
+      setClassName("avatar-shell", `avatar-shell ${heroClass}${isP ? " prestige" : ""}`);
       setImageSrc("hero-image", heroImagePath);
 
       setText("map-player-name", profile.display_name || "Hero");
       setText(id("map-class-tag"), profile.class_code || "");
       setText("map-hero-class-line", heroLine);
       setText("map-hero-stage-line", `${getStageLabel(level)} • ${getWorldData(currentWorld).name} • Stage ${unlockedStage} unlocked`);
-      setText("map-level-label", `Level ${level}`);
-      setText("map-xp-label", level >= 25 ? "MAX LEVEL" : `${xpInLevel} / ${xpNeeded} XP`);
+      setText("map-level-label", levelLabel);
+      setText("map-xp-label", xpLabel);
       setWidth("map-xp-fill", progressWidth);
-      setText("mobile-xp-level", `Level ${level}`);
-      setText("mobile-xp-text", level >= 25 ? "MAX LEVEL" : `${xpInLevel} / ${xpNeeded} XP • עוד ${Math.max(0, xpNeeded - xpInLevel)} XP`);
+      setText("mobile-xp-level", levelLabel);
+      setText("mobile-xp-text", (level >= 25 + MAX_PRESTIGE_LEVEL) ? "MAX PRESTIGE" : isP ? `${xpInLevel} / ${xpNeeded} XP` : (level >= 25 ? "MAX LEVEL — Ready to Prestige!" : `${xpInLevel} / ${xpNeeded} XP • עוד ${Math.max(0, xpNeeded - xpInLevel)} XP`));
       setWidth("mobile-xp-fill", progressWidth);
-      setClassName("map-avatar-shell", `avatar-shell ${heroClass}`);
+      setClassName("map-avatar-shell", `avatar-shell ${heroClass}${isP ? " prestige" : ""}`);
       setImageSrc("map-hero-image", heroImagePath);
       updateEvolutionHint(level);
 
@@ -5291,6 +5398,8 @@ function updateHeroUI(profile) {
         smashBestCombo = Math.max(smashBestCombo, smashCombo);
         updateSmashComboMeter();
         let xpGain = 2;
+        const pBonusSmash = getPrestigeLevel(currentProfile?.level || 1);
+        if (pBonusSmash > 0) xpGain += Math.ceil(pBonusSmash / 2);
         if (smashCombo > 0 && smashCombo % 5 === 0) xpGain += 3;
         // Smash uses world+stage 0 as its DR key
         xpGain = applyDR(xpGain);
@@ -5636,13 +5745,15 @@ function updateHeroUI(profile) {
         const worldIcon = ["🌿","🌊","🏞️","🏰","⚡","🔥"][worldNum - 1] || "🌿";
         const smashBest = player.smash_best || 0;
         const isMe = player.id === currentProfile?.id;
+        const pLvl = getPrestigeLevel(player.level || 1);
+        const prestigeHtml = pLvl > 0 ? `<span class="prestige-badge-lb">✦P${pLvl}</span>` : "";
         return `
         <div class="leader-row${isMe ? ' my-row' : ''}">
           <div class="leader-rank">${rank === 1 ? "👑" : rank}</div>
           <div class="leader-avatar"><img src="${heroSrc}" alt="Hero" /></div>
           <div>
-            <div class="leader-name">${safeName}${isMe ? ' <span style="color:#fbbf24;font-size:11px;">אתה</span>' : ""}</div>
-            <div class="leader-sub">${worldIcon} עולם ${worldNum} • 📖 ${player.words_learned || 0} מילים${smashBest > 0 ? ` • <span class="smash-lb-badge">⚡ ${smashBest}</span>` : ""} • רמה ${player.level || 1}</div>
+            <div class="leader-name">${prestigeHtml}${safeName}${isMe ? ' <span style="color:#fbbf24;font-size:11px;">אתה</span>' : ""}</div>
+            <div class="leader-sub">${worldIcon} עולם ${worldNum} • 📖 ${player.words_learned || 0} מילים${smashBest > 0 ? ` • <span class="smash-lb-badge">⚡ ${smashBest}</span>` : ""} • ${pLvl > 0 ? `✦P${pLvl}` : `רמה ${player.level || 1}`}</div>
           </div>
         </div>`;
       };
@@ -5736,16 +5847,18 @@ function updateHeroUI(profile) {
         const worldNum = player.current_world || 1;
         const worldIcon = ["🌿","🌊","🏞️","🏰","⚡","🔥"][worldNum - 1] || "🌿";
         const smashBest = player.smash_best || 0;
+        const pLvl = getPrestigeLevel(player.level || 1);
+        const prestigeHtml = pLvl > 0 ? `<span class="prestige-badge-lb">✦P${pLvl}</span>` : "";
         return `
         <div class="leader-row">
           <div class="leader-rank">${rank}</div>
           <div class="leader-avatar"><img src="${heroSrc}" alt="Hero" /></div>
           <div>
             ${titleHtml}
-            <div class="leader-name">${safeName} ${safeClass ? `<span class="leader-class-tag">${safeClass}</span>` : ""}</div>
+            <div class="leader-name">${prestigeHtml}${safeName} ${safeClass ? `<span class="leader-class-tag">${safeClass}</span>` : ""}</div>
             <div class="leader-sub">${worldIcon} עולם ${worldNum} • 📖 ${player.words_learned || 0} מילים${smashBest > 0 ? ` • <span class="smash-lb-badge">⚡ ${smashBest}</span>` : ""}</div>
           </div>
-          <div class="leader-level">רמה ${player.level || 1}</div>
+          <div class="leader-level">${pLvl > 0 ? `✦P${pLvl}` : `רמה ${player.level || 1}`}</div>
         </div>`;
       };
 
@@ -6354,21 +6467,44 @@ function updateHeroUI(profile) {
     }
 
     function maybeShowEvolutionModal(previousLevel, newLevel, heroClass) {
+      // Regular evolution milestones
       const milestones = [5, 10, 15, 20, 25];
       const unlocked = milestones.find(level => previousLevel < level && newLevel >= level && level > lastShownEvolutionLevel);
-      if (!unlocked) return;
+      if (unlocked) {
+        saveLastShownEvolutionLevel(unlocked);
+        playSound("evolution");
+        showCelebration({
+          title: getEvolutionTitle(unlocked),
+          subText: getEvolutionSubText(heroClass, unlocked),
+          emoji: unlocked >= 25 ? "👑" : "🦸",
+          theme: "evolution-theme",
+          symbols: ["✨", "🧬", "⭐", "⚡"],
+          autoCloseMs: 1700,
+          buttonText: "איזה כיף!"
+        });
+        return;
+      }
 
-      saveLastShownEvolutionLevel(unlocked);
-      playSound("evolution");
-      showCelebration({
-        title: getEvolutionTitle(unlocked),
-        subText: getEvolutionSubText(heroClass, unlocked),
-        emoji: unlocked >= 25 ? "👑" : "🦸",
-        theme: "evolution-theme",
-        symbols: ["✨", "🧬", "⭐", "⚡"],
-        autoCloseMs: 1700,
-        buttonText: "איזה כיף!"
-      });
+      // Prestige milestones: every new prestige level
+      if (isPrestige(newLevel) && newLevel > previousLevel) {
+        const pLvl = getPrestigeLevel(newLevel);
+        // Only show modal on first hit of each prestige level
+        const pKey = `wh_prestige_shown_${currentProfile?.id || "guest"}_p${pLvl}`;
+        if (localStorage.getItem(pKey)) return;
+        localStorage.setItem(pKey, "1");
+        playSound("evolution");
+        showCelebration({
+          title: `✦ PRESTIGE ${pLvl}`,
+          subText: pLvl >= MAX_PRESTIGE_LEVEL
+            ? `הגעת ל-MAX PRESTIGE! אתה אלוף מילים אגדי!`
+            : `הגבור שלך עלה ל-Prestige ${pLvl}! המשך לצבור XP.`,
+          emoji: pLvl >= MAX_PRESTIGE_LEVEL ? "🌠" : "✦",
+          theme: "prestige-theme",
+          symbols: ["✦", "🌟", "⚡", "👑"],
+          autoCloseMs: 2000,
+          buttonText: "מדהים!"
+        });
+      }
     }
 
     function closeStageComplete() {
@@ -6580,10 +6716,13 @@ function updateHeroUI(profile) {
     // ENHANCED VISUAL EFFECTS
     // ══════════════════════════════════════════════════════
 
-    function triggerLevelUpEffect(level) {
+    function triggerLevelUpEffect(levelOrText) {
       const banner = document.getElementById("levelup-banner");
       if (!banner) return;
-      banner.innerHTML = `⬆️ LEVEL UP!<br><span style="font-size:18px">רמה ${level}</span>`;
+      const isStr = typeof levelOrText === "string" && isNaN(Number(levelOrText));
+      banner.innerHTML = isStr
+        ? `${levelOrText}!<br><span style="font-size:16px">✦ Prestige Unlocked</span>`
+        : `⬆️ LEVEL UP!<br><span style="font-size:18px">רמה ${levelOrText}</span>`;
       banner.style.display = "block";
       banner.style.animation = "none";
       void banner.offsetWidth;
@@ -6709,6 +6848,9 @@ async function handleAnswer(buttonEl, selectedAnswer) {
       updateQuestProgress("streak", streak);
 
       let xpGain = 5;
+      // Prestige bonus: +1 XP per prestige level
+      const pBonus = getPrestigeLevel(currentProfile?.level || 1);
+      if (pBonus > 0) xpGain += pBonus;
       if (streak > 0 && streak % 5 === 0) xpGain += 10;
       if (currentQuestion.isRare) xpGain += 2;
       // Apply diminishing returns for repeated stage plays today
