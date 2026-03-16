@@ -3452,7 +3452,9 @@ function updateMiniStageProgress(world,stage,current,total){
 
     function updateSmashBtnBadge() {
       if (!wordSmashBtn) return;
-      const best = getWordSmashBestScore();
+      const localBest = getWordSmashBestScore();
+      const dbBest = Number(currentProfile?.smash_best || 0);
+      const best = Math.max(localBest, dbBest);
       wordSmashBtn.innerHTML = best > 0
         ? `⚡ Word Smash <span class="smash-best-badge">🏆 ${best}</span>`
         : "⚡ Word Smash";
@@ -4638,6 +4640,7 @@ function updateMiniStageProgress(world,stage,current,total){
       activeScreenName = name;
       if (name === "map-screen") {
         renderDailyQuests();
+        updateSmashBtnBadge();
       }
       if (name === "game-screen") {
         ensureEffectsHost();
