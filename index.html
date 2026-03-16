@@ -21,6 +21,23 @@
 
     * { box-sizing: border-box; }
 
+    :focus-visible {
+      outline: 3px solid rgba(251,191,36,0.95);
+      outline-offset: 3px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
@@ -426,15 +443,12 @@
       display: grid;
       gap: 10px;
       margin-top: 12px;
-      max-height: 760px;
       overflow-y: auto;
       padding-left: 2px;
     }
 
     .leader-row {
       display: grid;
-      grid-template-columns: 44px 56px 1fr 80px;
-      gap: 10px;
       align-items: center;
       background: rgba(255,255,255,0.08);
       border-radius: 16px;
@@ -448,9 +462,6 @@
     }
 
     .leader-avatar {
-      width: 56px;
-      height: 56px;
-      border-radius: 16px;
       overflow: hidden;
       border: 1px solid rgba(255,255,255,0.12);
       background: rgba(255,255,255,0.08);
@@ -701,35 +712,9 @@
       content: "−";
     }
 
-    .leaderboard-list {
-      margin-top: 14px;
+    /* Map-panel leaderboard is more compact than the full modal */
+    .leaderboard-panel .leaderboard-list {
       max-height: 340px;
-      overflow: auto;
-      padding-left: 2px;
-    }
-
-    .leader-row {
-      grid-template-columns: 36px 48px 1fr 72px;
-      gap: 8px;
-      padding: 10px;
-    }
-
-    .leader-rank {
-      font-size: 18px;
-    }
-
-    .leader-avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
-    }
-
-    .leader-name {
-      font-size: 16px;
-    }
-
-    .leader-level {
-      font-size: 14px;
     }
 
     @media (min-width: 900px) {
@@ -1386,7 +1371,7 @@
 
       .stage-node {
         width: auto;
-        gap: 4px;
+        gap: 0;
       }
 
       .stage-node::before {
@@ -1877,7 +1862,7 @@
 .leader-row.my-row { background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.25); }
 
 
-/* UI cleanup v22 */
+/* ── Leaderboard layout — canonical definition ───────── */
 .leader-row{
   grid-template-columns: 44px 56px 1fr;
   grid-template-areas:
@@ -1885,13 +1870,15 @@
     "rank avatar sub"
     "rank avatar level";
   align-items:center;
+  gap: 8px;
+  padding: 10px;
 }
-.leader-rank{grid-area:rank;}
-.leader-avatar{grid-area:avatar;}
-.leader-row > div:nth-child(3){grid-area:name;}
-.leader-level{grid-area:level; text-align:right; color:#f8fafc; margin-top:4px;}
-.leader-name{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
-.leader-sub{margin-top:4px;}
+.leader-rank{ grid-area:rank; font-size:18px; }
+.leader-avatar{ grid-area:avatar; width:48px; height:48px; border-radius:14px; }
+.leader-row > div:nth-child(3){ grid-area:name; }
+.leader-level{ grid-area:level; text-align:right; color:#f8fafc; margin-top:4px; font-size:14px; }
+.leader-name{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.leader-sub{ margin-top:4px; }
 .rank-box{
   margin-top:14px;
   text-align:center;
@@ -1912,10 +1899,19 @@
 }
 
 
-/* Speed + cleaner question UI */
-#stats-panel { display:none !important; }
-#game-screen .panel { margin-bottom: 10px; }
-#stage-note { margin-top: 6px; font-size: 12px; }
+/* ── Hidden UI elements (kept in DOM for JS access) ──── */
+#stats-panel          { display: none; }
+#stage-label          { display: none; }
+#stage-progress-panel { display: none; }
+
+.stage-header,
+.question-progress,
+.stage-name,
+.mastered-counter     { display: none; }
+
+/* top-progress-mini: hidden by default, shown only in boss-mode via JS class */
+.top-progress-mini { display: none; }
+#game-screen.boss-mode .top-progress-mini { display: block; }
 
 
 /* v27 safe world cleanup */
@@ -1970,32 +1966,9 @@ body.review-mode .world-pill.locked-world {
   font-weight:800;
   margin-top:2px;
 }
-.top-progress-mini{
-  display:none !important;
-}
-#game-screen.boss-mode .top-progress-mini{
-  display:block !important;
-}
-
-
-#stage-label { display: none !important; }
-
-/* Hide stage UI but keep DOM for JS */
-.stage-header,
-.question-progress,
-.stage-name,
-.mastered-counter {
-  display:none !important;
-}
-
-/* Hide the entire stage progress row, keep DOM so JS still works */
-#stage-progress-panel {
-  display:none !important;
-}
-
 /* Bigger word for cleaner UI */
-.question-word{
-  font-size:3.4rem !important;
+.question-word {
+  font-size: 3.4rem;
 }
 
 
@@ -2201,7 +2174,7 @@ body.review-mode .world-pill.locked-world {
 }
 
 .stage-node {
-  gap: 5px;
+  gap: 0;
 }
 
 .stage-orb {
@@ -2297,7 +2270,7 @@ body.review-mode .world-pill.locked-world {
 
   .stage-node {
     width: auto;
-    gap: 4px;
+    gap: 0;
   }
 
   .stage-orb {
@@ -2377,12 +2350,16 @@ body.review-mode .world-pill.locked-world {
 
 /* 2 — Stage map star ratings */
 .stage-stars {
+  position: absolute;
+  bottom: -14px;
+  left: 50%;
+  transform: translateX(-50%);
   font-size: 9px;
   letter-spacing: -1px;
-  height: 11px;
   line-height: 1;
   color: #fbbf24;
-  min-height: 11px;
+  white-space: nowrap;
+  pointer-events: none;
 }
 .stage-stars.dim { color: rgba(251,191,36,0.28); }
 
@@ -2623,7 +2600,7 @@ body.review-mode .world-pill[data-world].locked-world {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
+  gap: 0;
   flex: 0 0 auto;
   width: auto;
   background: transparent;
@@ -2707,14 +2684,6 @@ body.review-mode .world-pill[data-world].locked-world {
   display: flex; align-items: center; justify-content: center;
   z-index: 2;
 }
-.stage-stars {
-  font-size: 8px;
-  letter-spacing: -1px;
-  color: #f59e0b;
-  min-height: 10px;
-  line-height: 1;
-}
-.stage-stars.dim { color: rgba(251,191,36,0.22); }
 .stage-conn {
   flex: 1 1 0;
   min-width: 4px;
@@ -2722,7 +2691,6 @@ body.review-mode .world-pill[data-world].locked-world {
   border-radius: 2px;
   background: rgba(255,255,255,0.1);
   align-self: center;
-  margin-bottom: 15px;
   transition: background 0.25s;
 }
 .stage-conn.done       { background: rgba(52,211,153,0.65); }
@@ -3453,14 +3421,55 @@ body.review-mode .world-pill[data-world].locked-world {
       white-space: nowrap;
       animation: questToast 2.5s ease-out forwards;
     }
+
+    /* ── Teacher avatar-picker grid ───────────────────── */
+    .avatar-option {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 6px;
+      border-radius: 16px;
+      cursor: pointer;
+      background: rgba(255,255,255,0.07);
+      border: 2px solid rgba(255,255,255,0.1);
+      transition: background 0.18s, border-color 0.18s;
+      color: #cbd5e1;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .avatar-option.selected {
+      background: linear-gradient(135deg, rgba(168,85,247,0.3), rgba(96,165,250,0.25));
+      border-color: rgba(168,85,247,0.9);
+      color: #e9d5ff;
+    }
+    .avatar-option img {
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+      pointer-events: none;
+      display: block;
+    }
+    .avatar-option .avatar-check {
+      display: none;
+      font-size: 10px;
+      color: #a78bfa;
+      font-weight: 900;
+      pointer-events: none;
+    }
+    .avatar-option.selected .avatar-check { display: block; }
+    .avatar-option span { pointer-events: none; }
+
+    /* ── Game screen panel spacing ────────────────────── */
+    #game-screen .panel { margin-bottom: 10px; }
+    #stage-note { margin-top: 6px; font-size: 12px; }
 </style>
-</head>
 <body>
   <div class="app">
     <div id="combo-break-flash"></div>
     <div id="levelup-banner"></div>
     <div id="quest-toast"></div>
-    <div id="auth-screen" class="screen active">
+    <div id="auth-screen" class="screen active" data-screen="auth-screen" aria-hidden="false">
       <div class="auth-wrap">
         <div class="panel auth-panel">
           <div class="title">Word Heroes</div>
@@ -3475,11 +3484,11 @@ body.review-mode .world-pill[data-world].locked-world {
           </div>
           <button id="login-btn" class="auth-login-btn">התחברות</button>
           <button id="signup-btn" class="auth-signup-btn">אין לי משתמש עדיין — הרשמה</button>
-          <div id="message" class="message info"></div>
+          <div id="message" class="message info" aria-live="polite" role="status"></div>
 
           <!-- Discreet teacher access -->
           <div style="margin-top:16px; text-align:center;">
-            <button id="teacher-toggle-btn" style="
+            <button id="teacher-toggle-btn" type="button" aria-label="פתח כניסת מורה" aria-expanded="false" style="
               background:none; border:none; box-shadow:none;
               color:rgba(255,255,255,0.18); font-size:11px; font-weight:600;
               cursor:pointer; padding:4px 8px; width:auto; margin:0;
@@ -3487,14 +3496,14 @@ body.review-mode .world-pill[data-world].locked-world {
             ">🏫</button>
           </div>
           <div id="teacher-code-panel" style="display:none; margin-top:8px;">
-            <input id="teacher-code-input" type="password" placeholder="קוד גישה" autocomplete="off"
+            <input id="teacher-code-input" type="password" placeholder="קוד גישה" aria-label="קוד גישה למורה" autocomplete="off"
               style="margin-top:0; font-size:14px; text-align:center; letter-spacing:0.1em;" />
           </div>
         </div>
       </div>
     </div>
 
-    <div id="setup-screen" class="screen">
+    <div id="setup-screen" class="screen" data-screen="setup-screen" aria-hidden="true">
       <div class="panel">
         <div class="title">בחר גיבור</div>
         <div class="subtitle">בחר קלאס ומין כדי לפתוח את העולם הראשון</div>
@@ -3557,7 +3566,7 @@ body.review-mode .world-pill[data-world].locked-world {
       </div>
     </div>
 
-    <div id="map-screen" class="screen">
+    <div id="map-screen" class="screen" data-screen="map-screen" aria-hidden="true">
       <div id="review-mode-banner" class="teacher-review-banner">
         🎮 Review Mode — כל השלבים פתוחים
         <button class="teacher-review-exit" onclick="exitReviewMode()">יציאה</button>
@@ -3652,7 +3661,7 @@ body.review-mode .world-pill[data-world].locked-world {
       </div>
     </div>
 
-    <div id="game-screen" class="screen">
+    <div id="game-screen" class="screen" data-screen="game-screen" aria-hidden="true">
       <div class="top-progress-mini">
         <div class="xp-row">
           <span id="top-stage-label">Stage 1</span>
@@ -3740,7 +3749,7 @@ body.review-mode .world-pill[data-world].locked-world {
         <div id="answers" class="answers"></div>
         <div id="combo-banner" class="combo-banner"></div>
         <div id="tip-banner" class="tip-banner"></div>
-<div id="game-message" class="message info"></div>
+<div id="game-message" class="message info" aria-live="polite" role="status"></div>
       </div>
 
       <div id="game-effects-layer" aria-hidden="true"></div>
@@ -3751,8 +3760,8 @@ body.review-mode .world-pill[data-world].locked-world {
     </div>
   </div>
 
-    <div id="stage-complete-overlay" class="overlay">
-      <div id="celebration-modal" class="modal celebration-modal stage-theme">
+    <div id="stage-complete-overlay" class="overlay" aria-hidden="true">
+      <div id="celebration-modal" class="modal celebration-modal stage-theme" role="dialog" aria-modal="true" aria-labelledby="celebration-title" aria-describedby="celebration-sub">
         <div id="celebration-burst" class="celebration-burst"></div>
         <div id="celebration-emoji" class="celebration-emoji">🎉</div>
         <div id="celebration-title" class="modal-title">STAGE COMPLETE</div>
@@ -3763,10 +3772,10 @@ body.review-mode .world-pill[data-world].locked-world {
     </div>
 
     <!-- Title selection modal -->
-    <div id="title-modal-overlay">
-      <div id="title-modal">
+    <div id="title-modal-overlay" aria-hidden="true">
+      <div id="title-modal" role="dialog" aria-modal="true" aria-labelledby="title-modal-heading">
         <div class="title-modal-header">
-          <div class="title-modal-title">🏅 התארים שלך</div>
+          <div class="title-modal-title" id="title-modal-heading">🏅 התארים שלך</div>
           <button class="title-modal-close" id="close-title-modal">✕</button>
         </div>
         <div id="title-grid-container" class="title-grid"></div>
@@ -3777,9 +3786,9 @@ body.review-mode .world-pill[data-world].locked-world {
     <div id="title-toast" class="title-toast">🏅 <span id="title-toast-text"></span></div>
 
     <div id="leaderboard-overlay" class="overlay" aria-hidden="true">
-      <div id="leaderboard-modal" class="modal leaderboard-modal">
-        <div class="modal-title">🏆 הלוח המלא</div>
-        <div class="modal-sub">20 השחקנים המובילים כרגע</div>
+      <div id="leaderboard-modal" class="modal leaderboard-modal" role="dialog" aria-modal="true" aria-labelledby="leaderboard-modal-title" aria-describedby="leaderboard-modal-sub">
+        <div class="modal-title" id="leaderboard-modal-title">🏆 הלוח המלא</div>
+        <div class="modal-sub" id="leaderboard-modal-sub">20 השחקנים המובילים כרגע</div>
         <div id="leaderboard-modal-list" class="leaderboard-modal-list"></div>
         <button id="close-leaderboard-btn" class="secondary">סגירה</button>
       </div>
@@ -3788,7 +3797,7 @@ body.review-mode .world-pill[data-world].locked-world {
     <!-- ══════════════════════════════════════
          TEACHER DASHBOARD SCREEN
     ══════════════════════════════════════ -->
-    <div id="teacher-screen" class="screen">
+    <div id="teacher-screen" class="screen" data-screen="teacher-screen" aria-hidden="true">
       <div style="max-width:700px; margin:0 auto;">
 
         <div class="panel" style="text-align:center; padding:16px 18px 12px;">
@@ -3824,7 +3833,7 @@ body.review-mode .world-pill[data-world].locked-world {
         </div>
 
         <!-- Teacher Action Modal -->
-        <div id="teacher-action-modal" style="
+        <div id="teacher-action-modal" role="dialog" aria-modal="true" aria-labelledby="teacher-modal-title" aria-describedby="teacher-modal-sub" aria-hidden="true" style="
           display:none; position:fixed; inset:0; background:rgba(2,8,23,0.82);
           z-index:999; align-items:center; justify-content:center; padding:20px;
         ">
@@ -3849,7 +3858,7 @@ body.review-mode .world-pill[data-world].locked-world {
         </div>
 
         <!-- Teacher Avatar Picker Modal -->
-        <div id="teacher-avatar-modal" style="
+        <div id="teacher-avatar-modal" role="dialog" aria-modal="true" aria-labelledby="teacher-avatar-modal-title" aria-describedby="teacher-avatar-modal-sub" aria-hidden="true" style="
           display:none; position:fixed; inset:0; background:rgba(2,8,23,0.88);
           z-index:1000; align-items:center; justify-content:center; padding:20px;
         ">
@@ -3858,7 +3867,7 @@ body.review-mode .world-pill[data-world].locked-world {
             border:1px solid rgba(255,255,255,0.12); border-radius:24px;
             padding:24px; max-width:420px; width:100%; text-align:center;
           ">
-            <div style="font-size:22px;font-weight:900;margin-bottom:4px;">🎭 שינוי דמות</div>
+            <div id="teacher-avatar-modal-title" style="font-size:22px;font-weight:900;margin-bottom:4px;">🎭 שינוי דמות</div>
             <div id="teacher-avatar-modal-sub" style="font-size:13px;color:#94a3b8;margin-bottom:16px;"></div>
             <!-- Hero grid -->
             <div id="teacher-avatar-grid" style="
@@ -3907,6 +3916,205 @@ body.review-mode .world-pill[data-world].locked-world {
       if (el) el.src = src;
     };
 
+    const storage = {
+      get(key, fallback = null) {
+        try {
+          const value = localStorage.getItem(key);
+          return value === null ? fallback : value;
+        } catch (error) {
+          console.warn("localStorage read failed:", key, error);
+          return fallback;
+        }
+      },
+      set(key, value) {
+        try {
+          localStorage.setItem(key, String(value));
+          return true;
+        } catch (error) {
+          console.warn("localStorage write failed:", key, error);
+          return false;
+        }
+      },
+      remove(key) {
+        try {
+          localStorage.removeItem(key);
+          return true;
+        } catch (error) {
+          console.warn("localStorage remove failed:", key, error);
+          return false;
+        }
+      }
+    };
+
+    const session = {
+      get(key, fallback = null) {
+        try {
+          const value = sessionStorage.getItem(key);
+          return value === null ? fallback : value;
+        } catch (error) {
+          console.warn("sessionStorage read failed:", key, error);
+          return fallback;
+        }
+      },
+      set(key, value) {
+        try {
+          sessionStorage.setItem(key, String(value));
+          return true;
+        } catch (error) {
+          console.warn("sessionStorage write failed:", key, error);
+          return false;
+        }
+      },
+      remove(key) {
+        try {
+          sessionStorage.removeItem(key);
+          return true;
+        } catch (error) {
+          console.warn("sessionStorage remove failed:", key, error);
+          return false;
+        }
+      }
+    };
+
+
+
+    // =========================
+    // App structure helpers
+    // =========================
+    const AppSections = Object.freeze({
+      AUTH: "auth",
+      PROFILE: "profile",
+      MAP: "map",
+      GAMEPLAY: "gameplay",
+      SMASH: "smash",
+      TEACHER: "teacher",
+      PERSISTENCE: "persistence",
+      UI: "ui"
+    });
+
+    const storageJson = {
+      get(key, fallback = null) {
+        const raw = storage.get(key, null);
+        if (raw === null) return fallback;
+        try {
+          return JSON.parse(raw);
+        } catch (error) {
+          console.warn("localStorage JSON parse failed:", key, error);
+          return fallback;
+        }
+      },
+      set(key, value) {
+        try {
+          return storage.set(key, JSON.stringify(value));
+        } catch (error) {
+          console.warn("localStorage JSON stringify failed:", key, error);
+          return false;
+        }
+      }
+    };
+
+    function runSafely(section, fn, fallback = null) {
+      try {
+        return fn();
+      } catch (error) {
+        console.error(`[${section}]`, error);
+        return fallback;
+      }
+    }
+
+    function withAnimationFrame(callback) {
+      return requestAnimationFrame(() => runSafely(AppSections.UI, callback));
+    }
+
+    const SCREEN_IDS = ["auth-screen", "setup-screen", "map-screen", "game-screen", "teacher-screen"];
+    const TEACHER_SESSION_KEY = "wordheroes_teacher_session";
+    const DIALOG_SELECTOR = '[role="dialog"][aria-modal="true"]';
+    let activeDialog = null;
+    let lastFocusedElement = null;
+    let activeDialogCleanup = null;
+
+    function getFocusableElements(container) {
+      if (!container) return [];
+      return Array.from(container.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'))
+        .filter(el => !el.disabled && el.getAttribute('aria-hidden') !== 'true' && el.offsetParent !== null);
+    }
+
+    function trapFocusInDialog(dialog) {
+      if (!dialog) return () => {};
+      const onKeydown = (event) => {
+        if (event.key === 'Escape') {
+          closeActiveDialog();
+          return;
+        }
+        if (event.key !== 'Tab') return;
+        const focusable = getFocusableElements(dialog);
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        const current = document.activeElement;
+        if (event.shiftKey && current === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && current === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      };
+      document.addEventListener('keydown', onKeydown);
+      return () => document.removeEventListener('keydown', onKeydown);
+    }
+
+    function setActiveDialog(dialog, fallbackFocusEl = null) {
+      if (activeDialogCleanup) {
+        activeDialogCleanup();
+        activeDialogCleanup = null;
+      }
+      if (!dialog) {
+        activeDialog = null;
+        document.body.classList.remove('dialog-open');
+        if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+          lastFocusedElement.focus();
+        }
+        lastFocusedElement = null;
+        return;
+      }
+      lastFocusedElement = document.activeElement;
+      activeDialog = dialog;
+      dialog.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('dialog-open');
+      activeDialogCleanup = trapFocusInDialog(dialog);
+      const focusTarget = fallbackFocusEl || getFocusableElements(dialog)[0] || dialog;
+      withAnimationFrame(() => focusTarget.focus?.());
+    }
+
+    function closeActiveDialog() {
+      if (!activeDialog) return;
+      if (activeDialog === leaderboardOverlay) return closeLeaderboardModal();
+      if (activeDialog === overlay) return closeCelebration();
+      if (activeDialog.id === 'teacher-action-modal') return closeTeacherModal();
+      if (activeDialog.id === 'teacher-avatar-modal') return closeTeacherAvatarModal();
+      if (activeDialog.id === 'title-modal-overlay') return closeTitleModal?.();
+      setActiveDialog(null);
+    }
+
+    function updateScreenVisibility(activeId) {
+      SCREEN_IDS.forEach((screenId) => {
+        const screen = document.getElementById(screenId);
+        if (!screen) return;
+        const isActive = screenId === activeId;
+        screen.classList.toggle('active', isActive);
+        screen.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+        screen.hidden = !isActive;
+      });
+    }
+
+    function configureStaticAccessibility() {
+      document.querySelectorAll('.overlay').forEach((el) => el.setAttribute('aria-hidden', el.classList.contains('show') ? 'false' : 'true'));
+      const teacherToggle = document.getElementById('teacher-toggle-btn');
+      const teacherPanel = document.getElementById('teacher-code-panel');
+      if (teacherToggle && teacherPanel) teacherToggle.setAttribute('aria-controls', 'teacher-code-panel');
+    }
+
     const authScreen = id("auth-screen");
     const setupScreen = id("setup-screen");
     const mapScreen = id("map-screen");
@@ -3949,58 +4157,163 @@ body.review-mode .world-pill[data-world].locked-world {
     const nameErrorEl = id("name-error");
     const soundToggleBtn = id("sound-toggle-btn");
 
+    const dom = Object.freeze({
+      screens: { authScreen, setupScreen, mapScreen, gameScreen },
+      feedback: { messageEl, gameMessageEl, comboBanner, tipBanner, correctionNoteEl },
+      gameplay: {
+        answersEl,
+        questionSubEl,
+        questionModeEl,
+        questionWordEl,
+        stageFillEl,
+        topStageLabelEl,
+        topQuestionCounterEl,
+        topStageFillEl,
+        questionCounterEl,
+        stageLabelEl,
+        stageNoteEl,
+        stageMapEl,
+        journeyStartBtn,
+        wordSmashBtn
+      },
+      overlays: { leaderboardOverlay, overlay, celebrationModal },
+      teacher: { gradeSelectEl, classNumberSelectEl, nameErrorEl },
+      controls: { soundToggleBtn, openLeaderboardBtn, closeLeaderboardBtn, celebrationBtn }
+    });
+
     let currentProfile = null;
     let isReviewMode = false;
     let reviewModeSnapshot = null;
-    let currentQuestion = null;
-    let streak = 0;
-    let answeredCurrent = false;
-    let autoNextTimer = null;
-    let currentWorld = 1;
-    let currentStage = 1;
-    let unlockedStage = 1;
-    let selectedStage = 1;
-    let stageQuestionIndex = 0;
-    let stageQuestionTotal = 10;
-    let stageWords = [];
-    let stageXpGained = 0;
-    let stageWrongAnswers = 0;
-    let consecutiveWrongAnswers = 0;
-    let dailyBonusAwardedThisSession = false;
-    let lastShownEvolutionLevel = 0;
-    let stageMasteryMap = {};
-    let stageMasteredWordIds = new Set();
-    let bossBattleStats = null;
-    let celebrationTimer = null;
-    let celebrationCloseHandler = null;
     let activeScreenName = document.querySelector(".screen.active")?.id || "auth-screen";
-    let celebrationFlowId = 0;
-    let cachedStageKey = "";
-    let choicePoolCacheKey = "";
-    let unlockedChoiceWords = [];
-    let stageQuestionQueue = [];
-    let lastQuestionWordId = null;
     let leaderboardCache = { data: null, html: [], ts: 0 };
     const LEADERBOARD_TTL = 60_000;
-    let soundEnabled = localStorage.getItem("wordheroes_sound_enabled") !== "0";
+    let soundEnabled = storage.get("wordheroes_sound_enabled", "1") !== "0";
     let audioContext = null;
-    let activeGameMode = "journey";
-    let smashWords = [];
-    let smashEasyWords = [];
-    let smashHardWords = [];
-    let smashPrompt = null;
-    let smashChoices = [];
-    let smashScore = 0;
-    let smashCombo = 0;
-    let smashBestCombo = 0;
-    let smashTimeLeft = 45;
-    let smashRoundXp = 0;
-    let smashEndTriggered = false;
-    let smashTimerInterval = null;
-    let smashAnimationFrame = null;
-    let smashLastFrameTs = 0;
-    let smashLastWordId = null;
     let persistDebounceTimer = null;
+
+    // ── GameState: all resettable mid-game variables ─────
+    const _gameStateDefaults = Object.freeze({
+      currentQuestion:             null,
+      streak:                      0,
+      answeredCurrent:             false,
+      autoNextTimer:               null,
+      currentWorld:                1,
+      currentStage:                1,
+      unlockedStage:               1,
+      selectedStage:               1,
+      stageQuestionIndex:          0,
+      stageQuestionTotal:          10,
+      stageWords:                  [],
+      stageXpGained:               0,
+      stageWrongAnswers:           0,
+      consecutiveWrongAnswers:     0,
+      dailyBonusAwardedThisSession:false,
+      lastShownEvolutionLevel:     0,
+      stageMasteryMap:             {},
+      stageMasteredWordIds:        null,   // reset to new Set()
+      bossBattleStats:             null,
+      celebrationTimer:            null,
+      celebrationCloseHandler:     null,
+      celebrationFlowId:           0,
+      cachedStageKey:              "",
+      choicePoolCacheKey:          "",
+      unlockedChoiceWords:         [],
+      stageQuestionQueue:          [],
+      lastQuestionWordId:          null,
+      activeGameMode:              "journey",
+      smashWords:                  [],
+      smashEasyWords:              [],
+      smashHardWords:              [],
+      smashPrompt:                 null,
+      smashChoices:                [],
+      smashScore:                  0,
+      smashCombo:                  0,
+      smashBestCombo:              0,
+      smashTimeLeft:               45,
+      smashRoundXp:                0,
+      smashEndTriggered:           false,
+      smashTimerInterval:          null,
+      smashAnimationFrame:         null,
+      smashLastFrameTs:            0,
+      smashLastWordId:             null,
+    });
+
+    const GameState = {
+      ..._gameStateDefaults,
+      stageMasteredWordIds: new Set(),
+
+      reset() {
+        Object.assign(this, _gameStateDefaults);
+        this.stageMasteredWordIds = new Set();
+      }
+    };
+
+    // Convenience aliases so existing code that references these variables
+    // directly continues to work without rewriting every call site.
+    let currentQuestion             = null;
+    let streak                      = 0;
+    let answeredCurrent             = false;
+    let autoNextTimer               = null;
+    let currentWorld                = 1;
+    let currentStage                = 1;
+    let unlockedStage               = 1;
+    let selectedStage               = 1;
+    let stageQuestionIndex          = 0;
+    let stageQuestionTotal          = 10;
+    let stageWords                  = [];
+    let stageXpGained               = 0;
+    let stageWrongAnswers           = 0;
+    let consecutiveWrongAnswers     = 0;
+    let dailyBonusAwardedThisSession= false;
+    let lastShownEvolutionLevel     = 0;
+    let stageMasteryMap             = {};
+    let stageMasteredWordIds        = new Set();
+    let bossBattleStats             = null;
+    let celebrationTimer            = null;
+    let celebrationCloseHandler     = null;
+    let celebrationFlowId           = 0;
+    let cachedStageKey              = "";
+    let choicePoolCacheKey          = "";
+    let unlockedChoiceWords         = [];
+    let stageQuestionQueue          = [];
+    let lastQuestionWordId          = null;
+    let activeGameMode              = "journey";
+    let smashWords                  = [];
+    let smashEasyWords              = [];
+    let smashHardWords              = [];
+    let smashPrompt                 = null;
+    let smashChoices                = [];
+    let smashScore                  = 0;
+    let smashCombo                  = 0;
+    let smashBestCombo              = 0;
+    let smashTimeLeft               = 45;
+    let smashRoundXp                = 0;
+    let smashEndTriggered           = false;
+    let smashTimerInterval          = null;
+    let smashAnimationFrame         = null;
+    let smashLastFrameTs            = 0;
+    let smashLastWordId             = null;
+
+
+    function getRuntimeStateSnapshot() {
+      return {
+        profileId: currentProfile?.id || null,
+        world: currentWorld,
+        stage: currentStage,
+        unlockedStage,
+        selectedStage,
+        activeScreenName,
+        activeGameMode,
+        isReviewMode,
+        streak,
+        smashScore,
+        smashCombo
+      };
+    }
+
+    function debugLogState(label) {
+      console.debug(`[state] ${label}`, getRuntimeStateSnapshot());
+    }
 
     function isWordSmashMode() {
       return activeGameMode === "smash";
@@ -4012,7 +4325,7 @@ body.review-mode .world-pill[data-world].locked-world {
     }
 
     function getWordSmashBestScore() {
-      return Number(localStorage.getItem(getWordSmashBestKey()) || "0");
+      return Number(storage.get(getWordSmashBestKey(), "0") || "0");
     }
 
     function updateSmashBtnBadge() {
@@ -4026,7 +4339,7 @@ body.review-mode .world-pill[data-world].locked-world {
     }
 
     function setWordSmashBestScore(score) {
-      localStorage.setItem(getWordSmashBestKey(), String(Math.max(0, Number(score || 0))));
+      storage.set(getWordSmashBestKey(), String(Math.max(0, Number(score || 0))));
     }
 
     function clearWordSmashTimers() {
@@ -4062,12 +4375,15 @@ body.review-mode .world-pill[data-world].locked-world {
 
     function updateSoundToggleUI() {
       if (!soundToggleBtn) return;
-      soundToggleBtn.textContent = soundEnabled ? "🔊" : "🔇";
-      soundToggleBtn.title = soundEnabled ? "Sound On" : "Sound Off";
+      const isEnabled = !!soundEnabled;
+      soundToggleBtn.textContent = isEnabled ? "🔊" : "🔇";
+      soundToggleBtn.title = isEnabled ? "Sound On" : "Sound Off";
+      soundToggleBtn.setAttribute("aria-label", isEnabled ? "כבה צליל" : "הפעל צליל");
+      soundToggleBtn.setAttribute("aria-pressed", isEnabled ? "true" : "false");
     }
 
     function saveSoundPreference() {
-      localStorage.setItem("wordheroes_sound_enabled", soundEnabled ? "1" : "0");
+      storage.set("wordheroes_sound_enabled", soundEnabled ? "1" : "0");
       updateSoundToggleUI();
     }
 
@@ -4161,73 +4477,73 @@ body.review-mode .world-pill[data-world].locked-world {
       if (navigator.vibrate) navigator.vibrate([70, 30, 100]);
     }
 
+    // SOUND_MAP defined once at module level — not recreated on every playSound() call
+    const SOUND_MAP = {
+      correct:     ()     => playCorrectVariation(),
+      wrong:       ()     => playWrongVariation(),
+      streak:      (data) => playStreakSound(data.streak),
+      perfect:     ()     => triggerPerfectFeedback(),
+      levelup: () => {
+        playTone(392, 0.08, "triangle", 0.07, 0,    { endFreq: 420, release: 0.10 });
+        playTone(523, 0.08, "triangle", 0.07, 0.08, { endFreq: 560, release: 0.10 });
+        playTone(659, 0.09, "triangle", 0.075,0.16, { endFreq: 700, release: 0.11 });
+        playTone(784, 0.20, "triangle", 0.08, 0.24, { endFreq: 900, release: 0.26 });
+        playTone(1047,0.12, "sine",     0.045,0.28, { endFreq: 1200,release: 0.16 });
+      },
+      evolution: () => {
+        playTone(440, 0.07, "triangle", 0.065, 0,    { endFreq: 500, release: 0.09 });
+        playTone(660, 0.09, "triangle", 0.07,  0.07, { endFreq: 780, release: 0.11 });
+        playTone(880, 0.11, "triangle", 0.075, 0.16, { endFreq: 1040,release: 0.14 });
+        playTone(1320,0.18, "triangle", 0.08,  0.26, { endFreq: 1600,release: 0.22 });
+        playTone(1760,0.08, "sine",     0.04,  0.36, { endFreq: 2100,release: 0.12 });
+      },
+      stageclear: () => {
+        playTone(587, 0.07, "triangle", 0.065, 0,    { endFreq: 640, release: 0.09 });
+        playTone(740, 0.08, "triangle", 0.07,  0.07, { endFreq: 820, release: 0.10 });
+        playTone(880, 0.10, "triangle", 0.075, 0.14, { endFreq: 990, release: 0.13 });
+        playTone(1175,0.16, "triangle", 0.08,  0.22, { endFreq: 1360,release: 0.20 });
+      },
+      bosswin: () => {
+        playTone(293, 0.08, "triangle", 0.06,  0,    { endFreq: 330, release: 0.10 });
+        playTone(440, 0.08, "triangle", 0.065, 0.08, { endFreq: 490, release: 0.10 });
+        playTone(587, 0.09, "triangle", 0.07,  0.16, { endFreq: 660, release: 0.11 });
+        playTone(880, 0.12, "triangle", 0.075, 0.24, { endFreq: 1000,release: 0.14 });
+        playTone(1175,0.22, "triangle", 0.08,  0.34, { endFreq: 1400,release: 0.28 });
+        playTone(440, 0.10, "sine",     0.04,  0.38, { endFreq: 440, release: 0.14 });
+        if (navigator.vibrate) navigator.vibrate([100, 40, 150, 40, 200]);
+      },
+      bossattack: () => {
+        playTone(60,  0.22, "sawtooth", 0.045, 0,    { endFreq: 40,  release: 0.28 });
+        playTone(90,  0.16, "sawtooth", 0.04,  0.05, { endFreq: 60,  release: 0.22 });
+        playTone(180, 0.10, "square",   0.035, 0.10, { endFreq: 130, release: 0.16 });
+        if (navigator.vibrate) navigator.vibrate([80]);
+      },
+      bosshit: () => {
+        playTone(700,  0.06, "square",   0.04,  0,    { endFreq: 900,  release: 0.08 });
+        playTone(1050, 0.08, "triangle", 0.045, 0.04, { endFreq: 1300, release: 0.10 });
+      },
+      worldunlock: () => {
+        [[523,0.07,0],[659,0.07,0.1],[784,0.08,0.2],[1047,0.10,0.3],[1319,0.12,0.42],[1568,0.22,0.56]]
+          .forEach(([f, d, delay]) =>
+            playTone(f, d, "triangle", 0.065 + delay * 0.02, delay, { endFreq: f * 1.06, release: d + 0.06 })
+          );
+        playTone(2093, 0.06, "sine", 0.03, 0.62, { endFreq: 2600, release: 0.08 });
+        if (navigator.vibrate) navigator.vibrate([60, 30, 80, 30, 120]);
+      },
+      wordmastered: () => {
+        playTone(880,  0.06, "triangle", 0.055, 0,    { endFreq: 960,  release: 0.08 });
+        playTone(1175, 0.10, "triangle", 0.06,  0.06, { endFreq: 1320, release: 0.13 });
+      },
+      dailybonus: () => {
+        playTone(523, 0.06, "triangle", 0.06,  0,    { endFreq: 560, release: 0.08 });
+        playTone(784, 0.08, "triangle", 0.065, 0.07, { endFreq: 860, release: 0.10 });
+        playTone(1047,0.16, "triangle", 0.07,  0.14, { endFreq: 1250,release: 0.20 });
+      },
+    };
+
     function playSound(name, data = {}) {
       if (!soundEnabled) return;
-
-      const SOUND_MAP = {
-        correct: () => playCorrectVariation(),
-        wrong:   () => playWrongVariation(),
-        streak:  () => playStreakSound(data.streak),
-        perfect: () => triggerPerfectFeedback(),
-        levelup: () => {
-          playTone(392, 0.08, "triangle", 0.07, 0,    { endFreq: 420, release: 0.10 });
-          playTone(523, 0.08, "triangle", 0.07, 0.08, { endFreq: 560, release: 0.10 });
-          playTone(659, 0.09, "triangle", 0.075,0.16, { endFreq: 700, release: 0.11 });
-          playTone(784, 0.20, "triangle", 0.08, 0.24, { endFreq: 900, release: 0.26 });
-          playTone(1047,0.12, "sine",     0.045,0.28, { endFreq: 1200,release: 0.16 });
-        },
-        evolution: () => {
-          playTone(440, 0.07, "triangle", 0.065, 0,    { endFreq: 500, release: 0.09 });
-          playTone(660, 0.09, "triangle", 0.07,  0.07, { endFreq: 780, release: 0.11 });
-          playTone(880, 0.11, "triangle", 0.075, 0.16, { endFreq: 1040,release: 0.14 });
-          playTone(1320,0.18, "triangle", 0.08,  0.26, { endFreq: 1600,release: 0.22 });
-          playTone(1760,0.08, "sine",     0.04,  0.36, { endFreq: 2100,release: 0.12 });
-        },
-        stageclear: () => {
-          playTone(587, 0.07, "triangle", 0.065, 0,    { endFreq: 640, release: 0.09 });
-          playTone(740, 0.08, "triangle", 0.07,  0.07, { endFreq: 820, release: 0.10 });
-          playTone(880, 0.10, "triangle", 0.075, 0.14, { endFreq: 990, release: 0.13 });
-          playTone(1175,0.16, "triangle", 0.08,  0.22, { endFreq: 1360,release: 0.20 });
-        },
-        bosswin: () => {
-          playTone(293, 0.08, "triangle", 0.06,  0,    { endFreq: 330, release: 0.10 });
-          playTone(440, 0.08, "triangle", 0.065, 0.08, { endFreq: 490, release: 0.10 });
-          playTone(587, 0.09, "triangle", 0.07,  0.16, { endFreq: 660, release: 0.11 });
-          playTone(880, 0.12, "triangle", 0.075, 0.24, { endFreq: 1000,release: 0.14 });
-          playTone(1175,0.22, "triangle", 0.08,  0.34, { endFreq: 1400,release: 0.28 });
-          playTone(440, 0.10, "sine",     0.04,  0.38, { endFreq: 440, release: 0.14 });
-          if (navigator.vibrate) navigator.vibrate([100, 40, 150, 40, 200]);
-        },
-        bossattack: () => {
-          playTone(60,  0.22, "sawtooth", 0.045, 0,    { endFreq: 40,  release: 0.28 });
-          playTone(90,  0.16, "sawtooth", 0.04,  0.05, { endFreq: 60,  release: 0.22 });
-          playTone(180, 0.10, "square",   0.035, 0.10, { endFreq: 130, release: 0.16 });
-          if (navigator.vibrate) navigator.vibrate([80]);
-        },
-        bosshit: () => {
-          playTone(700,  0.06, "square",   0.04,  0,    { endFreq: 900,  release: 0.08 });
-          playTone(1050, 0.08, "triangle", 0.045, 0.04, { endFreq: 1300, release: 0.10 });
-        },
-        worldunlock: () => {
-          [[523,0.07,0],[659,0.07,0.1],[784,0.08,0.2],[1047,0.10,0.3],[1319,0.12,0.42],[1568,0.22,0.56]]
-            .forEach(([f, d, delay]) =>
-              playTone(f, d, "triangle", 0.065 + delay * 0.02, delay, { endFreq: f * 1.06, release: d + 0.06 })
-            );
-          playTone(2093, 0.06, "sine", 0.03, 0.62, { endFreq: 2600, release: 0.08 });
-          if (navigator.vibrate) navigator.vibrate([60, 30, 80, 30, 120]);
-        },
-        wordmastered: () => {
-          playTone(880,  0.06, "triangle", 0.055, 0,    { endFreq: 960,  release: 0.08 });
-          playTone(1175, 0.10, "triangle", 0.06,  0.06, { endFreq: 1320, release: 0.13 });
-        },
-        dailybonus: () => {
-          playTone(523, 0.06, "triangle", 0.06,  0,    { endFreq: 560, release: 0.08 });
-          playTone(784, 0.08, "triangle", 0.065, 0.07, { endFreq: 860, release: 0.10 });
-          playTone(1047,0.16, "triangle", 0.07,  0.14, { endFreq: 1250,release: 0.20 });
-        },
-      };
-
-      SOUND_MAP[name]?.();
+      SOUND_MAP[name]?.(data);
     }
 
 
@@ -4253,7 +4569,7 @@ body.review-mode .world-pill[data-world].locked-world {
     }
 
     function getGlobalStagesToday() {
-      return Number(localStorage.getItem(_getGlobalDRKey()) || 0);
+      return Number(storage.get(_getGlobalDRKey()) || 0);
     }
 
     function _globalDRMultiplier(stagesPlayedToday) {
@@ -4273,7 +4589,7 @@ body.review-mode .world-pill[data-world].locked-world {
     function recordDRPlay() {
       if (isReviewMode) return; // 🎮 review mode
       const key = _getGlobalDRKey();
-      localStorage.setItem(key, String(getGlobalStagesToday() + 1));
+      storage.set(key, String(getGlobalStagesToday() + 1));
     }
 
     function getDRBadge() {
@@ -4324,19 +4640,19 @@ body.review-mode .world-pill[data-world].locked-world {
     }
 
     function getQuestProgress(questId) {
-      return Number(localStorage.getItem(_getQuestKey("p_" + questId)) || 0);
+      return Number(storage.get(_getQuestKey("p_" + questId)) || 0);
     }
 
     function _setQuestProgress(questId, val) {
-      localStorage.setItem(_getQuestKey("p_" + questId), String(val));
+      storage.set(_getQuestKey("p_" + questId), String(val));
     }
 
     function isQuestDone(questId) {
-      return localStorage.getItem(_getQuestKey("done_" + questId)) === "1";
+      return storage.get(_getQuestKey("done_" + questId)) === "1";
     }
 
     function _markQuestDone(questId) {
-      localStorage.setItem(_getQuestKey("done_" + questId), "1");
+      storage.set(_getQuestKey("done_" + questId), "1");
     }
 
     // Call whenever a stat changes — awards XP if quest just completed
@@ -4397,11 +4713,11 @@ body.review-mode .world-pill[data-world].locked-world {
     }
 
     function isAllQuestsDoneBonusAwarded() {
-      return localStorage.getItem(getAllQuestsDoneKey()) === "1";
+      return storage.get(getAllQuestsDoneKey()) === "1";
     }
 
     function markAllQuestsDoneBonusAwarded() {
-      localStorage.setItem(getAllQuestsDoneKey(), "1");
+      storage.set(getAllQuestsDoneKey(), "1");
     }
 
     function renderDailyQuests() {
@@ -4414,7 +4730,7 @@ body.review-mode .world-pill[data-world].locked-world {
       const allDone   = doneCount === quests.length;
 
       // Check open state (persisted in sessionStorage)
-      const isOpen = sessionStorage.getItem("dq_open") === "1";
+      const isOpen = session.get("dq_open") === "1";
 
       if (titleEl) {
         titleEl.innerHTML = `
@@ -4424,8 +4740,8 @@ body.review-mode .world-pill[data-world].locked-world {
           <span class="dq-chevron">▼</span>`;
         titleEl.className = "dq-title" + (isOpen ? " dq-open" : "");
         titleEl.onclick = () => {
-          const nowOpen = sessionStorage.getItem("dq_open") === "1";
-          sessionStorage.setItem("dq_open", nowOpen ? "0" : "1");
+          const nowOpen = session.get("dq_open") === "1";
+          session.set("dq_open", nowOpen ? "0" : "1");
           renderDailyQuests();
         };
       }
@@ -4562,13 +4878,13 @@ body.review-mode .world-pill[data-world].locked-world {
 
       // Increment login streak counter
       const streakKey = `wh_login_streak_${currentProfile.id}`;
-      const lastStreakDate = localStorage.getItem(`wh_login_streak_date_${currentProfile.id}`) || "";
+      const lastStreakDate = storage.get(`wh_login_streak_date_${currentProfile.id}`) || "";
       const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
       const yesterdayStr = `${yesterday.getFullYear()}-${String(yesterday.getMonth()+1).padStart(2,"0")}-${String(yesterday.getDate()).padStart(2,"0")}`;
-      const prevStreak = Number(localStorage.getItem(streakKey) || 1);
+      const prevStreak = Number(storage.get(streakKey) || 1);
       const newStreak = lastStreakDate === yesterdayStr ? prevStreak + 1 : 1;
-      localStorage.setItem(streakKey, String(newStreak));
-      localStorage.setItem(`wh_login_streak_date_${currentProfile.id}`, today);
+      storage.set(streakKey, String(newStreak));
+      storage.set(`wh_login_streak_date_${currentProfile.id}`, today);
 
       updateHeroUI(currentProfile);
 
@@ -4638,6 +4954,7 @@ body.review-mode .world-pill[data-world].locked-world {
         overlay.style.display = "none";
         overlay.setAttribute("aria-hidden", "true");
       }
+      setActiveDialog(null);
       if (gameEffectsLayer) {
         gameEffectsLayer.classList.remove("active");
         gameEffectsLayer.style.pointerEvents = "none";
@@ -4720,38 +5037,13 @@ body.review-mode .world-pill[data-world].locked-world {
       overlay.style.display = "flex";
       overlay.setAttribute("aria-hidden", "false");
       overlay.classList.add("show");
+      setActiveDialog(overlay, celebrationBtn || celebrationModal);
       if (typeof autoCloseMs === "number" && autoCloseMs > 0) {
         celebrationTimer = setTimeout(() => {
           if (currentFlowId !== celebrationFlowId) return;
           closeCelebration();
         }, autoCloseMs);
       }
-    }
-
-    if (celebrationBtn) {
-      celebrationBtn.addEventListener("click", (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        closeCelebration();
-      });
-    }
-    if (overlay) {
-      overlay.addEventListener("click", (event) => {
-        event.preventDefault();
-        if (event.target === overlay) closeCelebration();
-      });
-    }
-
-
-    if (gradeSelectEl) {
-      gradeSelectEl.addEventListener("change", () => {
-        syncClassCodeField();
-      });
-    }
-    if (classNumberSelectEl) {
-      classNumberSelectEl.addEventListener("change", () => {
-        syncClassCodeField();
-      });
     }
 
     // ── Real-time: block non-Latin characters as typed ──────────
@@ -4765,105 +5057,6 @@ body.review-mode .world-pill[data-world].locked-world {
           inputEl.value = cleaned;
           try { inputEl.setSelectionRange(pos, pos); } catch(e) {}
         }
-      });
-    }
-
-    _enforceLatin(id("username"));
-
-    const displayNameInputEl = id("display-name");
-    _enforceLatin(displayNameInputEl);
-    if (displayNameInputEl) {
-      displayNameInputEl.addEventListener("input", () => {
-        const value = displayNameInputEl.value.trim();
-        if (!value) { setNameError(""); return; }
-        const check = isDisplayNameAllowed(value);
-        setNameError(check.ok ? "" : check.message);
-      });
-      displayNameInputEl.addEventListener("blur", () => {
-        const value = displayNameInputEl.value.trim();
-        const check = isDisplayNameAllowed(value);
-        setNameError(check.ok ? "" : check.message);
-      });
-    }
-
-    // Live validation on username field in auth screen
-    const usernameInputEl = id("username");
-    if (usernameInputEl) {
-      usernameInputEl.addEventListener("blur", () => {
-        const val = usernameInputEl.value.trim();
-        if (!val) { _setAuthFieldError("username-error", ""); return; }
-        const check = isUsernameAllowed(val);
-        _setAuthFieldError("username-error", check.ok ? "" : check.message);
-      });
-      usernameInputEl.addEventListener("input", () => {
-        _setAuthFieldError("username-error", "");
-      });
-    }
-
-    const passwordInputEl = id("password");
-    if (passwordInputEl) {
-      passwordInputEl.addEventListener("blur", () => {
-        const val = passwordInputEl.value;
-        if (!val) { _setAuthFieldError("password-error", ""); return; }
-        const check = isPasswordAllowed(val);
-        _setAuthFieldError("password-error", check.ok ? "" : check.message);
-      });
-      passwordInputEl.addEventListener("input", () => {
-        _setAuthFieldError("password-error", "");
-      });
-    }
-
-
-    updateSoundToggleUI();
-
-    const activeTitleBadgeBtn = document.getElementById("active-title-badge");
-    if (activeTitleBadgeBtn) {
-      activeTitleBadgeBtn.addEventListener("click", e => { e.preventDefault(); openTitleModal(); });
-    }
-    const closeTitleModalBtn = document.getElementById("close-title-modal");
-    if (closeTitleModalBtn) {
-      closeTitleModalBtn.addEventListener("click", e => { e.preventDefault(); closeTitleModal(); });
-    }
-
-    if (soundToggleBtn) {
-      soundToggleBtn.addEventListener("click", (event) => {
-        event.preventDefault();
-        soundEnabled = !soundEnabled;
-        if (soundEnabled) ensureAudioContext();
-        saveSoundPreference();
-      });
-    }
-
-    document.addEventListener("pointerdown", () => {
-      ensureAudioContext();
-    }, { once: true });
-
-    if (openLeaderboardBtn) {
-      openLeaderboardBtn.addEventListener("click", (event) => {
-        event.preventDefault();
-        openLeaderboardModal();
-      });
-    }
-
-    const lbTabGlobal = id("lb-tab-global");
-    const lbTabClass  = id("lb-tab-class");
-    const lbClassSel  = id("lb-class-filter");
-
-    if (lbTabGlobal) lbTabGlobal.addEventListener("click", () => switchLbTab("global"));
-    if (lbTabClass)  lbTabClass.addEventListener("click",  () => switchLbTab("class"));
-    if (lbClassSel)  lbClassSel.addEventListener("change", () => {
-      classLeaderboardCache.ts = 0;
-      loadClassLeaderboard(true);
-    });
-    if (closeLeaderboardBtn) {
-      closeLeaderboardBtn.addEventListener("click", (event) => {
-        event.preventDefault();
-        closeLeaderboardModal();
-      });
-    }
-    if (leaderboardOverlay) {
-      leaderboardOverlay.addEventListener("click", (event) => {
-        if (event.target === leaderboardOverlay) closeLeaderboardModal();
       });
     }
 
@@ -4945,11 +5138,11 @@ body.review-mode .world-pill[data-world].locked-world {
         level:        currentProfile?.level || 1,
         words:        currentProfile?.words_learned || 0,
         world:        currentProfile?.current_world || 1,
-        smashBest:    Number(localStorage.getItem(getWordSmashBestKey()) || 0),
-        stages:       Number(localStorage.getItem("wh_stages_cleared_" + uid) || 0),
-        maxStreak:    Number(localStorage.getItem("wh_max_streak_" + uid) || 0),
-        perfectStages:Number(localStorage.getItem("wh_perfect_stages_" + uid) || 0),
-        bossWins:     Number(localStorage.getItem("wh_boss_wins_" + uid) || 0),
+        smashBest:    Number(storage.get(getWordSmashBestKey()) || 0),
+        stages:       Number(storage.get("wh_stages_cleared_" + uid) || 0),
+        maxStreak:    Number(storage.get("wh_max_streak_" + uid) || 0),
+        perfectStages:Number(storage.get("wh_perfect_stages_" + uid) || 0),
+        bossWins:     Number(storage.get("wh_boss_wins_" + uid) || 0),
       };
     }
 
@@ -4959,11 +5152,11 @@ body.review-mode .world-pill[data-world].locked-world {
     }
 
     function getActiveTitleId() {
-      return localStorage.getItem("wh_active_title_" + (currentProfile?.id || "guest")) || "";
+      return storage.get("wh_active_title_" + (currentProfile?.id || "guest")) || "";
     }
 
     function setActiveTitleId(id) {
-      localStorage.setItem("wh_active_title_" + (currentProfile?.id || "guest"), id || "");
+      storage.set("wh_active_title_" + (currentProfile?.id || "guest"), id || "");
       renderTitleBadge();
     }
 
@@ -5036,14 +5229,20 @@ body.review-mode .world-pill[data-world].locked-world {
       });
       grid.innerHTML = html;
       overlay.style.display = "flex";
-      requestAnimationFrame(() => overlay.classList.add("show"));
+      overlay.setAttribute("aria-hidden", "false");
+      requestAnimationFrame(() => {
+        overlay.classList.add("show");
+        setActiveDialog(overlay, overlay.querySelector("button") || overlay);
+      });
     }
 
     function closeTitleModal() {
       const overlay = document.getElementById("title-modal-overlay");
       if (!overlay) return;
       overlay.classList.remove("show");
+      overlay.setAttribute("aria-hidden", "true");
       setTimeout(() => { overlay.style.display = "none"; }, 300);
+      setActiveDialog(null);
     }
 
     document.addEventListener("click", e => {
@@ -5067,14 +5266,14 @@ body.review-mode .world-pill[data-world].locked-world {
       if (isReviewMode) return; // 🎮 review mode
       const uid = currentProfile?.id || "guest";
       const k = "wh_stages_cleared_" + uid;
-      localStorage.setItem(k, String(Number(localStorage.getItem(k)||0)+1));
+      storage.set(k, String(Number(storage.get(k)||0)+1));
       if (perfect) {
         const pk = "wh_perfect_stages_" + uid;
-        localStorage.setItem(pk, String(Number(localStorage.getItem(pk)||0)+1));
+        storage.set(pk, String(Number(storage.get(pk)||0)+1));
       }
       if (bossWin) {
         const bk = "wh_boss_wins_" + uid;
-        localStorage.setItem(bk, String(Number(localStorage.getItem(bk)||0)+1));
+        storage.set(bk, String(Number(storage.get(bk)||0)+1));
       }
       checkAndNotifyNewTitles();
     }
@@ -5083,8 +5282,8 @@ body.review-mode .world-pill[data-world].locked-world {
       if (isReviewMode) return; // 🎮 review mode
       const uid = currentProfile?.id || "guest";
       const k = "wh_max_streak_" + uid;
-      const prev = Number(localStorage.getItem(k)||0);
-      if (s > prev) localStorage.setItem(k, String(s));
+      const prev = Number(storage.get(k)||0);
+      if (s > prev) storage.set(k, String(s));
       checkAndNotifyNewTitles();
     }
 
@@ -5137,8 +5336,8 @@ body.review-mode .world-pill[data-world].locked-world {
       const t = getWorldData(currentWorld).winTitle;
       if (!t || !currentProfile?.id) return;
       const key = `wh_boss_title_${currentProfile.id}_w${currentWorld}`;
-      if (localStorage.getItem(key)) return;
-      localStorage.setItem(key, "1");
+      if (storage.get(key)) return;
+      storage.set(key, "1");
       setTimeout(() => showTitleToast(t), 800);
     }
 
@@ -5212,81 +5411,232 @@ body.review-mode .world-pill[data-world].locked-world {
     }
 
     function setPendingSetupUsername(username) {
-      localStorage.setItem("wordheroes_pending_username", username || "");
+      storage.set("wordheroes_pending_username", username || "");
     }
 
     function getPendingSetupUsername() {
-      return localStorage.getItem("wordheroes_pending_username") || "";
+      return storage.get("wordheroes_pending_username") || "";
     }
 
     function clearPendingSetupUsername() {
-      localStorage.removeItem("wordheroes_pending_username");
+      storage.remove("wordheroes_pending_username");
     }
 
     function setSetupAllowed(value) {
-      localStorage.setItem("wordheroes_setup_allowed", value ? "1" : "0");
+      storage.set("wordheroes_setup_allowed", value ? "1" : "0");
     }
 
     function isSetupAllowed() {
-      return localStorage.getItem("wordheroes_setup_allowed") === "1";
+      return storage.get("wordheroes_setup_allowed") === "1";
     }
 
-    document.getElementById("signup-btn").addEventListener("click", signUp);
-    document.getElementById("login-btn").addEventListener("click", login);
-    document.getElementById("save-profile-btn").addEventListener("click", saveProfile);
-    document.getElementById("map-logout-btn").addEventListener("click", logout);
-    document.getElementById("back-to-map-btn").addEventListener("click", backToMap);
-    document.getElementById("journey-start-btn").addEventListener("click", startSelectedStage);
-    if (wordSmashBtn) wordSmashBtn.addEventListener("click", startWordSmash);
-    document.addEventListener("click", (e) => {
-      const btn = e.target.closest('.stage-btn');
-      if (!btn) return;
+    // ══════════════════════════════════════════════════════
+    // EVENT WIRING — all listener attachment in one place,
+    // called from window.addEventListener("load") below.
+    // ══════════════════════════════════════════════════════
+    function initEventListeners() {
+      // ── Auth & Setup ──────────────────────────────────
+      document.getElementById("signup-btn").addEventListener("click", signUp);
+      document.getElementById("login-btn").addEventListener("click", login);
+      document.getElementById("save-profile-btn").addEventListener("click", saveProfile);
 
-      const stage = Number(btn.dataset.stage);
-      selectStage(stage);
-    });
-
-    document.addEventListener("click", (event) => {
-      const btn = event.target.closest(".hero-choice");
-      if (!btn) return;
-      document.querySelectorAll(".hero-choice").forEach(choice => choice.classList.remove("selected"));
-      btn.classList.add("selected");
-      document.getElementById("avatar-class").value = btn.dataset.class;
-      document.getElementById("avatar-gender").value = btn.dataset.gender;
-    });
-
-    // World select navigation
-    document.addEventListener("change", (event) => {
-      if (event.target.id !== "world-select") return;
-      if (activeScreenName !== "map-screen") return;
-      const targetWorld = Number(event.target.value);
-      if (targetWorld === currentWorld) return;
-
-      currentWorld = targetWorld;
-      cachedStageKey = "";
-      choicePoolCacheKey = "";
-
-      if (isReviewMode) {
-        unlockedStage = 10;
-        selectedStage = 1;
-        currentStage  = 1;
-      } else {
-        const profileWorld = Number(currentProfile?.current_world || 1);
-        if (targetWorld < profileWorld) {
-          unlockedStage = 10;
-          currentStage  = 10;
-          selectedStage = 10;
-        } else {
-          unlockedStage = clamp(Number(currentProfile?.unlocked_stage || 1), 1, 10);
-          currentStage  = unlockedStage;
-          selectedStage = unlockedStage;
-        }
+      const usernameInputEl = id("username");
+      _enforceLatin(usernameInputEl);
+      if (usernameInputEl) {
+        usernameInputEl.addEventListener("blur", () => {
+          const val = usernameInputEl.value.trim();
+          if (!val) { _setAuthFieldError("username-error", ""); return; }
+          const check = isUsernameAllowed(val);
+          _setAuthFieldError("username-error", check.ok ? "" : check.message);
+        });
+        usernameInputEl.addEventListener("input", () => _setAuthFieldError("username-error", ""));
       }
 
-      renderStageMap();
-      updateWorldUI();
-      scrollToCurrentStage();
-    });
+      const passwordInputEl = id("password");
+      if (passwordInputEl) {
+        passwordInputEl.addEventListener("blur", () => {
+          const val = passwordInputEl.value;
+          if (!val) { _setAuthFieldError("password-error", ""); return; }
+          const check = isPasswordAllowed(val);
+          _setAuthFieldError("password-error", check.ok ? "" : check.message);
+        });
+        passwordInputEl.addEventListener("input", () => _setAuthFieldError("password-error", ""));
+      }
+
+      const displayNameInputEl = id("display-name");
+      _enforceLatin(displayNameInputEl);
+      if (displayNameInputEl) {
+        displayNameInputEl.addEventListener("input", () => {
+          const value = displayNameInputEl.value.trim();
+          if (!value) { setNameError(""); return; }
+          const check = isDisplayNameAllowed(value);
+          setNameError(check.ok ? "" : check.message);
+        });
+        displayNameInputEl.addEventListener("blur", () => {
+          const value = displayNameInputEl.value.trim();
+          const check = isDisplayNameAllowed(value);
+          setNameError(check.ok ? "" : check.message);
+        });
+      }
+
+      if (gradeSelectEl)       gradeSelectEl.addEventListener("change", syncClassCodeField);
+      if (classNumberSelectEl) classNumberSelectEl.addEventListener("change", syncClassCodeField);
+
+      // ── Map & Gameplay ────────────────────────────────
+      document.getElementById("map-logout-btn").addEventListener("click", logout);
+      document.getElementById("back-to-map-btn").addEventListener("click", backToMap);
+      document.getElementById("journey-start-btn").addEventListener("click", startSelectedStage);
+      if (wordSmashBtn) wordSmashBtn.addEventListener("click", startWordSmash);
+
+      // Delegated: stage nodes
+      document.addEventListener("click", (e) => {
+        const btn = e.target.closest(".stage-btn");
+        if (!btn) return;
+        selectStage(Number(btn.dataset.stage));
+      });
+
+      // Delegated: hero choice on setup screen
+      document.addEventListener("click", (event) => {
+        const btn = event.target.closest(".hero-choice");
+        if (!btn) return;
+        document.querySelectorAll(".hero-choice").forEach(c => c.classList.remove("selected"));
+        btn.classList.add("selected");
+        document.getElementById("avatar-class").value  = btn.dataset.class;
+        document.getElementById("avatar-gender").value = btn.dataset.gender;
+      });
+
+      // World select dropdown navigation
+      document.addEventListener("change", (event) => {
+        if (event.target.id !== "world-select") return;
+        if (activeScreenName !== "map-screen") return;
+        const targetWorld = Number(event.target.value);
+        if (targetWorld === currentWorld) return;
+
+        currentWorld      = targetWorld;
+        cachedStageKey    = "";
+        choicePoolCacheKey = "";
+
+        if (isReviewMode) {
+          unlockedStage = 10;
+          selectedStage = 1;
+          currentStage  = 1;
+        } else {
+          const profileWorld = Number(currentProfile?.current_world || 1);
+          if (targetWorld < profileWorld) {
+            unlockedStage = 10;
+            currentStage  = 10;
+            selectedStage = 10;
+          } else {
+            unlockedStage = clamp(Number(currentProfile?.unlocked_stage || 1), 1, 10);
+            currentStage  = unlockedStage;
+            selectedStage = unlockedStage;
+          }
+        }
+
+        renderStageMap();
+        updateWorldUI();
+        scrollToCurrentStage();
+      });
+
+      // ── Celebrations & Overlays ───────────────────────
+      if (celebrationBtn) {
+        celebrationBtn.addEventListener("click", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          closeCelebration();
+        });
+      }
+      if (overlay) {
+        overlay.addEventListener("click", (event) => {
+          event.preventDefault();
+          if (event.target === overlay) closeCelebration();
+        });
+      }
+
+      // ── Sound ─────────────────────────────────────────
+      updateSoundToggleUI();
+      if (soundToggleBtn) {
+        soundToggleBtn.addEventListener("click", (event) => {
+          event.preventDefault();
+          soundEnabled = !soundEnabled;
+          if (soundEnabled) ensureAudioContext();
+          saveSoundPreference();
+        });
+      }
+      document.addEventListener("pointerdown", () => ensureAudioContext(), { once: true });
+
+      // ── Titles ────────────────────────────────────────
+      const activeTitleBadgeBtn = document.getElementById("active-title-badge");
+      if (activeTitleBadgeBtn) {
+        activeTitleBadgeBtn.addEventListener("click", e => { e.preventDefault(); openTitleModal(); });
+      }
+      const closeTitleModalBtn = document.getElementById("close-title-modal");
+      if (closeTitleModalBtn) {
+        closeTitleModalBtn.addEventListener("click", e => { e.preventDefault(); closeTitleModal(); });
+      }
+
+      // ── Leaderboard ───────────────────────────────────
+      if (openLeaderboardBtn) {
+        openLeaderboardBtn.addEventListener("click", (event) => {
+          event.preventDefault();
+          openLeaderboardModal();
+        });
+      }
+      const lbTabGlobal = id("lb-tab-global");
+      const lbTabClass  = id("lb-tab-class");
+      const lbClassSel  = id("lb-class-filter");
+      if (lbTabGlobal) lbTabGlobal.addEventListener("click", () => switchLbTab("global"));
+      if (lbTabClass)  lbTabClass.addEventListener("click",  () => switchLbTab("class"));
+      if (lbClassSel)  lbClassSel.addEventListener("change", () => {
+        classLeaderboardCache.ts = 0;
+        loadClassLeaderboard(true);
+      });
+      if (closeLeaderboardBtn) {
+        closeLeaderboardBtn.addEventListener("click", (event) => {
+          event.preventDefault();
+          closeLeaderboardModal();
+        });
+      }
+      if (leaderboardOverlay) {
+        leaderboardOverlay.addEventListener("click", (event) => {
+          if (event.target === leaderboardOverlay) closeLeaderboardModal();
+        });
+      }
+
+      // ── Teacher UI ────────────────────────────────────
+      const teacherToggleBtn  = document.getElementById("teacher-toggle-btn");
+      const teacherLogoutBtn  = document.getElementById("teacher-logout-btn");
+      const teacherRefreshBtn = document.getElementById("teacher-refresh-btn");
+      const teacherClassSel   = document.getElementById("teacher-class-select");
+      const teacherReviewBtn  = document.getElementById("teacher-review-btn");
+      const teacherInput      = document.getElementById("teacher-code-input");
+
+      if (teacherToggleBtn) {
+        teacherToggleBtn.addEventListener("click", () => {
+          const panel = document.getElementById("teacher-code-panel");
+          if (!panel) return;
+          const isOpen = panel.style.display !== "none";
+          panel.style.display = isOpen ? "none" : "block";
+          teacherToggleBtn.setAttribute("aria-expanded", isOpen ? "false" : "true");
+          if (!isOpen) panel.querySelector("input")?.focus();
+        });
+      }
+      if (teacherLogoutBtn)  teacherLogoutBtn.addEventListener("click", teacherLogout);
+      if (teacherRefreshBtn) teacherRefreshBtn.addEventListener("click", () => loadTeacherDashboard(true));
+      if (teacherReviewBtn)  teacherReviewBtn.addEventListener("click", enterReviewMode);
+      if (teacherClassSel) {
+        teacherClassSel.addEventListener("change", () => {
+          teacherClassFilter = teacherClassSel.value;
+          renderTeacherSummary();
+          renderTeacherStudents();
+        });
+      }
+      if (teacherInput) {
+        teacherInput.addEventListener("keydown", e => {
+          if (e.key === "Enter") teacherLogin();
+        });
+      }
+    }
 
     function usernameToEmail(username) {
       return username.trim().toLowerCase() + "@wordheroes.local";
@@ -5317,9 +5667,7 @@ body.review-mode .world-pill[data-world].locked-world {
         hardResetCelebrations();
         clearGameEffects();
       }
-      const teacherScreen = document.getElementById("teacher-screen");
-      [authScreen, setupScreen, mapScreen, gameScreen, teacherScreen].filter(Boolean).forEach(screen => screen.classList.remove("active"));
-      document.getElementById(name).classList.add("active");
+      updateScreenVisibility(name);
       activeScreenName = name;
       if (name === "map-screen") {
         renderDailyQuests();
@@ -5451,6 +5799,9 @@ body.review-mode .world-pill[data-world].locked-world {
       return true;
     }
 
+    // =========================
+    // Progression and hero presentation
+    // =========================
     function getHeroImagePath(heroClass, gender, level) {
       let stage = "lv1";
       if (level >= 25) stage = "lv25";
@@ -5621,7 +5972,7 @@ function updateHeroUI(profile) {
         const today = getTodayStamp();
         const lastBonus = String(profile.last_daily_bonus_at || "").slice(0, 10);
         const checkedIn = lastBonus === today;
-        const streakDays = Number(localStorage.getItem(`wh_login_streak_${profile.id}`) || 1);
+        const streakDays = Number(storage.get(`wh_login_streak_${profile.id}`) || 1);
         streakEl.textContent = checkedIn
           ? (streakDays >= 2 ? `🔥 ${streakDays} יום ברצף` : "✅ נכנסת היום")
           : "⏰ היכנס היום לבונוס";
@@ -5639,6 +5990,9 @@ function updateHeroUI(profile) {
       }
     }
 
+    // =========================
+    // Map and world rendering
+    // =========================
     function updateWorldUI() {
       const worldData = getWorldData(currentWorld);
       const titleEl = document.getElementById("current-world-title");
@@ -5927,6 +6281,9 @@ function updateHeroUI(profile) {
       stageMapEl.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
     }
 
+    // =========================
+    // Journey mode lifecycle
+    // =========================
     function resetStageRunState() {
       stageQuestionIndex = 0;
       stageXpGained = 0;
@@ -5985,6 +6342,9 @@ function updateHeroUI(profile) {
       updateBossUI();
     }
 
+    // =========================
+    // Word Smash mode
+    // =========================
     function updateWordSmashUI() {
       if (!isWordSmashMode()) return;
       const pct = clamp((smashTimeLeft / 45) * 100, 0, 100);
@@ -6379,7 +6739,7 @@ function updateHeroUI(profile) {
         let starsEl = btn.querySelector(".stage-stars");
         if (stage < unlockedStage && stage !== 10) {
           const starKey = `wh_stars_w${currentWorld}_s${stage}_u${currentProfile?.id || ""}`;
-          const stars = Number(localStorage.getItem(starKey) || 0);
+          const stars = Number(storage.get(starKey) || 0);
           if (!starsEl) {
             starsEl = document.createElement("div");
             starsEl.className = "stage-stars";
@@ -6436,6 +6796,7 @@ function updateHeroUI(profile) {
       leaderboardOverlay.style.display = "flex";
       leaderboardOverlay.classList.add("show");
       leaderboardOverlay.setAttribute("aria-hidden", "false");
+      setActiveDialog(leaderboardOverlay, closeLeaderboardBtn || leaderboardOverlay.querySelector("button"));
     }
 
     function closeLeaderboardModal() {
@@ -6443,6 +6804,7 @@ function updateHeroUI(profile) {
       leaderboardOverlay.classList.remove("show");
       leaderboardOverlay.style.display = "none";
       leaderboardOverlay.setAttribute("aria-hidden", "true");
+      setActiveDialog(null);
     }
 
     function invalidateLeaderboardCache() {
@@ -6767,7 +7129,7 @@ function updateHeroUI(profile) {
       currentProfile = data;
       currentProfile.level = getLevelFromXp(currentProfile.xp || 0);
       if (currentProfile.id) {
-        const localBest = Number(localStorage.getItem("wordheroes_smash_best_" + currentProfile.id + "_world_" + (currentProfile.current_world || 1)) || 0);
+        const localBest = Number(storage.get("wordheroes_smash_best_" + currentProfile.id + "_world_" + (currentProfile.current_world || 1)) || 0);
         const dbBest = Number(currentProfile.smash_best || 0);
         if (localBest > dbBest) {
           currentProfile.smash_best = localBest;
@@ -7268,12 +7630,12 @@ function updateHeroUI(profile) {
     }
 
     function loadLastShownEvolutionLevel() {
-      lastShownEvolutionLevel = Number(localStorage.getItem(getEvolutionStorageKey()) || "0");
+      lastShownEvolutionLevel = Number(storage.get(getEvolutionStorageKey()) || "0");
     }
 
     function saveLastShownEvolutionLevel(level) {
       lastShownEvolutionLevel = level;
-      localStorage.setItem(getEvolutionStorageKey(), String(level));
+      storage.set(getEvolutionStorageKey(), String(level));
     }
 
     function getEvolutionTitle(level) {
@@ -7309,8 +7671,8 @@ function updateHeroUI(profile) {
       if (isPrestige(newLevel) && newLevel > previousLevel) {
         const pLvl = getPrestigeLevel(newLevel);
         const pKey = `wh_prestige_shown_${currentProfile?.id || "guest"}_p${pLvl}`;
-        if (localStorage.getItem(pKey)) return;
-        localStorage.setItem(pKey, "1");
+        if (storage.get(pKey)) return;
+        storage.set(pKey, "1");
         playSound("evolution");
         showCelebration({
           title: `✦ PRESTIGE ${pLvl}`,
@@ -7637,8 +7999,8 @@ function updateHeroUI(profile) {
       updateQuestProgress("stages", 1);
       if (perfectStage) updateQuestProgress("perfect", 1);
       const starKey = `wh_stars_w${currentWorld}_s${currentStage}_u${currentProfile?.id || ""}`;
-      const prevStars = Number(localStorage.getItem(starKey) || 0);
-      if (starRating > prevStars) localStorage.setItem(starKey, String(starRating));
+      const prevStars = Number(storage.get(starKey) || 0);
+      if (starRating > prevStars) storage.set(starKey, String(starRating));
 
       if (currentStage < 10 && currentStage === unlockedStage) {
         await saveUnlockedStage(currentStage + 1);
@@ -8010,7 +8372,7 @@ async function handleAnswer(buttonEl, selectedAnswer) {
     // TEACHER DASHBOARD
     // ══════════════════════════════════════════════════════
 
-    const TEACHER_CODE = "teacher2025"; // קוד מורה — שנה לפי הצורך
+    const TEACHER_CODE = "teacher2025"; // Frontend convenience gate only. Enforce real permissions with Supabase RLS.
     let teacherAllStudents = [];
     let teacherCurrentTab  = "all";
     let teacherClassFilter = "";
@@ -8019,20 +8381,38 @@ async function handleAnswer(buttonEl, selectedAnswer) {
       return activeScreenName === "teacher-screen";
     }
 
+    function hasTeacherSession() {
+      return session.get(TEACHER_SESSION_KEY, "0") === "1";
+    }
+
+    function requireTeacherSession() {
+      if (hasTeacherSession()) return true;
+      setMainMessage("הגישה לדשבורד המורה דורשת כניסת מורה פעילה", "error");
+      teacherLogout();
+      return false;
+    }
+
+
     function teacherLogin() {
       const code = (document.getElementById("teacher-code-input")?.value || "").trim();
       if (code !== TEACHER_CODE) {
         setMainMessage("קוד מורה שגוי", "error");
         return;
       }
+      setTeacherSession(true);
       document.getElementById("teacher-code-input").value = "";
       showScreen("teacher-screen");
       loadTeacherDashboard();
     }
 
     function teacherLogout() {
+      setTeacherSession(false);
       showScreen("auth-screen");
       teacherAllStudents = [];
+      const teacherPanel = document.getElementById("teacher-code-panel");
+      const teacherToggle = document.getElementById("teacher-toggle-btn");
+      if (teacherPanel) teacherPanel.style.display = "none";
+      if (teacherToggle) teacherToggle.setAttribute("aria-expanded", "false");
     }
 
     function switchTeacherTab(tab) {
@@ -8045,6 +8425,7 @@ async function handleAnswer(buttonEl, selectedAnswer) {
     }
 
     async function loadTeacherDashboard(force = false) {
+      if (!requireTeacherSession()) return;
       const listEl  = document.getElementById("teacher-student-list");
       const sumEl   = document.getElementById("teacher-summary");
       const lastEl  = document.getElementById("teacher-last-updated");
@@ -8298,6 +8679,7 @@ async function handleAnswer(buttonEl, selectedAnswer) {
     let _teacherModalAction = null;
 
     function openTeacherModal({ title, sub, showInput, inputVal, confirmLabel, confirmStyle, onConfirm }) {
+      if (!requireTeacherSession()) return;
       const modal   = document.getElementById("teacher-action-modal");
       const titleEl = document.getElementById("teacher-modal-title");
       const subEl   = document.getElementById("teacher-modal-sub");
@@ -8321,12 +8703,18 @@ async function handleAnswer(buttonEl, selectedAnswer) {
         confirmBtn.disabled = false;
       };
       modal.style.display = "flex";
+      modal.setAttribute("aria-hidden", "false");
+      setActiveDialog(modal, showInput ? inputEl : confirmBtn);
     }
 
     function closeTeacherModal() {
       const modal = document.getElementById("teacher-action-modal");
-      if (modal) modal.style.display = "none";
+      if (modal) {
+        modal.style.display = "none";
+        modal.setAttribute("aria-hidden", "true");
+      }
       _teacherModalAction = null;
+      setActiveDialog(null);
     }
 
     function setTeacherModalStatus(msg, isError = false) {
@@ -8338,6 +8726,7 @@ async function handleAnswer(buttonEl, selectedAnswer) {
 
     // ── Rename student ─────────────────────────────────
     function openTeacherRename(studentId, currentName) {
+      if (!requireTeacherSession()) return;
       openTeacherModal({
         title: "✏️ שינוי שם גיבור",
         sub: `שם נוכחי: ${currentName}`,
@@ -8366,6 +8755,7 @@ async function handleAnswer(buttonEl, selectedAnswer) {
 
     // ── Reset student ──────────────────────────────────
     function openTeacherReset(studentId, studentName) {
+      if (!requireTeacherSession()) return;
       openTeacherModal({
         title: "🔄 איפוס תלמיד",
         sub: `האם לאפס את ${studentName} חזרה להתחלה?\n\nXP, רמה, מילים ושלבים יתאפסו. הפעולה בלתי הפיכה.`,
@@ -8421,6 +8811,7 @@ async function handleAnswer(buttonEl, selectedAnswer) {
     let _avatarPickerSelectedGen = "male";
 
     function openTeacherChangeAvatar(studentId, studentName, currentCls, currentGen) {
+      if (!requireTeacherSession()) return;
       _avatarPickerStudentId   = studentId;
       _avatarPickerSelectedCls = currentCls || "mage";
       _avatarPickerSelectedGen = currentGen || "male";
@@ -8467,6 +8858,8 @@ async function handleAnswer(buttonEl, selectedAnswer) {
       };
 
       modal.style.display = "flex";
+      modal.setAttribute("aria-hidden", "false");
+      setActiveDialog(modal, confirmBtn);
     }
 
     function _renderAvatarGrid() {
@@ -8476,21 +8869,11 @@ async function handleAnswer(buttonEl, selectedAnswer) {
         const isSelected = h.cls === _avatarPickerSelectedCls && h.gender === _avatarPickerSelectedGen;
         return `
         <button type="button"
-          onclick="_selectAvatarOption('${h.cls}','${h.gender}')"
-          style="
-            display:flex; flex-direction:column; align-items:center; gap:6px;
-            padding:10px 6px; border-radius:16px; cursor:pointer;
-            background:${isSelected
-              ? "linear-gradient(135deg,rgba(168,85,247,0.3),rgba(96,165,250,0.25))"
-              : "rgba(255,255,255,0.07)"};
-            border:2px solid ${isSelected ? "rgba(168,85,247,0.9)" : "rgba(255,255,255,0.1)"};
-            transition:all 0.18s;
-          ">
-          <img src="${h.img}" alt="${h.label}"
-            style="width:64px;height:64px;object-fit:contain;pointer-events:none;" />
-          <span style="font-size:12px;font-weight:800;color:${isSelected ? "#e9d5ff" : "#cbd5e1"};
-            pointer-events:none;">${h.label}</span>
-          ${isSelected ? '<span style="font-size:10px;color:#a78bfa;font-weight:900;pointer-events:none;">✓ נבחר</span>' : ""}
+          class="avatar-option${isSelected ? " selected" : ""}"
+          onclick="_selectAvatarOption('${h.cls}','${h.gender}')">
+          <img src="${h.img}" alt="${h.label}" />
+          <span>${h.label}</span>
+          <span class="avatar-check">✓ נבחר</span>
         </button>`;
       }).join("");
     }
@@ -8503,8 +8886,12 @@ async function handleAnswer(buttonEl, selectedAnswer) {
 
     function closeTeacherAvatarModal() {
       const modal = document.getElementById("teacher-avatar-modal");
-      if (modal) modal.style.display = "none";
+      if (modal) {
+        modal.style.display = "none";
+        modal.setAttribute("aria-hidden", "true");
+      }
       _avatarPickerStudentId = null;
+      setActiveDialog(null);
     }
 
     // Wire up all startup logic after DOM is ready
@@ -8514,42 +8901,18 @@ async function handleAnswer(buttonEl, selectedAnswer) {
       _lastKnownTitleIds = getUnlockedTitleIds();
       ensureEffectsHost();
       resetComboBanner();
-      updateSoundToggleUI();
+      configureStaticAccessibility();
+      updateScreenVisibility(activeScreenName);
       closeLeaderboardModal();
+
+      // ── All event listeners ────────────────────────────────
+      initEventListeners();
+
+      // ── Restore teacher session if applicable ──────────────
       checkProfile();
-
-      // ── Teacher UI events ──────────────────────────────────
-      const teacherToggleBtn  = document.getElementById("teacher-toggle-btn");
-      const teacherLogoutBtn  = document.getElementById("teacher-logout-btn");
-      const teacherRefreshBtn = document.getElementById("teacher-refresh-btn");
-      const teacherClassSel   = document.getElementById("teacher-class-select");
-
-      if (teacherToggleBtn) {
-        teacherToggleBtn.addEventListener("click", () => {
-          const panel = document.getElementById("teacher-code-panel");
-          if (!panel) return;
-          const isOpen = panel.style.display !== "none";
-          panel.style.display = isOpen ? "none" : "block";
-          if (!isOpen) panel.querySelector("input")?.focus();
-        });
+      if (hasTeacherSession() && activeScreenName === "teacher-screen") {
+        loadTeacherDashboard();
       }
-
-      if (teacherLogoutBtn)  teacherLogoutBtn.addEventListener("click", teacherLogout);
-      if (teacherRefreshBtn) teacherRefreshBtn.addEventListener("click", () => loadTeacherDashboard(true));
-
-      const teacherReviewBtn = document.getElementById("teacher-review-btn");
-      if (teacherReviewBtn) teacherReviewBtn.addEventListener("click", enterReviewMode);
-
-      if (teacherClassSel) teacherClassSel.addEventListener("change", () => {
-        teacherClassFilter = teacherClassSel.value;
-        renderTeacherSummary();
-        renderTeacherStudents();
-      });
-
-      const teacherInput = document.getElementById("teacher-code-input");
-      if (teacherInput) teacherInput.addEventListener("keydown", e => {
-        if (e.key === "Enter") teacherLogin();
-      });
     });
 
     // ══════════════════════════════════════════════════════
@@ -8606,21 +8969,27 @@ async function handleAnswer(buttonEl, selectedAnswer) {
     async function logout() {
       await supabaseClient.auth.signOut();
       currentProfile = null;
-      currentQuestion = null;
-      streak = 0;
-      resetComboBanner();
-      stageWrongAnswers = 0;
-      consecutiveWrongAnswers = 0;
+
+      // Reset all game state in one call
+      GameState.reset();
+
+      // Sync convenience aliases back to defaults
+      currentQuestion              = null;
+      streak                       = 0;
+      stageWrongAnswers            = 0;
+      consecutiveWrongAnswers      = 0;
       dailyBonusAwardedThisSession = false;
-      currentStage = 1;
-      unlockedStage = 1;
-      stageQuestionIndex = 0;
-      stageXpGained = 0;
-      bossBattleStats = null;
-      lastShownEvolutionLevel = 0;
-      activeGameMode = "journey";
+      currentStage                 = 1;
+      unlockedStage                = 1;
+      stageQuestionIndex           = 0;
+      stageXpGained                = 0;
+      bossBattleStats              = null;
+      lastShownEvolutionLevel      = 0;
+      activeGameMode               = "journey";
+      cachedStageKey               = "";
+
+      resetComboBanner();
       resetWordSmashState();
-      cachedStageKey = "";
       clearAutoNextTimer();
       hardResetCelebrations();
       clearGameEffects();
