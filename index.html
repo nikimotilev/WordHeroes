@@ -5,17 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Word Heroes</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0"></script>
-  <script>
-function updateMiniStageProgress(world,stage,current,total){
-  const left=total-current;
-  const txt=document.getElementById('stage-mini-text');
-  const fill=document.getElementById('stage-mini-fill');
-  if(!txt||!fill)return;
-  txt.textContent=`עולם ${world} • שלב ${stage} • נשארו ${left}`;
-  const pct=(current/total)*100;
-  fill.style.width=pct+'%';
-}
-</script>
+
   <style>
     :root {
       --bg: #081120;
@@ -610,87 +600,7 @@ function updateMiniStageProgress(world,stage,current,total){
       font-weight: 700;
     }
 
-    .stage-rail {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: nowrap;
-      align-items: center;
-      overflow-x: visible;
-      gap: 0;
-      padding: 20px 4px 8px;
-      margin: 0;
-      direction: ltr;
-      justify-content: space-between;
-    }
 
-    .stage-node {
-      position: relative;
-      flex: 0 0 auto;
-      width: auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      background: transparent;
-      border: none;
-      box-shadow: none;
-      padding: 0;
-      margin: 0;
-      direction: rtl;
-    }
-
-    .stage-node::before {
-      display: none;
-    }
-
-    .stage-orb {
-      position: relative;
-      z-index: 1;
-      width: 46px;
-      height: 46px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 900;
-      font-size: 16px;
-      border: 2px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.08);
-      transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
-    }
-
-    .stage-node:hover .stage-orb {
-      transform: translateY(-2px);
-    }
-
-    .stage-label-mini {
-      font-size: 12px;
-      font-weight: 800;
-      color: var(--muted);
-      white-space: nowrap;
-    }
-
-    .stage-node.completed .stage-orb,
-    .stage-node.completed::before {
-      background: rgba(52,211,153,0.24);
-      border-color: rgba(52,211,153,0.55);
-    }
-
-    .stage-node.current .stage-orb {
-      background: linear-gradient(135deg, rgba(251,191,36,0.28), rgba(59,130,246,0.28));
-      border-color: rgba(251,191,36,0.95);
-      box-shadow: 0 0 0 6px rgba(251,191,36,0.12);
-    }
-
-    .stage-node.locked .stage-orb {
-      opacity: 0.7;
-      background: rgba(255,255,255,0.05);
-      border-color: rgba(255,255,255,0.1);
-    }
-
-    .stage-node.selected .stage-orb {
-      transform: scale(1.08);
-    }
 
     .stage-focus-card {
       background: rgba(255,255,255,0.08);
@@ -1965,16 +1875,6 @@ function updateMiniStageProgress(world,stage,current,total){
   border:1px solid rgba(251,191,36,0.28);
 }
 .leader-row.my-row { background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.25); }
-    .champion-card .leader-row{
-  background:transparent;
-  padding:0;
-}
-.rank-box{
-  margin-top:10px;
-  text-align:center;
-  color:#e2e8f0;
-  font-weight:800;
-}
 
 
 /* UI cleanup v22 */
@@ -2012,14 +1912,10 @@ function updateMiniStageProgress(world,stage,current,total){
 }
 
 
-/* Speed + cleaner question UI - background saving */
+/* Speed + cleaner question UI */
 #stats-panel { display:none !important; }
 #game-screen .panel { margin-bottom: 10px; }
 #stage-note { margin-top: 6px; font-size: 12px; }
-.answer-btn, .world-btn, .hero-choice, button { transition: none !important; }
-.bar-fill, .boss-hp-fill { transition: none !important; }
-.screen { animation: none !important; }
-.answer-btn.correct, .answer-btn.wrong { animation: none !important; transform: none !important; }
 
 
 /* v27 safe world cleanup */
@@ -2070,7 +1966,7 @@ body.review-mode .world-pill.locked-world {
 .world-counter{
   text-align:center;
   color:var(--muted);
-  font-size:13px;
+  font-size:12px;
   font-weight:800;
   margin-top:2px;
 }
@@ -2337,10 +2233,6 @@ body.review-mode .world-pill.locked-world {
 .blitz-secondary-btn {
   min-height: 44px;
   font-size: 17px;
-}
-
-.world-counter {
-  font-size: 12px;
 }
 
 @media (max-width: 640px) {
@@ -2904,6 +2796,7 @@ body.review-mode .world-pill[data-world].locked-world {
   padding: 1px 7px;
   vertical-align: middle;
 }
+.daily-bonus-badge {
   display: inline-flex;
   align-items: center;
   background: rgba(251,191,36,0.22);
@@ -3704,7 +3597,7 @@ body.review-mode .world-pill[data-world].locked-world {
           <!-- בחירת עולם — תיבה נפתחת -->
           <div class="world-select-wrap">
             <select id="world-select" class="world-select"></select>
-            <div id="world-counter" class="world-counter" style="display:none"></div>
+            <div id="world-counter-select" class="world-counter" style="display:none"></div>
           </div>
 
           <div id="stage-map" class="stage-rail">
@@ -4238,95 +4131,71 @@ body.review-mode .world-pill[data-world].locked-world {
 
     function playSound(name, data = {}) {
       if (!soundEnabled) return;
-      if (name === "correct") { playCorrectVariation(); return; }
-      if (name === "wrong")   { playWrongVariation();   return; }
-      if (name === "streak")  { playStreakSound(data.streak); return; }
 
-      if (name === "levelup") {
-        // טרומבון ניצחון
-        playTone(392, 0.08, "triangle", 0.07, 0,    { endFreq: 420, release: 0.10 });
-        playTone(523, 0.08, "triangle", 0.07, 0.08, { endFreq: 560, release: 0.10 });
-        playTone(659, 0.09, "triangle", 0.075,0.16, { endFreq: 700, release: 0.11 });
-        playTone(784, 0.20, "triangle", 0.08, 0.24, { endFreq: 900, release: 0.26 });
-        playTone(1047,0.12, "sine",     0.045,0.28, { endFreq: 1200,release: 0.16 });
-        return;
-      }
+      const SOUND_MAP = {
+        correct: () => playCorrectVariation(),
+        wrong:   () => playWrongVariation(),
+        streak:  () => playStreakSound(data.streak),
+        perfect: () => triggerPerfectFeedback(),
+        levelup: () => {
+          playTone(392, 0.08, "triangle", 0.07, 0,    { endFreq: 420, release: 0.10 });
+          playTone(523, 0.08, "triangle", 0.07, 0.08, { endFreq: 560, release: 0.10 });
+          playTone(659, 0.09, "triangle", 0.075,0.16, { endFreq: 700, release: 0.11 });
+          playTone(784, 0.20, "triangle", 0.08, 0.24, { endFreq: 900, release: 0.26 });
+          playTone(1047,0.12, "sine",     0.045,0.28, { endFreq: 1200,release: 0.16 });
+        },
+        evolution: () => {
+          playTone(440, 0.07, "triangle", 0.065, 0,    { endFreq: 500, release: 0.09 });
+          playTone(660, 0.09, "triangle", 0.07,  0.07, { endFreq: 780, release: 0.11 });
+          playTone(880, 0.11, "triangle", 0.075, 0.16, { endFreq: 1040,release: 0.14 });
+          playTone(1320,0.18, "triangle", 0.08,  0.26, { endFreq: 1600,release: 0.22 });
+          playTone(1760,0.08, "sine",     0.04,  0.36, { endFreq: 2100,release: 0.12 });
+        },
+        stageclear: () => {
+          playTone(587, 0.07, "triangle", 0.065, 0,    { endFreq: 640, release: 0.09 });
+          playTone(740, 0.08, "triangle", 0.07,  0.07, { endFreq: 820, release: 0.10 });
+          playTone(880, 0.10, "triangle", 0.075, 0.14, { endFreq: 990, release: 0.13 });
+          playTone(1175,0.16, "triangle", 0.08,  0.22, { endFreq: 1360,release: 0.20 });
+        },
+        bosswin: () => {
+          playTone(293, 0.08, "triangle", 0.06,  0,    { endFreq: 330, release: 0.10 });
+          playTone(440, 0.08, "triangle", 0.065, 0.08, { endFreq: 490, release: 0.10 });
+          playTone(587, 0.09, "triangle", 0.07,  0.16, { endFreq: 660, release: 0.11 });
+          playTone(880, 0.12, "triangle", 0.075, 0.24, { endFreq: 1000,release: 0.14 });
+          playTone(1175,0.22, "triangle", 0.08,  0.34, { endFreq: 1400,release: 0.28 });
+          playTone(440, 0.10, "sine",     0.04,  0.38, { endFreq: 440, release: 0.14 });
+          if (navigator.vibrate) navigator.vibrate([100, 40, 150, 40, 200]);
+        },
+        bossattack: () => {
+          playTone(60,  0.22, "sawtooth", 0.045, 0,    { endFreq: 40,  release: 0.28 });
+          playTone(90,  0.16, "sawtooth", 0.04,  0.05, { endFreq: 60,  release: 0.22 });
+          playTone(180, 0.10, "square",   0.035, 0.10, { endFreq: 130, release: 0.16 });
+          if (navigator.vibrate) navigator.vibrate([80]);
+        },
+        bosshit: () => {
+          playTone(700,  0.06, "square",   0.04,  0,    { endFreq: 900,  release: 0.08 });
+          playTone(1050, 0.08, "triangle", 0.045, 0.04, { endFreq: 1300, release: 0.10 });
+        },
+        worldunlock: () => {
+          [[523,0.07,0],[659,0.07,0.1],[784,0.08,0.2],[1047,0.10,0.3],[1319,0.12,0.42],[1568,0.22,0.56]]
+            .forEach(([f, d, delay]) =>
+              playTone(f, d, "triangle", 0.065 + delay * 0.02, delay, { endFreq: f * 1.06, release: d + 0.06 })
+            );
+          playTone(2093, 0.06, "sine", 0.03, 0.62, { endFreq: 2600, release: 0.08 });
+          if (navigator.vibrate) navigator.vibrate([60, 30, 80, 30, 120]);
+        },
+        wordmastered: () => {
+          playTone(880,  0.06, "triangle", 0.055, 0,    { endFreq: 960,  release: 0.08 });
+          playTone(1175, 0.10, "triangle", 0.06,  0.06, { endFreq: 1320, release: 0.13 });
+        },
+        dailybonus: () => {
+          playTone(523, 0.06, "triangle", 0.06,  0,    { endFreq: 560, release: 0.08 });
+          playTone(784, 0.08, "triangle", 0.065, 0.07, { endFreq: 860, release: 0.10 });
+          playTone(1047,0.16, "triangle", 0.07,  0.14, { endFreq: 1250,release: 0.20 });
+        },
+      };
 
-      if (name === "evolution") {
-        playTone(440, 0.07, "triangle", 0.065, 0,    { endFreq: 500, release: 0.09 });
-        playTone(660, 0.09, "triangle", 0.07,  0.07, { endFreq: 780, release: 0.11 });
-        playTone(880, 0.11, "triangle", 0.075, 0.16, { endFreq: 1040,release: 0.14 });
-        playTone(1320,0.18, "triangle", 0.08,  0.26, { endFreq: 1600,release: 0.22 });
-        playTone(1760,0.08, "sine",     0.04,  0.36, { endFreq: 2100,release: 0.12 });
-        return;
-      }
-
-      if (name === "stageclear") {
-        playTone(587, 0.07, "triangle", 0.065, 0,    { endFreq: 640, release: 0.09 });
-        playTone(740, 0.08, "triangle", 0.07,  0.07, { endFreq: 820, release: 0.10 });
-        playTone(880, 0.10, "triangle", 0.075, 0.14, { endFreq: 990, release: 0.13 });
-        playTone(1175,0.16, "triangle", 0.08,  0.22, { endFreq: 1360,release: 0.20 });
-        return;
-      }
-
-      if (name === "bosswin") {
-        // פנפרה אפית
-        playTone(293, 0.08, "triangle", 0.06,  0,    { endFreq: 330, release: 0.10 });
-        playTone(440, 0.08, "triangle", 0.065, 0.08, { endFreq: 490, release: 0.10 });
-        playTone(587, 0.09, "triangle", 0.07,  0.16, { endFreq: 660, release: 0.11 });
-        playTone(880, 0.12, "triangle", 0.075, 0.24, { endFreq: 1000,release: 0.14 });
-        playTone(1175,0.22, "triangle", 0.08,  0.34, { endFreq: 1400,release: 0.28 });
-        playTone(440, 0.10, "sine",     0.04,  0.38, { endFreq: 440, release: 0.14 }); // bass pedal
-        if (navigator.vibrate) navigator.vibrate([100, 40, 150, 40, 200]);
-        return;
-      }
-
-      if (name === "bossattack") {
-        playTone(60,  0.22, "sawtooth", 0.045, 0,    { endFreq: 40,  release: 0.28 });
-        playTone(90,  0.16, "sawtooth", 0.04,  0.05, { endFreq: 60,  release: 0.22 });
-        playTone(180, 0.10, "square",   0.035, 0.10, { endFreq: 130, release: 0.16 });
-        if (navigator.vibrate) navigator.vibrate([80]);
-        return;
-      }
-
-      if (name === "bosshit") {
-        playTone(700,  0.06, "square",   0.04, 0,    { endFreq: 900,  release: 0.08 });
-        playTone(1050, 0.08, "triangle", 0.045, 0.04, { endFreq: 1300, release: 0.10 });
-        return;
-      }
-
-      if (name === "worldunlock") {
-        // מנגינה קסומה עולה
-        [
-          [523, 0.07, 0],
-          [659, 0.07, 0.1],
-          [784, 0.08, 0.2],
-          [1047,0.10, 0.3],
-          [1319,0.12, 0.42],
-          [1568,0.22, 0.56],
-        ].forEach(([f, d, delay]) =>
-          playTone(f, d, "triangle", 0.065 + delay * 0.02, delay, { endFreq: f * 1.06, release: d + 0.06 })
-        );
-        // sparkle
-        playTone(2093, 0.06, "sine", 0.03, 0.62, { endFreq: 2600, release: 0.08 });
-        if (navigator.vibrate) navigator.vibrate([60, 30, 80, 30, 120]);
-        return;
-      }
-
-      if (name === "wordmastered") {
-        playTone(880,  0.06, "triangle", 0.055, 0,    { endFreq: 960,  release: 0.08 });
-        playTone(1175, 0.10, "triangle", 0.06,  0.06, { endFreq: 1320, release: 0.13 });
-        return;
-      }
-
-      if (name === "dailybonus") {
-        playTone(523, 0.06, "triangle", 0.06,  0,    { endFreq: 560, release: 0.08 });
-        playTone(784, 0.08, "triangle", 0.065, 0.07, { endFreq: 860, release: 0.10 });
-        playTone(1047,0.16, "triangle", 0.07,  0.14, { endFreq: 1250,release: 0.20 });
-        return;
-      }
-
-      if (name === "perfect") { triggerPerfectFeedback(); }
+      SOUND_MAP[name]?.();
     }
 
 
@@ -4465,15 +4334,19 @@ body.review-mode .world-pill[data-world].locked-world {
       });
     }
 
-    function showQuestToast(q) {
+    function showToast(text, durationMs = 2500) {
       const el = document.getElementById("quest-toast");
       if (!el) return;
-      el.textContent = `✅ Quest Complete! ${q.icon} ${q.label} — ${q.reward}`;
+      el.textContent = text;
       el.style.display = "block";
       el.style.animation = "none";
       void el.offsetWidth;
-      el.style.animation = "questToast 2.5s ease-out forwards";
-      setTimeout(() => { el.style.display = "none"; }, 2600);
+      el.style.animation = `questToast ${durationMs / 1000}s ease-out forwards`;
+      setTimeout(() => { el.style.display = "none"; }, durationMs + 100);
+    }
+
+    function showQuestToast(q) {
+      showToast(`✅ Quest Complete! ${q.icon} ${q.label} — ${q.reward}`, 2500);
     }
 
     function getQuestResetTimer() {
@@ -4557,15 +4430,7 @@ body.review-mode .world-pill[data-world].locked-world {
         if (currentProfile.level > prevLevel) triggerLevelUpEffect(currentProfile.level);
         updateHeroUI(currentProfile);
         persistProfileProgress();
-        const toast = document.getElementById("quest-toast");
-        if (toast) {
-          toast.textContent = `🏆 כל המשימות הושלמו! +${BONUS} XP בונוס!`;
-          toast.style.display = "block";
-          toast.style.animation = "none";
-          void toast.offsetWidth;
-          toast.style.animation = "questToast 3s ease-out forwards";
-          setTimeout(() => { toast.style.display = "none"; }, 3100);
-        }
+        showToast(`🏆 כל המשימות הושלמו! +${BONUS} XP בונוס!`, 3000);
       }
     }
 
@@ -8499,16 +8364,23 @@ async function handleAnswer(buttonEl, selectedAnswer) {
       });
     }
 
-    // Wire up teacher UI events after DOM is ready
+    // Wire up all startup logic after DOM is ready
     window.addEventListener("load", () => {
-      const teacherToggleBtn = document.getElementById("teacher-toggle-btn");
-      const teacherCodePanel = document.getElementById("teacher-code-panel");
-      const teacherLoginBtn  = document.getElementById("teacher-login-btn");
-      const teacherLogoutBtn = document.getElementById("teacher-logout-btn");
-      const teacherRefreshBtn= document.getElementById("teacher-refresh-btn");
-      const teacherClassSel  = document.getElementById("teacher-class-select");
+      // ── Game init ──────────────────────────────────────────
+      initBossElements();
+      _lastKnownTitleIds = getUnlockedTitleIds();
+      ensureEffectsHost();
+      resetComboBanner();
+      updateSoundToggleUI();
+      closeLeaderboardModal();
+      checkProfile();
 
-      // Toggle hidden panel on 🏫 click
+      // ── Teacher UI events ──────────────────────────────────
+      const teacherToggleBtn  = document.getElementById("teacher-toggle-btn");
+      const teacherLogoutBtn  = document.getElementById("teacher-logout-btn");
+      const teacherRefreshBtn = document.getElementById("teacher-refresh-btn");
+      const teacherClassSel   = document.getElementById("teacher-class-select");
+
       if (teacherToggleBtn) {
         teacherToggleBtn.addEventListener("click", () => {
           const panel = document.getElementById("teacher-code-panel");
@@ -8519,17 +8391,18 @@ async function handleAnswer(buttonEl, selectedAnswer) {
         });
       }
 
-      if (teacherLogoutBtn) teacherLogoutBtn.addEventListener("click", teacherLogout);
+      if (teacherLogoutBtn)  teacherLogoutBtn.addEventListener("click", teacherLogout);
       if (teacherRefreshBtn) teacherRefreshBtn.addEventListener("click", () => loadTeacherDashboard(true));
+
       const teacherReviewBtn = document.getElementById("teacher-review-btn");
       if (teacherReviewBtn) teacherReviewBtn.addEventListener("click", enterReviewMode);
+
       if (teacherClassSel) teacherClassSel.addEventListener("change", () => {
         teacherClassFilter = teacherClassSel.value;
         renderTeacherSummary();
         renderTeacherStudents();
       });
 
-      // Enter in code field → login
       const teacherInput = document.getElementById("teacher-code-input");
       if (teacherInput) teacherInput.addEventListener("keydown", e => {
         if (e.key === "Enter") teacherLogin();
@@ -8614,15 +8487,17 @@ async function handleAnswer(buttonEl, selectedAnswer) {
       showScreen("auth-screen");
     }
 
-    window.addEventListener("load", () => {
-      initBossElements();
-      _lastKnownTitleIds = getUnlockedTitleIds();
-      ensureEffectsHost();
-      resetComboBanner();
-      updateSoundToggleUI();
-      closeLeaderboardModal();
-      checkProfile();
-    });
+
+    // ── Mini stage progress helper ─────────────────────────
+    function updateMiniStageProgress(world, stage, current, total) {
+      const left = total - current;
+      const txt  = document.getElementById('stage-mini-text');
+      const fill = document.getElementById('stage-mini-fill');
+      if (!txt || !fill) return;
+      txt.textContent = `עולם ${world} • שלב ${stage} • נשארו ${left}`;
+      fill.style.width = ((current / total) * 100) + '%';
+    }
+
   </script>
   <!-- ══ World Unlock Modal ══════════════════════════════ -->
   <div id="world-unlock-overlay" style="display:none;position:fixed;inset:0;z-index:9000;background:rgba(5,11,22,0.88);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px;">
