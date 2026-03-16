@@ -8440,18 +8440,30 @@ async function handleAnswer(buttonEl, selectedAnswer) {
         statusEl.style.color  = "#94a3b8";
         statusEl.textContent  = "שומר...";
         confirmBtn.disabled   = true;
-        const { error } = await supabaseClient
+        const { data: updatedRows, error } = await supabaseClient
           .from("profiles")
           .update({ avatar_class: _avatarPickerSelectedCls, avatar_gender: _avatarPickerSelectedGen })
-          .eq("id", _avatarPickerStudentId);
+          .eq("id", _avatarPickerStudentId)
+          .select("id, avatar_class, avatar_gender");
         confirmBtn.disabled = false;
         if (error) { statusEl.style.color = "#f87171"; statusEl.textContent = "שגיאה: " + error.message; return; }
-        // Update local cache
+        if (!updatedRows || updatedRows.length === 0) {
+          statusEl.style.color = "#f87171";
+          statusEl.textContent = "❌ העדכון נכשל — ייתכן שחסרה הרשאת עריכה (RLS)";
+          return;
+        }
+        // Update local teacher cache
         const s = teacherAllStudents.find(s => s.id === _avatarPickerStudentId);
         if (s) { s.avatar_class = _avatarPickerSelectedCls; s.avatar_gender = _avatarPickerSelectedGen; }
+        // If this student is currently logged in on this device, update their live UI too
+        if (currentProfile && currentProfile.id === _avatarPickerStudentId) {
+          currentProfile.avatar_class  = _avatarPickerSelectedCls;
+          currentProfile.avatar_gender = _avatarPickerSelectedGen;
+          updateHeroUI(currentProfile);
+        }
         statusEl.style.color  = "#34d399";
-        statusEl.textContent  = "✅ הדמות עודכנה בהצלחה!";
-        setTimeout(closeTeacherAvatarModal, 1200);
+        statusEl.textContent  = "✅ הדמות עודכנה! התלמיד יראה אותה בכניסה הבאה.";
+        setTimeout(closeTeacherAvatarModal, 1800);
       };
 
       modal.style.display = "flex";
