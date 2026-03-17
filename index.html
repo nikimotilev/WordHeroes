@@ -3324,6 +3324,124 @@ body.review-mode .world-pill[data-world].locked-world {
     /* ══════════════════════════════════════
        TEACHER DASHBOARD
     ══════════════════════════════════════ */
+
+    /* ── Header panel ─────────────────────────────── */
+    .teacher-header-panel {
+      text-align: center;
+      padding: 16px 18px 12px;
+    }
+    .teacher-header-title {
+      font-size: 32px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+    .teacher-header-sub {
+      color: #94a3b8;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .teacher-controls-row {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .teacher-ctrl-btn {
+      width: auto;
+      padding: 8px 16px;
+      font-size: 14px;
+      margin-top: 0;
+    }
+    .teacher-ctrl-btn.review {
+      border-radius: 12px;
+      background: linear-gradient(135deg, #7c3aed, #a855f7);
+      box-shadow: 0 6px 18px rgba(124,58,237,0.3);
+      font-weight: 800;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .teacher-last-updated {
+      font-size: 11px;
+      color: #475569;
+    }
+
+    /* ── Summary grid ─────────────────────────────── */
+    #teacher-summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .teacher-summary-card {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 16px;
+      padding: 14px 10px;
+      text-align: center;
+    }
+    .teacher-summary-num {
+      font-size: 28px;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .teacher-summary-num.blue   { color: #60a5fa; }
+    .teacher-summary-num.green  { color: #34d399; }
+    .teacher-summary-num.red    { color: #f87171; }
+    .teacher-summary-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748b;
+    }
+
+    /* ── Search + sort bar ────────────────────────── */
+    .teacher-search-sort-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .teacher-search-input {
+      flex: 1;
+      min-width: 140px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      color: #f8fafc;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 8px 12px;
+      margin-top: 0;
+      outline: none;
+    }
+    .teacher-search-input::placeholder { color: #475569; }
+    .teacher-search-input:focus { border-color: rgba(96,165,250,0.5); }
+    .teacher-sort-select {
+      width: auto;
+      min-width: 120px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      color: #f8fafc;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 8px 12px;
+      margin-top: 0;
+      cursor: pointer;
+      appearance: none;
+    }
+
+    /* ── Tabs ─────────────────────────────────────── */
+    .teacher-tabs-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
     .teacher-tab {
       flex: 1;
       min-height: 40px;
@@ -3342,24 +3460,17 @@ body.review-mode .world-pill[data-world].locked-world {
       border-color: rgba(96,165,250,0.45);
       color: #93c5fd;
     }
-    .teacher-summary-card {
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.09);
-      border-radius: 16px;
-      padding: 14px 10px;
-      text-align: center;
+
+    /* ── Student list panel ───────────────────────── */
+    .teacher-list-panel {
+      padding: 12px;
     }
-    .teacher-summary-num {
-      font-size: 28px;
-      font-weight: 900;
-      line-height: 1;
-      margin-bottom: 4px;
+    #teacher-student-list {
+      display: grid;
+      gap: 8px;
     }
-    .teacher-summary-label {
-      font-size: 11px;
-      font-weight: 700;
-      color: #64748b;
-    }
+
+    /* ── Student row ──────────────────────────────── */
     .teacher-row {
       display: grid;
       grid-template-columns: 36px 1fr auto;
@@ -3389,11 +3500,22 @@ body.review-mode .world-pill[data-world].locked-world {
       font-weight: 800;
       color: #f1f5f9;
     }
+    .teacher-student-class-code {
+      font-size: 11px;
+      color: #64748b;
+      font-weight: 700;
+    }
     .teacher-student-meta {
       font-size: 12px;
       color: #64748b;
       font-weight: 700;
       margin-top: 2px;
+    }
+    .teacher-student-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
     }
     .teacher-student-stats {
       text-align: right;
@@ -3402,15 +3524,157 @@ body.review-mode .world-pill[data-world].locked-world {
       color: #94a3b8;
       white-space: nowrap;
     }
-    .teacher-student-stats span {
-      display: block;
+    .teacher-student-stats span { display: block; }
+    .teacher-stat-words  { color: #93c5fd; }
+    .teacher-stat-smash  { color: #c4b5fd; }
+    .teacher-stat-xp     { color: #fde68a; }
+    .teacher-action-btns {
+      display: flex;
+      gap: 5px;
     }
-    .teacher-badge-today { color: #34d399; }
+    .teacher-action-btn {
+      width: auto;
+      padding: 3px 9px;
+      font-size: 11px;
+      min-height: 0;
+      border-radius: 8px;
+      font-weight: 800;
+      cursor: pointer;
+      border: 1px solid;
+    }
+    .teacher-action-btn.rename {
+      background: rgba(96,165,250,0.18);
+      border-color: rgba(96,165,250,0.35);
+      color: #93c5fd;
+    }
+    .teacher-action-btn.avatar {
+      background: rgba(168,85,247,0.18);
+      border-color: rgba(168,85,247,0.4);
+      color: #d8b4fe;
+    }
+    .teacher-action-btn.reset {
+      background: rgba(248,113,113,0.14);
+      border-color: rgba(248,113,113,0.32);
+      color: #fca5a5;
+    }
+
+    /* ── Class group header ───────────────────────── */
+    .teacher-class-group { margin-bottom: 16px; }
+    .teacher-class-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, rgba(59,130,246,0.18), rgba(96,165,250,0.12));
+      border: 1px solid rgba(96,165,250,0.3);
+    }
+    .teacher-class-header-title {
+      font-size: 17px;
+      font-weight: 900;
+      color: #93c5fd;
+    }
+    .teacher-class-header-stats {
+      display: flex;
+      gap: 12px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .teacher-class-rows { display: grid; gap: 8px; }
+
+    /* ── Modal inner ──────────────────────────────── */
+    .teacher-modal-inner {
+      background: linear-gradient(180deg, rgba(30,41,59,0.98), rgba(15,23,42,0.98));
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 24px;
+      padding: 24px;
+      max-width: 360px;
+      width: 100%;
+      text-align: center;
+    }
+    .teacher-modal-title {
+      font-size: 22px;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+    .teacher-modal-sub {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+    .teacher-modal-btns {
+      display: flex;
+      gap: 10px;
+    }
+    .teacher-modal-confirm-btn {
+      flex: 1;
+      min-height: 48px;
+      font-size: 16px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+    }
+    .teacher-modal-cancel-btn {
+      flex: 1;
+      min-height: 48px;
+      font-size: 16px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.09);
+      color: #e2e8f0;
+    }
+    .teacher-modal-status {
+      font-size: 13px;
+      margin-top: 10px;
+      min-height: 18px;
+    }
+    .teacher-avatar-modal-inner {
+      background: linear-gradient(180deg, rgba(30,41,59,0.98), rgba(15,23,42,0.98));
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 24px;
+      padding: 24px;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+    }
+    #teacher-avatar-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .teacher-avatar-modal-title {
+      font-size: 22px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+    .teacher-avatar-modal-sub {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-bottom: 16px;
+    }
+    .teacher-avatar-save-btn {
+      flex: 1;
+      min-height: 48px;
+      font-size: 16px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #7c3aed, #a855f7);
+      font-weight: 800;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .teacher-badge-today  { color: #34d399; }
     .teacher-badge-absent { color: #f87171; }
+
     @media (max-width: 640px) {
-      #teacher-summary { grid-template-columns: repeat(3,1fr); gap: 8px; }
+      #teacher-summary { gap: 8px; }
       .teacher-summary-num { font-size: 22px; }
       .teacher-tab { font-size: 11px; padding: 7px 6px; }
+      .teacher-action-btns { flex-wrap: wrap; }
     }
 
     /* ── Quest complete toast ──────────────────────────── */
@@ -3817,92 +4081,82 @@ body.review-mode .world-pill[data-world].locked-world {
     <div id="teacher-screen" class="screen" data-screen="teacher-screen" aria-hidden="true">
       <div style="max-width:700px; margin:0 auto;">
 
-        <div class="panel" style="text-align:center; padding:16px 18px 12px;">
-          <div style="font-size:32px; font-weight:900; margin-bottom:4px;">🏫 דשבורד מורה</div>
-          <div style="color:#94a3b8; font-size:14px; font-weight:700; margin-bottom:12px;">Word Heroes — מצב צפייה</div>
-          <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:10px;">
-            <select id="teacher-class-select" style="width:auto; min-width:140px; margin-top:0; font-size:14px; padding:8px 12px;">
+        <div class="panel teacher-header-panel">
+          <div class="teacher-header-title">🏫 דשבורד מורה</div>
+          <div class="teacher-header-sub">Word Heroes — מצב צפייה</div>
+          <div class="teacher-controls-row">
+            <select id="teacher-class-select" class="teacher-ctrl-btn" style="width:auto; min-width:140px;">
               <option value="">כל הכיתות</option>
             </select>
-            <button id="teacher-refresh-btn" class="secondary" style="width:auto; padding:8px 16px; font-size:14px; margin-top:0;">🔄 רענן</button>
-            <button id="teacher-review-btn" style="width:auto; padding:8px 16px; font-size:14px; margin-top:0; border-radius:12px; background:linear-gradient(135deg,#7c3aed,#a855f7); box-shadow:0 6px 18px rgba(124,58,237,0.3); font-weight:800; color:white; border:none; cursor:pointer;">🎮 Review Mode</button>
-            <button id="teacher-logout-btn" class="secondary" style="width:auto; padding:8px 16px; font-size:14px; margin-top:0;">יציאה</button>
+            <button id="teacher-refresh-btn" class="secondary teacher-ctrl-btn">🔄 רענן</button>
+            <button id="teacher-review-btn"  class="teacher-ctrl-btn review">🎮 Review Mode</button>
+            <button id="teacher-logout-btn"  class="secondary teacher-ctrl-btn">יציאה</button>
           </div>
-          <div id="teacher-last-updated" style="font-size:11px; color:#475569;"></div>
+          <div id="teacher-last-updated" class="teacher-last-updated"></div>
         </div>
 
         <!-- Summary cards -->
-        <div id="teacher-summary" style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:10px;"></div>
+        <div id="teacher-summary"></div>
 
         <!-- Tabs -->
-        <div style="display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
-          <button id="tt-all"     class="teacher-tab active-tab" onclick="switchTeacherTab('all')">📋 כל התלמידים</button>
-          <button id="tt-class"   class="teacher-tab" onclick="switchTeacherTab('class')">🏫 לפי כיתה</button>
-          <button id="tt-today"   class="teacher-tab" onclick="switchTeacherTab('today')">📅 נכנסו היום</button>
-          <button id="tt-absent"  class="teacher-tab" onclick="switchTeacherTab('absent')">⚠️ לא נכנסו 3+ ימים</button>
+        <div class="teacher-tabs-row">
+          <button id="tt-all"    class="teacher-tab active-tab" onclick="switchTeacherTab('all')">📋 כל התלמידים</button>
+          <button id="tt-class"  class="teacher-tab" onclick="switchTeacherTab('class')">🏫 לפי כיתה</button>
+          <button id="tt-today"  class="teacher-tab" onclick="switchTeacherTab('today')">📅 נכנסו היום</button>
+          <button id="tt-absent" class="teacher-tab" onclick="switchTeacherTab('absent')">⚠️ לא נכנסו 3+ ימים</button>
+        </div>
+
+        <!-- Search + sort bar -->
+        <div class="teacher-search-sort-row">
+          <input id="teacher-search" class="teacher-search-input" type="search"
+            placeholder="🔍 חפש תלמיד לפי שם..." autocomplete="off" />
+          <select id="teacher-sort" class="teacher-sort-select">
+            <option value="words">מיון: מילים</option>
+            <option value="level">מיון: רמה</option>
+            <option value="xp">מיון: XP</option>
+            <option value="last_active">מיון: פעיל לאחרונה</option>
+            <option value="name">מיון: שם</option>
+          </select>
         </div>
 
         <!-- Student list -->
-        <div class="panel" style="padding:12px;">
-          <div id="teacher-student-list" style="display:grid; gap:8px;">
+        <div class="panel teacher-list-panel">
+          <div id="teacher-student-list">
             <div style="text-align:center; color:#64748b; padding:20px;">טוען...</div>
           </div>
         </div>
 
         <!-- Teacher Action Modal -->
-        <div id="teacher-action-modal" role="dialog" aria-modal="true" aria-labelledby="teacher-modal-title" aria-describedby="teacher-modal-sub" aria-hidden="true" style="
-          display:none; position:fixed; inset:0; background:rgba(2,8,23,0.82);
-          z-index:999; align-items:center; justify-content:center; padding:20px;
-        ">
-          <div style="
-            background:linear-gradient(180deg,rgba(30,41,59,0.98),rgba(15,23,42,0.98));
-            border:1px solid rgba(255,255,255,0.12); border-radius:24px;
-            padding:24px; max-width:360px; width:100%; text-align:center;
-          ">
-            <div id="teacher-modal-title" style="font-size:22px;font-weight:900;margin-bottom:6px;"></div>
-            <div id="teacher-modal-sub" style="font-size:13px;color:#94a3b8;margin-bottom:16px;line-height:1.5;"></div>
+        <div id="teacher-action-modal" role="dialog" aria-modal="true"
+          aria-labelledby="teacher-modal-title" aria-describedby="teacher-modal-sub"
+          aria-hidden="true" class="overlay">
+          <div class="teacher-modal-inner">
+            <div id="teacher-modal-title" class="teacher-modal-title"></div>
+            <div id="teacher-modal-sub"   class="teacher-modal-sub"></div>
             <input id="teacher-modal-input" type="text" placeholder="שם גיבור חדש"
-              style="display:none; margin-bottom:14px; font-size:16px; text-align:center;" maxlength="12"
-              autocorrect="off" autocapitalize="off" spellcheck="false" />
-            <div style="display:flex; gap:10px;">
-              <button id="teacher-modal-confirm" style="flex:1; min-height:48px; font-size:16px; border-radius:14px;
-                background:linear-gradient(135deg,#2563eb,#3b82f6);">אישור</button>
-              <button onclick="closeTeacherModal()" style="flex:1; min-height:48px; font-size:16px; border-radius:14px;
-                background:rgba(255,255,255,0.09); color:#e2e8f0;">ביטול</button>
+              style="display:none; margin-bottom:14px; font-size:16px; text-align:center;"
+              maxlength="12" autocorrect="off" autocapitalize="off" spellcheck="false" />
+            <div class="teacher-modal-btns">
+              <button id="teacher-modal-confirm" class="teacher-modal-confirm-btn">אישור</button>
+              <button onclick="closeTeacherModal()" class="teacher-modal-cancel-btn">ביטול</button>
             </div>
-            <div id="teacher-modal-status" style="font-size:13px;margin-top:10px;min-height:18px;"></div>
+            <div id="teacher-modal-status" class="teacher-modal-status"></div>
           </div>
         </div>
 
         <!-- Teacher Avatar Picker Modal -->
-        <div id="teacher-avatar-modal" role="dialog" aria-modal="true" aria-labelledby="teacher-avatar-modal-title" aria-describedby="teacher-avatar-modal-sub" aria-hidden="true" style="
-          display:none; position:fixed; inset:0; background:rgba(2,8,23,0.88);
-          z-index:1000; align-items:center; justify-content:center; padding:20px;
-        ">
-          <div style="
-            background:linear-gradient(180deg,rgba(30,41,59,0.98),rgba(15,23,42,0.98));
-            border:1px solid rgba(255,255,255,0.12); border-radius:24px;
-            padding:24px; max-width:420px; width:100%; text-align:center;
-          ">
-            <div id="teacher-avatar-modal-title" style="font-size:22px;font-weight:900;margin-bottom:4px;">🎭 שינוי דמות</div>
-            <div id="teacher-avatar-modal-sub" style="font-size:13px;color:#94a3b8;margin-bottom:16px;"></div>
-            <!-- Hero grid -->
-            <div id="teacher-avatar-grid" style="
-              display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:18px;
-            ">
-              <!-- filled by JS -->
+        <div id="teacher-avatar-modal" role="dialog" aria-modal="true"
+          aria-labelledby="teacher-avatar-modal-title" aria-describedby="teacher-avatar-modal-sub"
+          aria-hidden="true" class="overlay" style="background:rgba(2,8,23,0.88); z-index:1000;">
+          <div class="teacher-avatar-modal-inner">
+            <div id="teacher-avatar-modal-title" class="teacher-avatar-modal-title">🎭 שינוי דמות</div>
+            <div id="teacher-avatar-modal-sub"   class="teacher-avatar-modal-sub"></div>
+            <div id="teacher-avatar-grid"></div>
+            <div class="teacher-modal-btns">
+              <button id="teacher-avatar-confirm" class="teacher-avatar-save-btn">שמור דמות</button>
+              <button onclick="closeTeacherAvatarModal()" class="teacher-modal-cancel-btn">ביטול</button>
             </div>
-            <div style="display:flex; gap:10px;">
-              <button id="teacher-avatar-confirm" style="flex:1; min-height:48px; font-size:16px; border-radius:14px;
-                background:linear-gradient(135deg,#7c3aed,#a855f7); font-weight:800; color:white; border:none; cursor:pointer;">
-                שמור דמות
-              </button>
-              <button onclick="closeTeacherAvatarModal()" style="flex:1; min-height:48px; font-size:16px; border-radius:14px;
-                background:rgba(255,255,255,0.09); color:#e2e8f0; border:none; cursor:pointer; font-weight:800;">
-                ביטול
-              </button>
-            </div>
-            <div id="teacher-avatar-status" style="font-size:13px;margin-top:10px;min-height:18px;"></div>
+            <div id="teacher-avatar-status" class="teacher-modal-status"></div>
           </div>
         </div>
 
@@ -4046,6 +4300,22 @@ body.review-mode .world-pill[data-world].locked-world {
     const SCREEN_IDS = ["auth-screen", "setup-screen", "map-screen", "game-screen", "teacher-screen"];
     const TEACHER_SESSION_KEY = "wordheroes_teacher_session";
     const DIALOG_SELECTOR = '[role="dialog"][aria-modal="true"]';
+
+    // ── Game balance constants ─────────────────────────────────
+    // All tunable numbers live here — change once, takes effect everywhere.
+    const GAME = Object.freeze({
+      STAGES_PER_WORLD:        10,   // stages in each world
+      BOSS_STAGE:              10,   // which stage number is the boss
+      QUESTIONS_PER_STAGE:     10,   // questions per normal stage
+      BOSS_QUESTIONS:           5,   // questions in a boss stage
+      BOSS_REQUIRED_HITS:       4,   // correct answers needed to beat boss
+      BOSS_BONUS_XP:          120,   // XP awarded for beating a boss
+      STAGE_CLEAR_XP:          40,   // base XP for completing a stage
+      PERFECT_BONUS_XP:        15,   // extra XP for zero wrong answers
+      SMASH_DURATION_SEC:      45,   // Word Smash timer in seconds
+      SMASH_QUEST_THRESHOLD:   15,   // smash score needed to count quest
+      ABSENT_DAYS_THRESHOLD:    3,   // days without login = "absent"
+    });
     let activeDialog = null;
     let lastFocusedElement = null;
     let activeDialogCleanup = null;
@@ -4127,8 +4397,8 @@ body.review-mode .world-pill[data-world].locked-world {
 
     function configureStaticAccessibility() {
       document.querySelectorAll('.overlay').forEach((el) => el.setAttribute('aria-hidden', el.classList.contains('show') ? 'false' : 'true'));
-      const teacherToggle = document.getElementById('teacher-toggle-btn');
-      const teacherPanel = document.getElementById('teacher-code-panel');
+      const teacherToggle = id('teacher-toggle-btn');
+      const teacherPanel = id('teacher-code-panel');
       if (teacherToggle && teacherPanel) teacherToggle.setAttribute('aria-controls', 'teacher-code-panel');
     }
 
@@ -4219,7 +4489,7 @@ body.review-mode .world-pill[data-world].locked-world {
       unlockedStage:               1,
       selectedStage:               1,
       stageQuestionIndex:          0,
-      stageQuestionTotal:          10,
+      stageQuestionTotal:          GAME.QUESTIONS_PER_STAGE,
       stageWords:                  [],
       stageXpGained:               0,
       stageWrongAnswers:           0,
@@ -4246,7 +4516,7 @@ body.review-mode .world-pill[data-world].locked-world {
       smashScore:                  0,
       smashCombo:                  0,
       smashBestCombo:              0,
-      smashTimeLeft:               45,
+      smashTimeLeft:               GAME.SMASH_DURATION_SEC,
       smashRoundXp:                0,
       smashEndTriggered:           false,
       smashTimerInterval:          null,
@@ -4276,7 +4546,7 @@ body.review-mode .world-pill[data-world].locked-world {
     let unlockedStage               = 1;
     let selectedStage               = 1;
     let stageQuestionIndex          = 0;
-    let stageQuestionTotal          = 10;
+    let stageQuestionTotal          = GAME.QUESTIONS_PER_STAGE;
     let stageWords                  = [];
     let stageXpGained               = 0;
     let stageWrongAnswers           = 0;
@@ -4303,7 +4573,7 @@ body.review-mode .world-pill[data-world].locked-world {
     let smashScore                  = 0;
     let smashCombo                  = 0;
     let smashBestCombo              = 0;
-    let smashTimeLeft               = 45;
+    let smashTimeLeft               = GAME.SMASH_DURATION_SEC;
     let smashRoundXp                = 0;
     let smashEndTriggered           = false;
     let smashTimerInterval          = null;
@@ -4378,7 +4648,7 @@ body.review-mode .world-pill[data-world].locked-world {
       smashScore = 0;
       smashCombo = 0;
       smashBestCombo = 0;
-      smashTimeLeft = 45;
+      smashTimeLeft = GAME.SMASH_DURATION_SEC;
       smashRoundXp = 0;
       smashEndTriggered = false;
       smashLastWordId = null;
@@ -4640,9 +4910,17 @@ body.review-mode .world-pill[data-world].locked-world {
       return `wh_dq_${currentProfile?.id || "guest"}_${getTodayStamp()}_${suffix}`;
     }
 
-    // Pick 3 quests for today (deterministic based on date + userId)
+    // Pick 3 quests for today (deterministic based on date + userId).
+    // Cached: the hash only changes at midnight or on login — no need to recompute
+    // on every answer event.
+    let _todayQuestsCache = null;
+    let _todayQuestsCacheKey = "";
+
     function getTodayQuests() {
-      const seed = getTodayStamp().replace(/-/g,'') + (currentProfile?.id || "x");
+      const cacheKey = getTodayStamp() + "|" + (currentProfile?.id || "x");
+      if (_todayQuestsCache && _todayQuestsCacheKey === cacheKey) return _todayQuestsCache;
+
+      const seed = cacheKey.replace(/-/g, "").replace("|", "");
       let h = 0;
       for (let i = 0; i < seed.length; i++) h = (Math.imul(31, h) + seed.charCodeAt(i)) | 0;
       const pool = [...QUEST_POOL];
@@ -4653,6 +4931,8 @@ body.review-mode .world-pill[data-world].locked-world {
         picked.push(pool.splice(idx, 1)[0]);
         s = Math.abs((Math.imul(31, s) + 7) | 0);
       }
+      _todayQuestsCache    = picked;
+      _todayQuestsCacheKey = cacheKey;
       return picked;
     }
 
@@ -4700,7 +4980,7 @@ body.review-mode .world-pill[data-world].locked-world {
     }
 
     function showToast(text, durationMs = 2500) {
-      const el = document.getElementById("quest-toast");
+      const el = id("quest-toast");
       if (!el) return;
       el.textContent = text;
       el.style.display = "block";
@@ -4738,7 +5018,7 @@ body.review-mode .world-pill[data-world].locked-world {
     }
 
     function renderDailyQuests() {
-      const container = document.getElementById("dq-list");
+      const container = id("dq-list");
       const titleEl   = document.querySelector(".dq-title");
       if (!container) return;
 
@@ -4799,13 +5079,23 @@ body.review-mode .world-pill[data-world].locked-world {
       }
     }
 
-    function getTodayStamp() {
+    // Cached today stamp — recomputed once per day at midnight
+    let _todayStampCache = "";
+    let _todayStampTimer = null;
+
+    function _refreshTodayStamp() {
       const now = new Date();
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, "0");
-      const day = String(now.getDate()).padStart(2, "0");
-      return `${year}-${month}-${day}`;
+      _todayStampCache = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
+      // Schedule refresh for next midnight
+      if (_todayStampTimer) clearTimeout(_todayStampTimer);
+      const tomorrow = new Date(now);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0, 0, 0, 0);
+      _todayStampTimer = setTimeout(_refreshTodayStamp, tomorrow - now);
     }
+    _refreshTodayStamp(); // initialise immediately
+
+    function getTodayStamp() { return _todayStampCache; }
 
     function getPraiseMessage() {
       const praises = ["Nice!", "Great!", "Awesome!", "Perfect!", "Smart!", "Excellent!", "Brilliant!"];
@@ -5178,7 +5468,7 @@ body.review-mode .world-pill[data-world].locked-world {
     }
 
     function renderTitleBadge() {
-      const btn = document.getElementById("active-title-badge");
+      const btn = id("active-title-badge");
       if (!btn) return;
       const activeId = getActiveTitleId();
       const unlocked = getUnlockedTitleIds();
@@ -5212,8 +5502,8 @@ body.review-mode .world-pill[data-world].locked-world {
     }
 
     function showTitleToast(t) {
-      const toast = document.getElementById("title-toast");
-      const txt   = document.getElementById("title-toast-text");
+      const toast = id("title-toast");
+      const txt   = id("title-toast-text");
       if (!toast || !txt) return;
       txt.textContent = "תואר חדש: " + t.emoji + " " + t.label;
       toast.className = "title-toast rarity-" + t.rarity + " show";
@@ -5222,8 +5512,8 @@ body.review-mode .world-pill[data-world].locked-world {
 
     // ── Title modal ────────────────────────────────────
     function openTitleModal() {
-      const overlay = document.getElementById("title-modal-overlay");
-      const grid    = document.getElementById("title-grid-container");
+      const overlay = id("title-modal-overlay");
+      const grid    = id("title-grid-container");
       if (!overlay || !grid) return;
       const unlocked = getUnlockedTitleIds();
       const activeId = getActiveTitleId();
@@ -5254,7 +5544,7 @@ body.review-mode .world-pill[data-world].locked-world {
     }
 
     function closeTitleModal() {
-      const overlay = document.getElementById("title-modal-overlay");
+      const overlay = id("title-modal-overlay");
       if (!overlay) return;
       overlay.classList.remove("show");
       overlay.setAttribute("aria-hidden", "true");
@@ -5265,11 +5555,11 @@ body.review-mode .world-pill[data-world].locked-world {
     document.addEventListener("click", e => {
       const btn = e.target.closest("[data-title-id]");
       if (!btn) return;
-      const id = btn.dataset.titleId;
+      const titleId = btn.dataset.titleId;
       const unlocked = getUnlockedTitleIds();
-      if (!unlocked.has(id)) return;
+      if (!unlocked.has(titleId)) return;
       const current = getActiveTitleId();
-      setActiveTitleId(current === id ? "" : id);  // toggle off if same
+      setActiveTitleId(current === titleId ? "" : titleId);  // toggle off if same
       openTitleModal(); // refresh selection state
     });
 
@@ -5311,7 +5601,7 @@ body.review-mode .world-pill[data-world].locked-world {
 
     // ── Boss enhancement helpers ───────────────────────────
     function showBossDialogue(type) {
-      const el = document.getElementById("boss-dialogue");
+      const el = id("boss-dialogue");
       if (!el || !isBossStage()) return;
       const world = getWorldData(currentWorld);
       const lines = type === "taunt" ? (world.taunts || []) : (world.praises || []);
@@ -5324,7 +5614,7 @@ body.review-mode .world-pill[data-world].locked-world {
     }
 
     function triggerBossAttack() {
-      const flash = document.getElementById("boss-attack-flash");
+      const flash = id("boss-attack-flash");
       if (flash) {
         flash.style.display = "block";
         flash.style.animation = "none";
@@ -5369,7 +5659,7 @@ body.review-mode .world-pill[data-world].locked-world {
 
 
     function isBossStage() {
-      return currentStage === 10;
+      return currentStage === GAME.BOSS_STAGE;
     }
 
     function getBossData() {
@@ -5379,7 +5669,7 @@ body.review-mode .world-pill[data-world].locked-world {
 
     function initBossBattle() {
       bossBattleStats = isBossStage()
-        ? { asked: 0, correct: 0, requiredCorrect: 4, total: 5 }
+        ? { asked: 0, correct: 0, requiredCorrect: GAME.BOSS_REQUIRED_HITS, total: GAME.BOSS_QUESTIONS }
         : null;
     }
 
@@ -5395,12 +5685,12 @@ body.review-mode .world-pill[data-world].locked-world {
     };
 
     function initBossElements() {
-      bossEls.banner = document.getElementById("boss-banner");
-      bossEls.panel  = document.getElementById("boss-panel");
-      bossEls.name   = document.getElementById("boss-name");
-      bossEls.status = document.getElementById("boss-status");
-      bossEls.hpFill = document.getElementById("boss-hp-fill");
-      bossEls.note   = document.getElementById("boss-note");
+      bossEls.banner = id("boss-banner");
+      bossEls.panel  = id("boss-panel");
+      bossEls.name   = id("boss-name");
+      bossEls.status = id("boss-status");
+      bossEls.hpFill = id("boss-hp-fill");
+      bossEls.note   = id("boss-note");
     }
 
     function updateBossUI() {
@@ -5453,9 +5743,9 @@ body.review-mode .world-pill[data-world].locked-world {
     // ══════════════════════════════════════════════════════
     function initEventListeners() {
       // ── Auth & Setup ──────────────────────────────────
-      document.getElementById("signup-btn").addEventListener("click", signUp);
-      document.getElementById("login-btn").addEventListener("click", login);
-      document.getElementById("save-profile-btn").addEventListener("click", saveProfile);
+      id("signup-btn").addEventListener("click", signUp);
+      id("login-btn").addEventListener("click", login);
+      id("save-profile-btn").addEventListener("click", saveProfile);
 
       const usernameInputEl = id("username");
       _enforceLatin(usernameInputEl);
@@ -5500,9 +5790,9 @@ body.review-mode .world-pill[data-world].locked-world {
       if (classNumberSelectEl) classNumberSelectEl.addEventListener("change", syncClassCodeField);
 
       // ── Map & Gameplay ────────────────────────────────
-      document.getElementById("map-logout-btn").addEventListener("click", logout);
-      document.getElementById("back-to-map-btn").addEventListener("click", backToMap);
-      document.getElementById("journey-start-btn").addEventListener("click", startSelectedStage);
+      id("map-logout-btn").addEventListener("click", logout);
+      id("back-to-map-btn").addEventListener("click", backToMap);
+      id("journey-start-btn").addEventListener("click", startSelectedStage);
       if (wordSmashBtn) wordSmashBtn.addEventListener("click", startWordSmash);
 
       // Delegated: stage nodes
@@ -5518,8 +5808,8 @@ body.review-mode .world-pill[data-world].locked-world {
         if (!btn) return;
         document.querySelectorAll(".hero-choice").forEach(c => c.classList.remove("selected"));
         btn.classList.add("selected");
-        document.getElementById("avatar-class").value  = btn.dataset.class;
-        document.getElementById("avatar-gender").value = btn.dataset.gender;
+        id("avatar-class").value  = btn.dataset.class;
+        id("avatar-gender").value = btn.dataset.gender;
       });
 
       // World select dropdown navigation
@@ -5534,17 +5824,17 @@ body.review-mode .world-pill[data-world].locked-world {
         choicePoolCacheKey = "";
 
         if (isReviewMode) {
-          unlockedStage = 10;
+          unlockedStage = GAME.STAGES_PER_WORLD;
           selectedStage = 1;
           currentStage  = 1;
         } else {
           const profileWorld = Number(currentProfile?.current_world || 1);
           if (targetWorld < profileWorld) {
-            unlockedStage = 10;
+            unlockedStage = GAME.STAGES_PER_WORLD;
             currentStage  = 10;
-            selectedStage = 10;
+            selectedStage = GAME.STAGES_PER_WORLD;
           } else {
-            unlockedStage = clamp(Number(currentProfile?.unlocked_stage || 1), 1, 10);
+            unlockedStage = clamp(Number(currentProfile?.unlocked_stage || 1), 1, GAME.STAGES_PER_WORLD);
             currentStage  = unlockedStage;
             selectedStage = unlockedStage;
           }
@@ -5583,11 +5873,11 @@ body.review-mode .world-pill[data-world].locked-world {
       document.addEventListener("pointerdown", () => ensureAudioContext(), { once: true });
 
       // ── Titles ────────────────────────────────────────
-      const activeTitleBadgeBtn = document.getElementById("active-title-badge");
+      const activeTitleBadgeBtn = id("active-title-badge");
       if (activeTitleBadgeBtn) {
         activeTitleBadgeBtn.addEventListener("click", e => { e.preventDefault(); openTitleModal(); });
       }
-      const closeTitleModalBtn = document.getElementById("close-title-modal");
+      const closeTitleModalBtn = id("close-title-modal");
       if (closeTitleModalBtn) {
         closeTitleModalBtn.addEventListener("click", e => { e.preventDefault(); closeTitleModal(); });
       }
@@ -5621,16 +5911,16 @@ body.review-mode .world-pill[data-world].locked-world {
       }
 
       // ── Teacher UI ────────────────────────────────────
-      const teacherToggleBtn  = document.getElementById("teacher-toggle-btn");
-      const teacherLogoutBtn  = document.getElementById("teacher-logout-btn");
-      const teacherRefreshBtn = document.getElementById("teacher-refresh-btn");
-      const teacherClassSel   = document.getElementById("teacher-class-select");
-      const teacherReviewBtn  = document.getElementById("teacher-review-btn");
-      const teacherInput      = document.getElementById("teacher-code-input");
+      const teacherToggleBtn  = id("teacher-toggle-btn");
+      const teacherLogoutBtn  = id("teacher-logout-btn");
+      const teacherRefreshBtn = id("teacher-refresh-btn");
+      const teacherClassSel   = id("teacher-class-select");
+      const teacherReviewBtn  = id("teacher-review-btn");
+      const teacherInput      = id("teacher-code-input");
 
       if (teacherToggleBtn) {
         teacherToggleBtn.addEventListener("click", () => {
-          const panel = document.getElementById("teacher-code-panel");
+          const panel = id("teacher-code-panel");
           if (!panel) return;
           const isOpen = panel.style.display !== "none";
           panel.style.display = isOpen ? "none" : "block";
@@ -5651,6 +5941,22 @@ body.review-mode .world-pill[data-world].locked-world {
       if (teacherInput) {
         teacherInput.addEventListener("keydown", e => {
           if (e.key === "Enter") teacherLogin();
+        });
+      }
+
+      // ── Teacher search + sort ─────────────────────────
+      const teacherSearchEl = id("teacher-search");
+      const teacherSortEl   = id("teacher-sort");
+      if (teacherSearchEl) {
+        teacherSearchEl.addEventListener("input", () => {
+          teacherSearchQuery = teacherSearchEl.value.trim();
+          renderTeacherStudents();
+        });
+      }
+      if (teacherSortEl) {
+        teacherSortEl.addEventListener("change", () => {
+          teacherSortKey = teacherSortEl.value;
+          renderTeacherStudents();
         });
       }
     }
@@ -5803,7 +6109,7 @@ body.review-mode .world-pill[data-world].locked-world {
       cachedStageKey = cacheKey;
       choicePoolCacheKey = poolCacheKey;
       if (!isBossStage()) {
-        stageQuestionQueue = shuffleArray(stageWords.map(word => word.id).slice());
+        stageQuestionQueue = shuffleArray(stageWords.map(w => w.id));
         if (lastQuestionWordId && stageQuestionQueue.length > 1 && stageQuestionQueue[0] === lastQuestionWordId) {
           const swapIndex = stageQuestionQueue.findIndex(id => id !== lastQuestionWordId);
           if (swapIndex > 0) {
@@ -5855,9 +6161,14 @@ body.review-mode .world-pill[data-world].locked-world {
       return 100 + (level * level * 4);
     }
 
+    // Memoized: XP changes at most once per answer, so a single-entry cache
+    // avoids re-running the loop 35 times on every updateHeroUI call.
+    let _levelCache = { xp: -1, result: null };
     function computeLevelData(totalXp) {
+      const xp = Math.max(0, Number(totalXp || 0));
+      if (_levelCache.xp === xp) return _levelCache.result;
       let level = 1;
-      let remaining = Math.max(0, Number(totalXp || 0));
+      let remaining = xp;
       const hardCap = 25 + MAX_PRESTIGE_LEVEL;
       while (level < hardCap) {
         const needed = xpForLevel(level);
@@ -5866,24 +6177,19 @@ body.review-mode .world-pill[data-world].locked-world {
         level += 1;
       }
       const atCap = level >= hardCap;
-      return {
+      const result = {
         level,
         xpInLevel: atCap ? 0 : remaining,
-        xpNeeded: atCap ? 1 : xpForLevel(level)
+        xpNeeded:  atCap ? 1 : xpForLevel(level)
       };
+      _levelCache = { xp, result };
+      return result;
     }
 
-    function getLevelFromXp(totalXp) {
-      return computeLevelData(totalXp).level;
-    }
-
-    function getXpIntoCurrentLevel(totalXp) {
-      return computeLevelData(totalXp).xpInLevel;
-    }
-
-    function getXpNeededForCurrentLevel(totalXp) {
-      return computeLevelData(totalXp).xpNeeded;
-    }
+    // Convenience wrappers kept for call-site compatibility
+    function getLevelFromXp(totalXp)          { return computeLevelData(totalXp).level; }
+    function getXpIntoCurrentLevel(totalXp)   { return computeLevelData(totalXp).xpInLevel; }
+    function getXpNeededForCurrentLevel(totalXp) { return computeLevelData(totalXp).xpNeeded; }
 
     function awardXp(amount) {
       if (!currentProfile || amount <= 0) return;
@@ -5916,7 +6222,7 @@ function getNextEvolutionLevel(level){
 }
 
 function updateEvolutionHint(level){
-  const el=document.getElementById("evolution-hint");
+  const el=id("evolution-hint");
   if(!el) return;
   if(isPrestige(level)){
     const p = getPrestigeLevel(level);
@@ -5938,15 +6244,23 @@ function updateEvolutionHint(level){
   }
 }
 
-function updateHeroUI(profile) {
+    let _lastHeroUIKey = "";
+
+    function updateHeroUI(profile) {
       if (!profile) return;
       const heroClass = profile.avatar_class || "mage";
       const xp = Number(profile.xp || 0);
       const { level, xpInLevel, xpNeeded } = computeLevelData(xp);
+      profile.level = level;
+
+      // Skip all DOM writes when nothing visible has changed
+      const uiKey = `${xp}|${profile.display_name}|${profile.class_code}|${profile.avatar_gender}|${streak}|${unlockedStage}|${currentWorld}|${profile.last_daily_bonus_at}`;
+      if (uiKey === _lastHeroUIKey) return;
+      _lastHeroUIKey = uiKey;
+
       const progressWidth = `${clamp(Math.round((xpInLevel / xpNeeded) * 100), 0, 100)}%`;
       const heroLine = `${profile.username || ""} • ${getClassLabel(heroClass)} • ${profile.avatar_gender === "female" ? "Female" : "Male"}`;
       const heroImagePath = getHeroImagePath(heroClass, profile.avatar_gender, level);
-      profile.level = level;
 
       setText("player-name", profile.display_name || "Hero");
       setText(id("player-class-tag"), profile.class_code || "");
@@ -5984,7 +6298,7 @@ function updateHeroUI(profile) {
       updateEvolutionHint(level);
 
       // Daily streak display
-      const streakEl = document.getElementById("map-daily-streak");
+      const streakEl = id("map-daily-streak");
       if (streakEl) {
         const today = getTodayStamp();
         const lastBonus = String(profile.last_daily_bonus_at || "").slice(0, 10);
@@ -6012,8 +6326,8 @@ function updateHeroUI(profile) {
     // =========================
     function updateWorldUI() {
       const worldData = getWorldData(currentWorld);
-      const titleEl = document.getElementById("current-world-title");
-      const descEl = document.getElementById("current-world-desc");
+      const titleEl = id("current-world-title");
+      const descEl = id("current-world-desc");
       if (titleEl) titleEl.textContent = `${worldData.icon} עולם ${currentWorld}: ${worldData.name}`;
       if (descEl) descEl.textContent = worldData.desc;
       const authBadge = document.querySelector("#auth-screen .world-badge");
@@ -6022,7 +6336,7 @@ function updateHeroUI(profile) {
     }
 
     function renderWorldRoad() {
-      const sel = document.getElementById("world-select");
+      const sel = id("world-select");
       if (!sel) return;
 
       const maxUnlockedWorld = isReviewMode ? 6 : Number(currentProfile?.current_world || currentWorld);
@@ -6185,37 +6499,43 @@ function updateHeroUI(profile) {
     function buildChoices(words, correctWord, direction, choiceWords = []) {
       const correctAnswer = direction === "en-he" ? correctWord.hebrew : correctWord.english;
       const normalizedCorrect = String(correctAnswer || "").trim();
-      const stagePool = direction === "en-he" ? words.map(w => w.hebrew) : words.map(w => w.english);
+      const stagePool   = direction === "en-he" ? words.map(w => w.hebrew)      : words.map(w => w.english);
       const unlockedPool = direction === "en-he" ? choiceWords.map(w => w.hebrew) : choiceWords.map(w => w.english);
       const combinedPool = [...new Set([...unlockedPool, ...stagePool].filter(Boolean).map(item => String(item).trim()))]
         .filter(item => item && item !== normalizedCorrect);
       shuffleArray(combinedPool);
 
-      const preferredWrongAnswers = [];
-      const fallbackWrongAnswers = [];
+      const picked       = new Set();   // O(1) duplicate check
+      const preferred    = [];
+      const fallback     = [];
 
-      combinedPool.forEach(candidate => {
-        if (!candidate || candidate === normalizedCorrect) return;
-        const tooSimilarToCorrect = areChoicesTooSimilar(candidate, normalizedCorrect);
-        const tooSimilarToSelected = preferredWrongAnswers.some(existing => areChoicesTooSimilar(candidate, existing));
-        const alreadyPicked = preferredWrongAnswers.includes(candidate) || fallbackWrongAnswers.includes(candidate);
-        if (alreadyPicked) return;
+      for (const candidate of combinedPool) {
+        if (!candidate || candidate === normalizedCorrect) continue;
+        if (picked.has(candidate)) continue;
 
-        if (!tooSimilarToCorrect && !tooSimilarToSelected && preferredWrongAnswers.length < 3) {
-          preferredWrongAnswers.push(candidate);
-          return;
+        const tooSimilarToCorrect   = areChoicesTooSimilar(candidate, normalizedCorrect);
+        if (tooSimilarToCorrect) continue;
+
+        if (preferred.length < 3) {
+          const tooSimilarToSelected = preferred.some(e => areChoicesTooSimilar(candidate, e));
+          if (!tooSimilarToSelected) {
+            preferred.push(candidate);
+            picked.add(candidate);
+            continue;
+          }
         }
 
-        if (!tooSimilarToCorrect) {
-          const fallbackTooSimilar = fallbackWrongAnswers.some(existing => areChoicesTooSimilar(candidate, existing));
-          if (!fallbackTooSimilar) fallbackWrongAnswers.push(candidate);
+        const tooSimilarToFallback = fallback.some(e => areChoicesTooSimilar(candidate, e));
+        if (!tooSimilarToFallback) {
+          fallback.push(candidate);
+          picked.add(candidate);
         }
-      });
+      }
 
-      const wrongAnswers = preferredWrongAnswers.slice();
-      while (wrongAnswers.length < 3 && fallbackWrongAnswers.length) {
-        const candidate = fallbackWrongAnswers.shift();
-        if (!wrongAnswers.includes(candidate)) wrongAnswers.push(candidate);
+      const wrongAnswers = preferred.slice();
+      let fi = 0;
+      while (wrongAnswers.length < 3 && fi < fallback.length) {
+        wrongAnswers.push(fallback[fi++]);
       }
 
       const desiredAnswerCount = wrongAnswers.length >= 3 ? 4 : 3;
@@ -6226,7 +6546,7 @@ function updateHeroUI(profile) {
     function loadUnlockedStage() {
       const savedStage = Number(currentProfile?.unlocked_stage || 1);
       const savedWorld = Number(currentProfile?.current_world || 1);
-      unlockedStage = clamp(savedStage, 1, 10);
+      unlockedStage = clamp(savedStage, 1, GAME.STAGES_PER_WORLD);
       currentWorld = clamp(savedWorld, 1, 6);
       currentStage = unlockedStage;
       selectedStage = unlockedStage;
@@ -6255,7 +6575,7 @@ function updateHeroUI(profile) {
     }
 
     function selectStage(stage) {
-      selectedStage = clamp(stage, 1, 10);
+      selectedStage = clamp(stage, 1, GAME.STAGES_PER_WORLD);
       renderStageMap();
     }
 
@@ -6306,7 +6626,7 @@ function updateHeroUI(profile) {
       stageXpGained = 0;
       stageWrongAnswers = 0;
       consecutiveWrongAnswers = 0;
-      stageQuestionTotal = currentStage === 10 ? 5 : 10;
+      stageQuestionTotal = isBossStage() ? GAME.BOSS_QUESTIONS : GAME.QUESTIONS_PER_STAGE;
       stageWords = [];
       stageMasteryMap = {};
       stageMasteredWordIds = new Set();
@@ -6416,7 +6736,7 @@ function updateHeroUI(profile) {
     }
 
     function updateSmashDifficultyBar() {
-      const bar = document.getElementById("smash-difficulty-bar");
+      const bar = id("smash-difficulty-bar");
       if (!bar) return;
       const diff = getSmashDifficulty();
       bar.style.display = "flex";
@@ -6427,7 +6747,7 @@ function updateHeroUI(profile) {
         pip.className = "smash-diff-pip" +
           (i <= diff.diffLevel + 1 ? " lit" + (isDanger ? " danger" : "") : "");
       }
-      const label = document.getElementById("smash-diff-label");
+      const label = id("smash-diff-label");
       if (label) label.textContent = diff.label;
     }
 
@@ -6484,7 +6804,7 @@ function updateHeroUI(profile) {
       answeredCurrent = false;
       answersEl.classList.add("word-smash-board");
       // Combo meter element
-      if (!document.getElementById("smash-combo-meter")) {
+      if (!id("smash-combo-meter")) {
         const meter = document.createElement("div");
         meter.id = "smash-combo-meter";
         meter.className = "smash-combo-meter";
@@ -6553,7 +6873,7 @@ function updateHeroUI(profile) {
     }
 
     function updateSmashComboMeter() {
-      const el = document.getElementById("smash-combo-value");
+      const el = id("smash-combo-value");
       if (!el) return;
       el.textContent = smashCombo;
       el.classList.remove("bump");
@@ -6643,7 +6963,7 @@ function updateHeroUI(profile) {
       clearWordSmashTimers();
       const bestBefore = getWordSmashBestScore();
       const isRecord = smashScore > bestBefore;
-      if (smashScore >= 15) updateQuestProgress("smash", smashScore);
+      if (smashScore >= GAME.SMASH_QUEST_THRESHOLD) updateQuestProgress("smash", smashScore);
       if (isRecord) {
         setWordSmashBestScore(smashScore);
         updateSmashBtnBadge();
@@ -6754,7 +7074,7 @@ function updateHeroUI(profile) {
 
         // Star ratings for completed stages (stored in localStorage)
         let starsEl = btn.querySelector(".stage-stars");
-        if (stage < unlockedStage && stage !== 10) {
+        if (stage < unlockedStage && stage !== GAME.BOSS_STAGE) {
           const starKey = `wh_stars_w${currentWorld}_s${stage}_u${currentProfile?.id || ""}`;
           const stars = Number(storage.get(starKey) || 0);
           if (!starsEl) {
@@ -6797,7 +7117,17 @@ function updateHeroUI(profile) {
       }
     }
 
-    
+    // Convenience helper: renders both the world road and stage map in a single
+    // requestAnimationFrame so the browser only does one layout pass instead of two.
+    let _renderMapRafId = null;
+    function renderMap() {
+      if (_renderMapRafId) cancelAnimationFrame(_renderMapRafId);
+      _renderMapRafId = requestAnimationFrame(() => {
+        _renderMapRafId = null;
+        renderWorldRoad();
+        renderStageMap();
+      });
+    }
 
     function openLeaderboardModal() {
       if (activeScreenName !== "map-screen") return;
@@ -6831,8 +7161,8 @@ function updateHeroUI(profile) {
 
     function renderLeaderboardFromCache(cache) {
       if (!leaderboardList) return;
-      const championCard = document.getElementById("champion-card");
-      const yourRankEl = document.getElementById("your-rank");
+      const championCard = id("champion-card");
+      const yourRankEl = id("your-rank");
       const PREVIEW_LIMIT = 5;
       const data = cache.data;
 
@@ -6868,7 +7198,7 @@ function updateHeroUI(profile) {
     let lbActiveTab = "global"; // "global" | "class"
     let lbClassFilter = "";     // "" = my class, else specific class code
     let classLeaderboardCache = { data: null, html: [], ts: 0, classCode: "" };
-    const CLASS_LB_TTL = 60_000;
+    
 
     function getLbClassFilter() {
       const sel = id("lb-class-filter");
@@ -6900,12 +7230,12 @@ function updateHeroUI(profile) {
       if (!leaderboardList) return;
       const targetClass = getLbClassFilter() || getMyClassCode();
       const now = Date.now();
-      const championCard = document.getElementById("champion-card");
-      const yourRankEl = document.getElementById("your-rank");
+      const championCard = id("champion-card");
+      const yourRankEl = id("your-rank");
 
       if (!force && classLeaderboardCache.data &&
           classLeaderboardCache.classCode === targetClass &&
-          (now - classLeaderboardCache.ts) < CLASS_LB_TTL) {
+          (now - classLeaderboardCache.ts) < LEADERBOARD_TTL) {
         renderClassLeaderboard(classLeaderboardCache.data, targetClass);
         return;
       }
@@ -6933,8 +7263,8 @@ function updateHeroUI(profile) {
     }
 
     function renderClassLeaderboard(data, targetClass) {
-      const championCard = document.getElementById("champion-card");
-      const yourRankEl = document.getElementById("your-rank");
+      const championCard = id("champion-card");
+      const yourRankEl = id("your-rank");
       const PREVIEW = 5;
 
       const renderRow = (player, rank) => {
@@ -7010,8 +7340,8 @@ function updateHeroUI(profile) {
         return;
       }
 
-      const championCard = document.getElementById("champion-card");
-      const yourRankEl = document.getElementById("your-rank");
+      const championCard = id("champion-card");
+      const yourRankEl = id("your-rank");
       const LEADERBOARD_LIMIT = 20;
       const PREVIEW_LIMIT = 5;
 
@@ -7098,8 +7428,8 @@ function updateHeroUI(profile) {
     }
 
     async function login() {
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value.trim();
+      const username = id("username").value.trim();
+      const password = id("password").value.trim();
       setPendingSetupUsername(username);
       setSetupAllowed(true);
       if (!username || !password) {
@@ -7116,54 +7446,60 @@ function updateHeroUI(profile) {
     }
 
     async function checkProfile() {
-      const { data: { user } } = await supabaseClient.auth.getUser();
-      if (!user) {
-        showScreen("auth-screen");
-        return;
-      }
-
-      const { data, error } = await supabaseClient
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .maybeSingle();
-
-      if (error) {
-        setMainMessage("שגיאה בטעינת פרופיל: " + error.message, "error");
-        return;
-      }
-
-      if (!data) {
-        if (isSetupAllowed()) {
-          showScreen("setup-screen");
-        } else {
+      try {
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        if (!user) {
           showScreen("auth-screen");
-          setMainMessage("יש להתחבר או להירשם קודם", "info");
+          return;
         }
-        return;
-      }
 
-      currentProfile = data;
-      currentProfile.level = getLevelFromXp(currentProfile.xp || 0);
-      if (currentProfile.id) {
-        const localBest = Number(storage.get("wordheroes_smash_best_" + currentProfile.id + "_world_" + (currentProfile.current_world || 1)) || 0);
-        const dbBest = Number(currentProfile.smash_best || 0);
-        if (localBest > dbBest) {
-          currentProfile.smash_best = localBest;
-          updateProfileRecord({ smash_best: localBest }).catch(() => {});
+        const { data, error } = await supabaseClient
+          .from("profiles")
+          .select("*")
+          .eq("id", user.id)
+          .maybeSingle();
+
+        if (error) {
+          setMainMessage("שגיאה בטעינת פרופיל: " + error.message, "error");
+          return;
         }
+
+        if (!data) {
+          if (isSetupAllowed()) {
+            showScreen("setup-screen");
+          } else {
+            showScreen("auth-screen");
+            setMainMessage("יש להתחבר או להירשם קודם", "info");
+          }
+          return;
+        }
+
+        currentProfile = data;
+        currentProfile.level = getLevelFromXp(currentProfile.xp || 0);
+        if (currentProfile.id) {
+          const localBest = Number(storage.get("wordheroes_smash_best_" + currentProfile.id + "_world_" + (currentProfile.current_world || 1)) || 0);
+          const dbBest = Number(currentProfile.smash_best || 0);
+          if (localBest > dbBest) {
+            currentProfile.smash_best = localBest;
+            updateProfileRecord({ smash_best: localBest }).catch(() => {});
+          }
+        }
+        if ((data.level || 1) !== currentProfile.level) {
+          updateProfileRecord({ level: currentProfile.level }).catch(e => console.error("level sync failed:", e));
+        }
+        clearPendingSetupUsername();
+        setSetupAllowed(false);
+        loadUnlockedStage();
+        loadLastShownEvolutionLevel();
+        updateHeroUI(currentProfile);
+        showScreen("map-screen");
+        await maybeAwardDailyBonus();
+        await loadLeaderboard();
+      } catch (err) {
+        console.error("[checkProfile]", err);
+        setMainMessage("שגיאת רשת — אנא רענן את הדף", "error");
+        showScreen("auth-screen");
       }
-      if ((data.level || 1) !== currentProfile.level) {
-        updateProfileRecord({ level: currentProfile.level }).then(() => {});
-      }
-      clearPendingSetupUsername();
-      setSetupAllowed(false);
-      loadUnlockedStage();
-      loadLastShownEvolutionLevel();
-      updateHeroUI(currentProfile);
-      showScreen("map-screen");
-      await maybeAwardDailyBonus();
-      await loadLeaderboard();
     }
 
 
@@ -7343,12 +7679,12 @@ function updateHeroUI(profile) {
         return;
       }
 
-      const username = (document.getElementById("username").value.trim() || getPendingSetupUsername()).toLowerCase();
-      const displayName = document.getElementById("display-name").value.trim();
+      const username = (id("username").value.trim() || getPendingSetupUsername()).toLowerCase();
+      const displayName = id("display-name").value.trim();
       syncClassCodeField();
-      const classCode = document.getElementById("class-code").value.trim();
-      const avatarClass = document.getElementById("avatar-class").value;
-      const avatarGender = document.getElementById("avatar-gender").value;
+      const classCode = id("class-code").value.trim();
+      const avatarClass = id("avatar-class").value;
+      const avatarGender = id("avatar-gender").value;
 
       setNameError("");
       setClassError("");
@@ -7517,7 +7853,7 @@ function updateHeroUI(profile) {
     }
 
     function refillStageQuestionQueue() {
-      stageQuestionQueue = shuffleArray(stageWords.map(word => word.id).slice());
+      stageQuestionQueue = shuffleArray(stageWords.map(w => w.id));
       if (lastQuestionWordId && stageQuestionQueue.length > 1 && stageQuestionQueue[0] === lastQuestionWordId) {
         const swapIndex = stageQuestionQueue.findIndex(id => id !== lastQuestionWordId);
         if (swapIndex > 0) {
@@ -7828,12 +8164,12 @@ function updateHeroUI(profile) {
     // WORLD UNLOCK MODAL — בחירת עולם אסטטית
     // ══════════════════════════════════════════════════════
     function showWorldUnlockModal(newWorld) {
-      const overlay = document.getElementById('world-unlock-overlay');
-      const badge   = document.getElementById('wum-badge');
-      const title   = document.getElementById('wum-title');
-      const sub     = document.getElementById('wum-sub');
-      const grid    = document.getElementById('wum-worlds');
-      const closeBtn= document.getElementById('wum-close');
+      const overlay = id('world-unlock-overlay');
+      const badge   = id('wum-badge');
+      const title   = id('wum-title');
+      const sub     = id('wum-sub');
+      const grid    = id('wum-worlds');
+      const closeBtn= id('wum-close');
       if (!overlay) return;
 
       const newData = getWorldData(newWorld);
@@ -7872,8 +8208,7 @@ function updateHeroUI(profile) {
             unlockedStage = (w === newWorld) ? 1 : (currentProfile?.unlocked_stage || 1);
             closeWorldUnlockModal();
             updateHeroUI(currentProfile);
-            renderWorldRoad();
-            renderStageMap();
+            renderMap();
             scrollToCurrentStage();
           });
         }
@@ -7883,8 +8218,7 @@ function updateHeroUI(profile) {
       closeBtn.onclick = () => {
         closeWorldUnlockModal();
         updateHeroUI(currentProfile);
-        renderWorldRoad();
-        renderStageMap();
+        renderMap();
         scrollToCurrentStage();
       };
 
@@ -7892,134 +8226,113 @@ function updateHeroUI(profile) {
     }
 
     function closeWorldUnlockModal() {
-      const overlay = document.getElementById('world-unlock-overlay');
+      const overlay = id('world-unlock-overlay');
       if (overlay) overlay.style.display = 'none';
     }
 
-    async function completeStage() {
-      setWidth(stageFillEl, "100%");
+    // ── completeStage sub-functions ───────────────────────────
 
-      // ── Review Mode: show result, no saving ──────────────
-      if (isReviewMode) {
-        const isBoss = isBossStage() && !!bossBattleStats;
-        const wonBoss = isBoss && bossBattleStats.correct >= bossBattleStats.requiredCorrect;
-        showCelebration({
-          title: isBoss ? (wonBoss ? "⚔️ Boss Defeated! (Review)" : "💥 Boss Won (Review)") : "✅ STAGE REVIEWED",
-          subText: isBoss
-            ? `${bossBattleStats.correct} / ${bossBattleStats.requiredCorrect} hits • מצב סקירה`
-            : "מצב סקירה — אין שמירה",
-          emoji: isBoss ? (wonBoss ? "⚔️" : "💥") : "🎮",
-          theme: wonBoss ? "world-theme" : isBoss ? "fail-theme" : "stage-theme",
-          symbols: wonBoss ? ["⚔️","🏆","✨"] : ["🎮","✅","🔍"],
-          autoCloseMs: 1600,
-          buttonText: "חזרה למפה",
-          onClose: () => {
-            showScreen("map-screen");
-            unlockedStage = 10;
-            const banner = document.getElementById("review-mode-banner");
-            if (banner) banner.classList.add("show");
-            renderStageMap();
-          }
-        });
+    function _completeStageReview() {
+      const isBoss   = isBossStage() && !!bossBattleStats;
+      const wonBoss  = isBoss && bossBattleStats.correct >= bossBattleStats.requiredCorrect;
+      showCelebration({
+        title:      isBoss ? (wonBoss ? "⚔️ Boss Defeated! (Review)" : "💥 Boss Won (Review)") : "✅ STAGE REVIEWED",
+        subText:    isBoss ? `${bossBattleStats.correct} / ${bossBattleStats.requiredCorrect} hits • מצב סקירה` : "מצב סקירה — אין שמירה",
+        emoji:      isBoss ? (wonBoss ? "⚔️" : "💥") : "🎮",
+        theme:      wonBoss ? "world-theme" : isBoss ? "fail-theme" : "stage-theme",
+        symbols:    wonBoss ? ["⚔️","🏆","✨"] : ["🎮","✅","🔍"],
+        autoCloseMs: 1600,
+        buttonText: "חזרה למפה",
+        onClose: () => {
+          showScreen("map-screen");
+          unlockedStage = GAME.STAGES_PER_WORLD;
+          const banner = id("review-mode-banner");
+          if (banner) banner.classList.add("show");
+          renderStageMap();
+        }
+      });
+    }
+
+    async function _completeStageBoss() {
+      const wonBoss        = bossBattleStats.correct >= bossBattleStats.requiredCorrect;
+      const defeatedBossName = getBossData().failName;
+
+      if (!wonBoss) {
+        selectedStage = GAME.STAGES_PER_WORLD - 1;
+        currentStage  = GAME.STAGES_PER_WORLD - 1;
+        unlockedStage = Math.min(unlockedStage, GAME.STAGES_PER_WORLD - 1);
+        updateHeroUI(currentProfile);
+        updateBossUI();
+        playSound("wrong");
+        showStageComplete("BOSS FAILED", `${defeatedBossName} ניצח. חזור ל-Stage 9 והתחזק.`,
+          { emoji: "💥", theme: "fail-theme", symbols: ["💥","⚔️","😵"], autoCloseMs: 1800, buttonText: "ננסה שוב" });
         return;
       }
 
-      if (isBossStage() && bossBattleStats) {
-        const wonBoss = bossBattleStats.correct >= bossBattleStats.requiredCorrect;
-        const defeatedBossName = getBossData().failName;
+      // Boss won — award XP and title
+      stageXpGained += GAME.BOSS_BONUS_XP;
+      awardXp(GAME.BOSS_BONUS_XP);
+      persistProfileProgress();
+      awardBossWinTitle();
 
-        if (!wonBoss) {
-          selectedStage = 9;
-          currentStage = 9;
-          unlockedStage = Math.min(unlockedStage, 9);
-          updateHeroUI(currentProfile);
-          updateBossUI();
-          playSound("wrong");
-          showStageComplete("BOSS FAILED", `${defeatedBossName} ניצח. חזור ל-Stage 9 והתחזק.`, { emoji: "💥", theme: "fail-theme", symbols: ["💥", "⚔️", "😵"], autoCloseMs: 1800, buttonText: "ננסה שוב" });
-          return;
-        }
-
-        if (currentWorld < 6) {
-          const bossBonusXp = 120;
-          stageXpGained += bossBonusXp;
-          awardXp(bossBonusXp);
-          persistProfileProgress();
-          awardBossWinTitle();
-          const prevWorld = currentWorld;
-          currentWorld += 1;
-          unlockedStage = 1;
-          selectedStage = 1;
-          currentStage = 1;
-          currentProfile.current_world = currentWorld;
-          currentProfile.unlocked_stage = 1;
-
-          await updateProfileRecord({
-            current_world: currentWorld,
-            unlocked_stage: 1
-          });
-
-          updateHeroUI(currentProfile);
-          updateBossUI();
-          playSound("bosswin");
-          setTimeout(() => playSound("worldunlock"), 270);
-          showCelebration({
-            title: "WORLD COMPLETE",
-            subText: `ניצחת את ${defeatedBossName} ופתחת את עולם ${currentWorld}!`,
-            emoji: "🌍",
-            theme: "world-theme",
-            symbols: ["🌟", "🌍", "🏆", "✨"],
-            autoCloseMs: 2300,
-            buttonText: "לעולם הבא",
-            onClose: () => {
-              showScreen("map-screen");
-              showWorldUnlockModal(currentWorld);
-            }
-          });
-          return;
-        }
-
-        const bossBonusXp = 120;
-        stageXpGained += bossBonusXp;
-        awardXp(bossBonusXp);
-        persistProfileProgress();
-        awardBossWinTitle();
-        currentProfile.current_world = 6;
-        currentProfile.unlocked_stage = 10;
-        selectedStage = 10;
-        currentStage = 10;
-        await updateProfileRecord({
-          current_world: 6,
-          unlocked_stage: 10
-        });
-
+      const isLastWorld = currentWorld >= 6;
+      if (!isLastWorld) {
+        currentWorld += 1;
+        unlockedStage = 1;
+        selectedStage = 1;
+        currentStage  = 1;
+        currentProfile.current_world   = currentWorld;
+        currentProfile.unlocked_stage  = 1;
+        await updateProfileRecord({ current_world: currentWorld, unlocked_stage: 1 });
         updateHeroUI(currentProfile);
         updateBossUI();
         playSound("bosswin");
-        showStageComplete("FINAL WORLD COMPLETE", `ניצחת את ${defeatedBossName} וסיימת את כל Word Heroes!`, { emoji: "🏆", theme: "final-theme", symbols: ["👑", "🏆", "✨", "🔥"], autoCloseMs: 2800, buttonText: "אגדי!" });
-        return;
+        setTimeout(() => playSound("worldunlock"), 270);
+        showCelebration({
+          title:      "WORLD COMPLETE",
+          subText:    `ניצחת את ${defeatedBossName} ופתחת את עולם ${currentWorld}!`,
+          emoji:      "🌍",
+          theme:      "world-theme",
+          symbols:    ["🌟","🌍","🏆","✨"],
+          autoCloseMs: 2300,
+          buttonText:  "לעולם הבא",
+          onClose: () => { showScreen("map-screen"); showWorldUnlockModal(currentWorld); }
+        });
+      } else {
+        currentProfile.current_world  = 6;
+        currentProfile.unlocked_stage = GAME.STAGES_PER_WORLD;
+        selectedStage = GAME.STAGES_PER_WORLD;
+        currentStage  = GAME.STAGES_PER_WORLD;
+        await updateProfileRecord({ current_world: 6, unlocked_stage: GAME.STAGES_PER_WORLD });
+        updateHeroUI(currentProfile);
+        updateBossUI();
+        playSound("bosswin");
+        showStageComplete("FINAL WORLD COMPLETE",
+          `ניצחת את ${defeatedBossName} וסיימת את כל Word Heroes!`,
+          { emoji: "🏆", theme: "final-theme", symbols: ["👑","🏆","✨","🔥"], autoCloseMs: 2800, buttonText: "אגדי!" });
       }
+    }
 
-      const stageClearBonusXp = 40;
-      stageXpGained += stageClearBonusXp;
-      awardXp(stageClearBonusXp);
+    async function _completeStageRegular() {
+      stageXpGained += GAME.STAGE_CLEAR_XP;
+      awardXp(GAME.STAGE_CLEAR_XP);
       const perfectStage = stageWrongAnswers === 0;
       if (perfectStage) {
-        stageXpGained += 15;
-        awardXp(15);
+        stageXpGained += GAME.PERFECT_BONUS_XP;
+        awardXp(GAME.PERFECT_BONUS_XP);
         playSound("perfect");
       }
       persistProfileProgress();
 
-      // Save star rating: 3=perfect, 2=≤2 wrong, 1=completed
       const starRating = perfectStage ? 3 : stageWrongAnswers <= 2 ? 2 : 1;
       recordStageCleared(perfectStage, false);
       updateQuestProgress("stages", 1);
       if (perfectStage) updateQuestProgress("perfect", 1);
-      const starKey = `wh_stars_w${currentWorld}_s${currentStage}_u${currentProfile?.id || ""}`;
+      const starKey  = `wh_stars_w${currentWorld}_s${currentStage}_u${currentProfile?.id || ""}`;
       const prevStars = Number(storage.get(starKey) || 0);
       if (starRating > prevStars) storage.set(starKey, String(starRating));
 
-      if (currentStage < 10 && currentStage === unlockedStage) {
+      if (currentStage < GAME.STAGES_PER_WORLD && currentStage === unlockedStage) {
         await saveUnlockedStage(currentStage + 1);
         selectedStage = unlockedStage;
         updateHeroUI(currentProfile);
@@ -8027,7 +8340,7 @@ function updateHeroUI(profile) {
         showStageComplete(
           perfectStage ? "PERFECT STAGE" : "STAGE COMPLETE",
           perfectStage ? `Stage ${unlockedStage} unlocked • Perfect run!` : `Stage ${unlockedStage} unlocked`,
-          { emoji: perfectStage ? "🌟" : "🎉", theme: "stage-theme", symbols: perfectStage ? ["🌟", "✨", "🏅"] : ["🎉", "⭐", "✨"], autoCloseMs: 1700, buttonText: "קדימה" }
+          { emoji: perfectStage ? "🌟" : "🎉", theme: "stage-theme", symbols: perfectStage ? ["🌟","✨","🏅"] : ["🎉","⭐","✨"], autoCloseMs: 1700, buttonText: "קדימה" }
         );
       } else {
         selectedStage = currentStage;
@@ -8035,9 +8348,16 @@ function updateHeroUI(profile) {
         showStageComplete(
           perfectStage ? "PERFECT STAGE" : "STAGE COMPLETE",
           perfectStage ? `Stage ${currentStage} cleared • Perfect run!` : `Stage ${currentStage} cleared`,
-          { emoji: perfectStage ? "🌟" : "🎊", theme: "stage-theme", symbols: perfectStage ? ["🌟", "✨", "🏅"] : ["🎊", "⭐", "✨"], autoCloseMs: 1700, buttonText: "המשך" }
+          { emoji: perfectStage ? "🌟" : "🎊", theme: "stage-theme", symbols: perfectStage ? ["🌟","✨","🏅"] : ["🎊","⭐","✨"], autoCloseMs: 1700, buttonText: "המשך" }
         );
       }
+    }
+
+    async function completeStage() {
+      setWidth(stageFillEl, "100%");
+      if (isReviewMode)                  { _completeStageReview();          return; }
+      if (isBossStage() && bossBattleStats) { await _completeStageBoss();   return; }
+      await _completeStageRegular();
     }
 
 
@@ -8145,7 +8465,7 @@ function updateHeroUI(profile) {
     // ══════════════════════════════════════════════════════
 
     function triggerLevelUpEffect(levelOrText) {
-      const banner = document.getElementById("levelup-banner");
+      const banner = id("levelup-banner");
       if (!banner) return;
       const isStr = typeof levelOrText === "string" && isNaN(Number(levelOrText));
       banner.innerHTML = isStr
@@ -8199,7 +8519,7 @@ function spawnScreenFlash(type) {
   setTimeout(() => el.remove(), 370);
 }
 
-function spawnAnswerParticles(btn, isCorrect) {
+    function spawnAnswerParticles(btn, isCorrect) {
   if (!btn) return;
   const rect = btn.getBoundingClientRect();
   const cx = rect.left + rect.width / 2;
@@ -8222,7 +8542,7 @@ function spawnAnswerParticles(btn, isCorrect) {
 // ══════════════════════════════════════════════════════
 
 
-async function handleAnswer(buttonEl, selectedAnswer) {
+    async function handleAnswer(buttonEl, selectedAnswer) {
       if (!currentQuestion || answeredCurrent) return;
       answeredCurrent = true;
 
@@ -8376,8 +8696,8 @@ async function handleAnswer(buttonEl, selectedAnswer) {
       updateBossUI();
       showScreen("map-screen");
       if (isReviewMode) {
-        unlockedStage = 10;
-        const banner = document.getElementById("review-mode-banner");
+        unlockedStage = GAME.STAGES_PER_WORLD;
+        const banner = id("review-mode-banner");
         if (banner) banner.classList.add("show");
         renderStageMap();
       } else {
@@ -8393,6 +8713,8 @@ async function handleAnswer(buttonEl, selectedAnswer) {
     let teacherAllStudents = [];
     let teacherCurrentTab  = "all";
     let teacherClassFilter = "";
+    let teacherSortKey     = "words";
+    let teacherSearchQuery = "";
 
     function isTeacherMode() {
       return activeScreenName === "teacher-screen";
@@ -8402,6 +8724,14 @@ async function handleAnswer(buttonEl, selectedAnswer) {
       return session.get(TEACHER_SESSION_KEY, "0") === "1";
     }
 
+    function setTeacherSession(value) {
+      if (value) {
+        session.set(TEACHER_SESSION_KEY, "1");
+      } else {
+        session.remove(TEACHER_SESSION_KEY);
+      }
+    }
+
     function requireTeacherSession() {
       if (hasTeacherSession()) return true;
       setMainMessage("הגישה לדשבורד המורה דורשת כניסת מורה פעילה", "error");
@@ -8409,15 +8739,86 @@ async function handleAnswer(buttonEl, selectedAnswer) {
       return false;
     }
 
+    // ── Shared date helpers — computed once, used everywhere ──
+    function getDateHelpers() {
+      const today       = new Date().toISOString().slice(0, 10);
+      const threeDaysAgo = new Date(Date.now() - GAME.ABSENT_DAYS_THRESHOLD * 864e5).toISOString().slice(0, 10);
+      const lastLogin   = s => String(s.last_daily_bonus_at || "").slice(0, 10);
+      const isToday     = s => lastLogin(s) === today;
+      const isAbsent    = s => { const l = lastLogin(s); return !l || l < threeDaysAgo; };
+      return { today, threeDaysAgo, lastLogin, isToday, isAbsent };
+    }
+
+    // ── Sort students by current sort key ─────────────────────
+    function getSortedStudents(arr) {
+      const sorted = [...arr];
+      switch (teacherSortKey) {
+        case "level":       return sorted.sort((a, b) => (b.level || 1)          - (a.level || 1));
+        case "xp":          return sorted.sort((a, b) => (b.xp    || 0)          - (a.xp    || 0));
+        case "last_active": return sorted.sort((a, b) =>
+          (b.last_daily_bonus_at || "").localeCompare(a.last_daily_bonus_at || ""));
+        case "name":        return sorted.sort((a, b) =>
+          (a.display_name || "").localeCompare(b.display_name || "", "he"));
+        default:            return sorted.sort((a, b) => (b.words_learned || 0) - (a.words_learned || 0));
+      }
+    }
+
+    // ── Shared student row renderer ────────────────────────────
+    // dates param is the result of getDateHelpers() — computed once per render,
+    // not once per row. Pass it explicitly to avoid 3× new Date() per student.
+    function renderStudentRow(s, rank, showClassCode = false, dates = null) {
+      const { lastLogin, isToday, isAbsent } = dates || getDateHelpers();
+      const login    = lastLogin(s);
+      const today_s  = isToday(s);
+      const absent_s = isAbsent(s);
+      const pLvl     = getPrestigeLevel(s.level || 1);
+      const levelTxt = pLvl > 0 ? `✦P${pLvl}` : `רמה ${s.level || 1}`;
+      const worldIcon = ["🌿","🌊","🏞️","🏰","⚡","🔥"][(s.current_world || 1) - 1] || "🌿";
+      const statusBadge = today_s
+        ? `<span class="teacher-badge-today">✅ היום</span>`
+        : absent_s
+          ? `<span class="teacher-badge-absent">⚠️ ${login ? login.slice(5) : "מעולם לא"}</span>`
+          : `<span style="color:#94a3b8;">${login ? login.slice(5) : "—"}</span>`;
+      const rowClass = today_s ? "teacher-row today-row" : absent_s ? "teacher-row absent-row" : "teacher-row";
+      const nameCode = showClassCode && s.class_code
+        ? ` <span class="teacher-student-class-code">${s.class_code}</span>` : "";
+      const xpLine   = `<span class="teacher-stat-xp">⚡ ${(s.xp || 0).toLocaleString()} XP</span>`;
+      const smashLine = s.smash_best > 0
+        ? `<span class="teacher-stat-smash">💥 ${s.smash_best}</span>` : "";
+
+      return `
+      <div class="${rowClass}">
+        <div class="teacher-rank-num">${rank}</div>
+        <div>
+          <div class="teacher-student-name">${escHtml(s.display_name || "?")}${nameCode}</div>
+          <div class="teacher-student-meta">${worldIcon} עולם ${s.current_world || 1} • ${levelTxt} • ${statusBadge}</div>
+        </div>
+        <div class="teacher-student-actions">
+          <div class="teacher-student-stats">
+            <span class="teacher-stat-words">📖 ${s.words_learned || 0}</span>
+            ${xpLine}
+            ${smashLine}
+          </div>
+          <div class="teacher-action-btns">
+            <button class="teacher-action-btn rename"
+              onclick="openTeacherRename('${s.id}','${escHtml(s.display_name||'')}')">✏️ שם</button>
+            <button class="teacher-action-btn avatar"
+              onclick="openTeacherChangeAvatar('${s.id}','${escHtml(s.display_name||'')}','${s.avatar_class||'mage'}','${s.avatar_gender||'male'}')">🎭 דמות</button>
+            <button class="teacher-action-btn reset"
+              onclick="openTeacherReset('${s.id}','${escHtml(s.display_name||'')}')">🔄 אפס</button>
+          </div>
+        </div>
+      </div>`;
+    }
 
     function teacherLogin() {
-      const code = (document.getElementById("teacher-code-input")?.value || "").trim();
+      const code = (id("teacher-code-input")?.value || "").trim();
       if (code !== TEACHER_CODE) {
         setMainMessage("קוד מורה שגוי", "error");
         return;
       }
       setTeacherSession(true);
-      document.getElementById("teacher-code-input").value = "";
+      id("teacher-code-input").value = "";
       showScreen("teacher-screen");
       loadTeacherDashboard();
     }
@@ -8426,9 +8827,9 @@ async function handleAnswer(buttonEl, selectedAnswer) {
       setTeacherSession(false);
       showScreen("auth-screen");
       teacherAllStudents = [];
-      const teacherPanel = document.getElementById("teacher-code-panel");
-      const teacherToggle = document.getElementById("teacher-toggle-btn");
-      if (teacherPanel) teacherPanel.style.display = "none";
+      const teacherPanel  = id("teacher-code-panel");
+      const teacherToggle = id("teacher-toggle-btn");
+      if (teacherPanel)  teacherPanel.style.display = "none";
       if (teacherToggle) teacherToggle.setAttribute("aria-expanded", "false");
     }
 
@@ -8443,12 +8844,10 @@ async function handleAnswer(buttonEl, selectedAnswer) {
 
     async function loadTeacherDashboard(force = false) {
       if (!requireTeacherSession()) return;
-      const listEl  = document.getElementById("teacher-student-list");
-      const sumEl   = document.getElementById("teacher-summary");
-      const lastEl  = document.getElementById("teacher-last-updated");
+      const listEl = id("teacher-student-list");
+      const lastEl = id("teacher-last-updated");
       if (listEl) listEl.innerHTML = '<div style="text-align:center;color:#64748b;padding:20px;">טוען...</div>';
 
-      // Fetch all profiles
       const { data, error } = await supabaseClient
         .from("profiles")
         .select("id, display_name, class_code, level, xp, words_learned, last_daily_bonus_at, smash_best, current_world, avatar_class, avatar_gender")
@@ -8457,7 +8856,7 @@ async function handleAnswer(buttonEl, selectedAnswer) {
       if (error || !data) {
         if (listEl) listEl.innerHTML = `<div style="color:#f87171;text-align:center;padding:16px;">
           שגיאה בטעינה: ${error?.message || "Unknown"}<br>
-          <span style="font-size:12px;color:#94a3b8;margin-top:8px;display:block;">ייתכן שה-RLS מונע גישה. ודא שהמורה מחובר עם חשבון Supabase תקין.</span>
+          <span style="font-size:12px;color:#94a3b8;margin-top:8px;display:block;">ייתכן שה-RLS מונע גישה.</span>
         </div>`;
         return;
       }
@@ -8470,7 +8869,7 @@ async function handleAnswer(buttonEl, selectedAnswer) {
       teacherAllStudents = data;
 
       // Populate class selector
-      const classSel = document.getElementById("teacher-class-select");
+      const classSel = id("teacher-class-select");
       if (classSel) {
         const classes = [...new Set(data.map(p => p.class_code).filter(Boolean))].sort();
         classSel.innerHTML = '<option value="">כל הכיתות</option>' +
@@ -8483,66 +8882,65 @@ async function handleAnswer(buttonEl, selectedAnswer) {
       renderTeacherStudents();
     }
 
+    // Returns students filtered by class, tab, and search query
     function getFilteredStudents() {
+      const { today, threeDaysAgo, lastLogin, isToday, isAbsent } = getDateHelpers();
       let students = teacherAllStudents;
-      if (teacherClassFilter) students = students.filter(s => s.class_code === teacherClassFilter);
-      const today = new Date().toISOString().slice(0, 10);
-      const threeDaysAgo = new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 10);
-      if (teacherCurrentTab === "today") {
-        students = students.filter(s => String(s.last_daily_bonus_at || "").slice(0, 10) === today);
-      } else if (teacherCurrentTab === "absent") {
-        students = students.filter(s => {
-          const last = String(s.last_daily_bonus_at || "").slice(0, 10);
-          return !last || last < threeDaysAgo;
-        });
+
+      if (teacherClassFilter)  students = students.filter(s => s.class_code === teacherClassFilter);
+      if (teacherSearchQuery) {
+        const q = teacherSearchQuery.toLowerCase();
+        students = students.filter(s => (s.display_name || "").toLowerCase().includes(q));
       }
-      return students;
+      if (teacherCurrentTab === "today") {
+        students = students.filter(isToday);
+      } else if (teacherCurrentTab === "absent") {
+        students = students.filter(isAbsent);
+      }
+      return getSortedStudents(students);
     }
 
     function renderTeacherSummary() {
-      const el = document.getElementById("teacher-summary");
+      const el = id("teacher-summary");
       if (!el) return;
+      const { today, threeDaysAgo, isToday, isAbsent } = getDateHelpers();
       let students = teacherAllStudents;
       if (teacherClassFilter) students = students.filter(s => s.class_code === teacherClassFilter);
-      const today = new Date().toISOString().slice(0, 10);
-      const todayCount  = students.filter(s => String(s.last_daily_bonus_at || "").slice(0, 10) === today).length;
-      const threeDaysAgo = new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 10);
-      const absentCount = students.filter(s => {
-        const last = String(s.last_daily_bonus_at || "").slice(0, 10);
-        return !last || last < threeDaysAgo;
-      }).length;
-      const totalWords  = students.reduce((sum, s) => sum + (s.words_learned || 0), 0);
+
+      const todayCount  = students.filter(isToday).length;
+      const absentCount = students.filter(isAbsent).length;
+
       el.innerHTML = `
         <div class="teacher-summary-card">
-          <div class="teacher-summary-num" style="color:#60a5fa;">${students.length}</div>
+          <div class="teacher-summary-num blue">${students.length}</div>
           <div class="teacher-summary-label">תלמידים סה"כ</div>
         </div>
         <div class="teacher-summary-card">
-          <div class="teacher-summary-num" style="color:#34d399;">${todayCount}</div>
+          <div class="teacher-summary-num green">${todayCount}</div>
           <div class="teacher-summary-label">נכנסו היום</div>
         </div>
         <div class="teacher-summary-card">
-          <div class="teacher-summary-num" style="color:#f87171;">${absentCount}</div>
+          <div class="teacher-summary-num red">${absentCount}</div>
           <div class="teacher-summary-label">לא נכנסו 3+ ימים</div>
         </div>`;
     }
 
     function renderTeacherByClass() {
-      const el = document.getElementById("teacher-student-list");
+      const el = id("teacher-student-list");
       if (!el) return;
 
-      let students = teacherAllStudents;
-      if (teacherClassFilter) students = students.filter(s => s.class_code === teacherClassFilter);
+      // Use getFilteredStudents so search + filter apply here too
+      let students = getFilteredStudents();
 
       if (!students.length) {
         el.innerHTML = '<div style="text-align:center;color:#64748b;padding:16px;">אין תלמידים להצגה</div>';
         return;
       }
 
-      const today = new Date().toISOString().slice(0, 10);
-      const threeDaysAgo = new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 10);
+      // Compute dates once — passed down to every renderStudentRow call
+      const dates = getDateHelpers();
+      const { isToday, isAbsent } = dates;
 
-      // Group by class_code
       const groups = {};
       students.forEach(s => {
         const cls = s.class_code || "ללא כיתה";
@@ -8550,146 +8948,47 @@ async function handleAnswer(buttonEl, selectedAnswer) {
         groups[cls].push(s);
       });
 
-      const sortedClasses = Object.keys(groups).sort();
-
-      el.innerHTML = sortedClasses.map(cls => {
-        const members = groups[cls].sort((a, b) => (b.words_learned || 0) - (a.words_learned || 0));
-        const todayCount   = members.filter(s => String(s.last_daily_bonus_at || "").slice(0, 10) === today).length;
-        const absentCount  = members.filter(s => {
-          const last = String(s.last_daily_bonus_at || "").slice(0, 10);
-          return !last || last < threeDaysAgo;
-        }).length;
-        const totalWords   = members.reduce((sum, s) => sum + (s.words_learned || 0), 0);
-        const avgWords     = members.length ? Math.round(totalWords / members.length) : 0;
-
-        const rows = members.map((s, i) => {
-          const lastLogin = String(s.last_daily_bonus_at || "").slice(0, 10);
-          const isToday   = lastLogin === today;
-          const isAbsent  = !lastLogin || lastLogin < threeDaysAgo;
-          const pLvl      = getPrestigeLevel(s.level || 1);
-          const levelTxt  = pLvl > 0 ? `✦P${pLvl}` : `רמה ${s.level || 1}`;
-          const worldIcon = ["🌿","🌊","🏞️","🏰","⚡","🔥"][(s.current_world || 1) - 1] || "🌿";
-          const statusBadge = isToday
-            ? `<span class="teacher-badge-today">✅ היום</span>`
-            : isAbsent
-              ? `<span class="teacher-badge-absent">⚠️ ${lastLogin ? lastLogin.slice(5) : "מעולם לא"}</span>`
-              : `<span style="color:#94a3b8;">${lastLogin ? lastLogin.slice(5) : "—"}</span>`;
-          const rowClass = isToday ? "teacher-row today-row" : isAbsent ? "teacher-row absent-row" : "teacher-row";
-          return `
-          <div class="${rowClass}">
-            <div class="teacher-rank-num">${i + 1}</div>
-            <div>
-              <div class="teacher-student-name">${escHtml(s.display_name || "?")}</div>
-              <div class="teacher-student-meta">${worldIcon} עולם ${s.current_world || 1} • ${levelTxt} • ${statusBadge}</div>
-            </div>
-            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
-              <div class="teacher-student-stats">
-                <span style="color:#93c5fd;">📖 ${s.words_learned || 0}</span>
-                ${s.smash_best > 0 ? `<span style="color:#c4b5fd;">⚡ ${s.smash_best}</span>` : ""}
-              </div>
-              <div style="display:flex;gap:5px;">
-                <button onclick="openTeacherRename('${s.id}','${escHtml(s.display_name||'')}')"
-                  style="width:auto;padding:3px 9px;font-size:11px;min-height:0;border-radius:8px;
-                  background:rgba(96,165,250,0.18);border:1px solid rgba(96,165,250,0.35);color:#93c5fd;font-weight:800;">
-                  ✏️ שם
-                </button>
-                <button onclick="openTeacherChangeAvatar('${s.id}','${escHtml(s.display_name||'')}','${s.avatar_class||'mage'}','${s.avatar_gender||'male'}')"
-                  style="width:auto;padding:3px 9px;font-size:11px;min-height:0;border-radius:8px;
-                  background:rgba(168,85,247,0.18);border:1px solid rgba(168,85,247,0.4);color:#d8b4fe;font-weight:800;">
-                  🎭 דמות
-                </button>
-                <button onclick="openTeacherReset('${s.id}','${escHtml(s.display_name||'')}')"
-                  style="width:auto;padding:3px 9px;font-size:11px;min-height:0;border-radius:8px;
-                  background:rgba(248,113,113,0.14);border:1px solid rgba(248,113,113,0.32);color:#fca5a5;font-weight:800;">
-                  🔄 אפס
-                </button>
-              </div>
-            </div>
-          </div>`;
-        }).join("");
+      el.innerHTML = Object.keys(groups).sort().map(cls => {
+        const members    = groups[cls];
+        const todayCount  = members.filter(isToday).length;
+        const absentCount = members.filter(isAbsent).length;
+        const avgWords    = members.length
+          ? Math.round(members.reduce((s, m) => s + (m.words_learned || 0), 0) / members.length) : 0;
 
         return `
-        <div style="margin-bottom:16px;">
-          <div style="
-            display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap;
-            gap:8px; padding:10px 14px; border-radius:14px; margin-bottom:8px;
-            background:linear-gradient(135deg,rgba(59,130,246,0.18),rgba(96,165,250,0.12));
-            border:1px solid rgba(96,165,250,0.3);
-          ">
-            <div style="font-size:17px;font-weight:900;color:#93c5fd;">🏫 כיתה ${escHtml(cls)}</div>
-            <div style="display:flex;gap:12px;font-size:12px;font-weight:800;">
+        <div class="teacher-class-group">
+          <div class="teacher-class-header">
+            <div class="teacher-class-header-title">🏫 כיתה ${escHtml(cls)}</div>
+            <div class="teacher-class-header-stats">
               <span style="color:#f1f5f9;">👥 ${members.length}</span>
               <span style="color:#34d399;">✅ ${todayCount} היום</span>
               <span style="color:#f87171;">⚠️ ${absentCount} נעדרים</span>
               <span style="color:#93c5fd;">📖 ממוצע ${avgWords}</span>
             </div>
           </div>
-          <div style="display:grid;gap:8px;">${rows}</div>
+          <div class="teacher-class-rows">
+            ${members.map((s, i) => renderStudentRow(s, i + 1, false, dates)).join("")}
+          </div>
         </div>`;
       }).join("");
     }
 
     function renderTeacherStudents() {
-      if (teacherCurrentTab === "class") {
-        renderTeacherByClass();
-        return;
-      }
-      const el = document.getElementById("teacher-student-list");
+      if (teacherCurrentTab === "class") { renderTeacherByClass(); return; }
+      const el = id("teacher-student-list");
       if (!el) return;
+
       const students = getFilteredStudents();
-      const today = new Date().toISOString().slice(0, 10);
-      const threeDaysAgo = new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 10);
 
       if (!students.length) {
         el.innerHTML = '<div style="text-align:center;color:#64748b;padding:16px;">אין תלמידים להצגה</div>';
         return;
       }
 
-      el.innerHTML = students.map((s, i) => {
-        const lastLogin = String(s.last_daily_bonus_at || "").slice(0, 10);
-        const isToday   = lastLogin === today;
-        const isAbsent  = !lastLogin || lastLogin < threeDaysAgo;
-        const pLvl      = getPrestigeLevel(s.level || 1);
-        const levelTxt  = pLvl > 0 ? `✦P${pLvl}` : `רמה ${s.level || 1}`;
-        const worldIcon = ["🌿","🌊","🏞️","🏰","⚡","🔥"][(s.current_world || 1) - 1] || "🌿";
-        const statusBadge = isToday
-          ? `<span class="teacher-badge-today">✅ היום</span>`
-          : isAbsent
-            ? `<span class="teacher-badge-absent">⚠️ ${lastLogin ? lastLogin.slice(5) : "מעולם לא"}</span>`
-            : `<span style="color:#94a3b8;">${lastLogin ? lastLogin.slice(5) : "—"}</span>`;
-        const rowClass = isToday ? "teacher-row today-row" : isAbsent ? "teacher-row absent-row" : "teacher-row";
-        return `
-        <div class="${rowClass}">
-          <div class="teacher-rank-num">${i + 1}</div>
-          <div>
-            <div class="teacher-student-name">${escHtml(s.display_name || "?")} <span style="font-size:11px;color:#64748b;font-weight:700;">${s.class_code || ""}</span></div>
-            <div class="teacher-student-meta">${worldIcon} עולם ${s.current_world || 1} • ${levelTxt} • ${statusBadge}</div>
-          </div>
-          <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
-            <div class="teacher-student-stats">
-              <span style="color:#93c5fd;">📖 ${s.words_learned || 0} מילים</span>
-              ${s.smash_best > 0 ? `<span style="color:#c4b5fd;">⚡ ${s.smash_best}</span>` : ""}
-            </div>
-            <div style="display:flex; gap:5px;">
-              <button onclick="openTeacherRename('${s.id}','${escHtml(s.display_name||'')}')"
-                style="width:auto;padding:3px 9px;font-size:11px;min-height:0;border-radius:8px;
-                background:rgba(96,165,250,0.18);border:1px solid rgba(96,165,250,0.35);color:#93c5fd;font-weight:800;">
-                ✏️ שם
-              </button>
-              <button onclick="openTeacherChangeAvatar('${s.id}','${escHtml(s.display_name||'')}','${s.avatar_class||'mage'}','${s.avatar_gender||'male'}')"
-                style="width:auto;padding:3px 9px;font-size:11px;min-height:0;border-radius:8px;
-                background:rgba(168,85,247,0.18);border:1px solid rgba(168,85,247,0.4);color:#d8b4fe;font-weight:800;">
-                🎭 דמות
-              </button>
-              <button onclick="openTeacherReset('${s.id}','${escHtml(s.display_name||'')}')"
-                style="width:auto;padding:3px 9px;font-size:11px;min-height:0;border-radius:8px;
-                background:rgba(248,113,113,0.14);border:1px solid rgba(248,113,113,0.32);color:#fca5a5;font-weight:800;">
-                🔄 אפס
-              </button>
-            </div>
-          </div>
-        </div>`;
-      }).join("");
+      // Compute dates once for all rows
+      const dates = getDateHelpers();
+      const showClass = teacherCurrentTab === "all" && !teacherClassFilter;
+      el.innerHTML = students.map((s, i) => renderStudentRow(s, i + 1, showClass, dates)).join("");
     }
 
     // ── Teacher Modal helpers ──────────────────────────
@@ -8697,12 +8996,12 @@ async function handleAnswer(buttonEl, selectedAnswer) {
 
     function openTeacherModal({ title, sub, showInput, inputVal, confirmLabel, confirmStyle, onConfirm }) {
       if (!requireTeacherSession()) return;
-      const modal   = document.getElementById("teacher-action-modal");
-      const titleEl = document.getElementById("teacher-modal-title");
-      const subEl   = document.getElementById("teacher-modal-sub");
-      const inputEl = document.getElementById("teacher-modal-input");
-      const confirmBtn = document.getElementById("teacher-modal-confirm");
-      const statusEl = document.getElementById("teacher-modal-status");
+      const modal   = id("teacher-action-modal");
+      const titleEl = id("teacher-modal-title");
+      const subEl   = id("teacher-modal-sub");
+      const inputEl = id("teacher-modal-input");
+      const confirmBtn = id("teacher-modal-confirm");
+      const statusEl = id("teacher-modal-status");
       if (!modal) return;
       titleEl.textContent  = title;
       subEl.textContent    = sub;
@@ -8725,7 +9024,7 @@ async function handleAnswer(buttonEl, selectedAnswer) {
     }
 
     function closeTeacherModal() {
-      const modal = document.getElementById("teacher-action-modal");
+      const modal = id("teacher-action-modal");
       if (modal) {
         modal.style.display = "none";
         modal.setAttribute("aria-hidden", "true");
@@ -8735,7 +9034,7 @@ async function handleAnswer(buttonEl, selectedAnswer) {
     }
 
     function setTeacherModalStatus(msg, isError = false) {
-      const el = document.getElementById("teacher-modal-status");
+      const el = id("teacher-modal-status");
       if (!el) return;
       el.style.color = isError ? "#f87171" : "#34d399";
       el.textContent = msg;
@@ -8833,10 +9132,10 @@ async function handleAnswer(buttonEl, selectedAnswer) {
       _avatarPickerSelectedCls = currentCls || "mage";
       _avatarPickerSelectedGen = currentGen || "male";
 
-      const modal   = document.getElementById("teacher-avatar-modal");
-      const subEl   = document.getElementById("teacher-avatar-modal-sub");
-      const statusEl = document.getElementById("teacher-avatar-status");
-      const confirmBtn = document.getElementById("teacher-avatar-confirm");
+      const modal   = id("teacher-avatar-modal");
+      const subEl   = id("teacher-avatar-modal-sub");
+      const statusEl = id("teacher-avatar-status");
+      const confirmBtn = id("teacher-avatar-confirm");
       if (!modal) return;
 
       subEl.textContent    = `תלמיד/ה: ${studentName}`;
@@ -8880,7 +9179,7 @@ async function handleAnswer(buttonEl, selectedAnswer) {
     }
 
     function _renderAvatarGrid() {
-      const grid = document.getElementById("teacher-avatar-grid");
+      const grid = id("teacher-avatar-grid");
       if (!grid) return;
       grid.innerHTML = HERO_OPTIONS.map(h => {
         const isSelected = h.cls === _avatarPickerSelectedCls && h.gender === _avatarPickerSelectedGen;
@@ -8902,7 +9201,7 @@ async function handleAnswer(buttonEl, selectedAnswer) {
     }
 
     function closeTeacherAvatarModal() {
-      const modal = document.getElementById("teacher-avatar-modal");
+      const modal = id("teacher-avatar-modal");
       if (modal) {
         modal.style.display = "none";
         modal.setAttribute("aria-hidden", "true");
@@ -8948,18 +9247,17 @@ async function handleAnswer(buttonEl, selectedAnswer) {
         profile_current_world:  currentProfile?.current_world,
       };
       currentWorld  = 1;
-      unlockedStage = 10;
+      unlockedStage = GAME.STAGES_PER_WORLD;
       currentStage  = 1;
       selectedStage = 1;
       if (currentProfile) {
-        currentProfile.unlocked_stage = 10;
+        currentProfile.unlocked_stage = GAME.STAGES_PER_WORLD;
         currentProfile.current_world  = 6;  // כל 6 עולמות גלויים ב-Review Mode
       }
       showScreen("map-screen");
       updateHeroUI(currentProfile);
-      renderWorldRoad();   // וודא שכל 6 העולמות מוצגים מיד
-      renderStageMap();
-      const banner = document.getElementById("review-mode-banner");
+      renderMap();   // וודא שכל 6 העולמות מוצגים מיד
+      const banner = id("review-mode-banner");
       if (banner) banner.classList.add("show");
     }
 
@@ -8978,7 +9276,7 @@ async function handleAnswer(buttonEl, selectedAnswer) {
         }
         reviewModeSnapshot = null;
       }
-      const banner = document.getElementById("review-mode-banner");
+      const banner = id("review-mode-banner");
       if (banner) banner.classList.remove("show");
       showScreen("teacher-screen");
     }
@@ -8986,6 +9284,11 @@ async function handleAnswer(buttonEl, selectedAnswer) {
     async function logout() {
       await supabaseClient.auth.signOut();
       currentProfile = null;
+
+      // Invalidate UI caches so next login renders fresh
+      _levelCache       = { xp: -1, result: null };
+      _lastHeroUIKey    = "";
+      _todayQuestsCache = null;
 
       // Reset all game state in one call
       GameState.reset();
@@ -9020,8 +9323,8 @@ async function handleAnswer(buttonEl, selectedAnswer) {
     // ── Mini stage progress helper ─────────────────────────
     function updateMiniStageProgress(world, stage, current, total) {
       const left = total - current;
-      const txt  = document.getElementById('stage-mini-text');
-      const fill = document.getElementById('stage-mini-fill');
+      const txt  = id('stage-mini-text');
+      const fill = id('stage-mini-fill');
       if (!txt || !fill) return;
       txt.textContent = `עולם ${world} • שלב ${stage} • נשארו ${left}`;
       fill.style.width = ((current / total) * 100) + '%';
